@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MasHome</string>
+    <string name="add_category_editor">New category</string>
+    <string name="add_category_button">Add</string>
+</resources>
