@@ -25,14 +25,12 @@ class CategoryAdapter(private val dataset: AppDatabase) :
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val categories = dataset.categoryDao().getAll()
-        holder.view.categoryName.text = categories[position]?.firstName
+        holder.view.categoryName.text = categories[position]?.name
 
-        holder.view.categoryRemoveButton.setOnClickListener(object: View.OnClickListener{
-            override fun onClick(var1: View?) {
-                dataset.categoryDao().delete(categories[position])
-                notifyDataSetChanged();
-            }
-        })
+        holder.view.categoryRemoveButton.setOnClickListener {
+            dataset.categoryDao().delete(categories[position])
+            notifyDataSetChanged();
+        }
     }
 
     override fun getItemCount() = dataset.categoryDao().getAll().size

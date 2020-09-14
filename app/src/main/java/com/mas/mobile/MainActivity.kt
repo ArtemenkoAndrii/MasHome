@@ -1,18 +1,22 @@
 package com.mas.mobile
 
-import kotlinx.coroutines.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mas.mobile.adapters.CategoryAdapter
 import com.mas.mobile.db.AppDatabase
 import com.mas.mobile.db.entity.CategoryEntity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private val errorCategoryLength = "Valid length is 2..25"
+    private val errorCategoryDuplication = "Already exist"
+    private val valRange = 2..25
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -36,17 +40,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addCategory(view: View) {
-        val editText = findViewById<EditText>(R.id.categoryAddEditor)
+        val textView = findViewById<EditText>(R.id.categoryAddEditor)
+        val error = validate(view)
 
-        val category = CategoryEntity(firstName = editText.text.toString())
-        GlobalScope.launch {
-            db?.categoryDao()?.insertAll(category)
+        error?.let {
+            textView.requestFocus()
+            textView.error = error
+        } ?: run {
+            val category = CategoryEntity(name = textView.text.toString())
+            GlobalScope.launch {
+                db?.categoryDao()?.insertAll(category)
+            }
+            val size = db?.categoryDao()?.getAll()?.size
+            viewAdapter.notifyItemInserted(size!!)
+            recyclerView.scrollToPosition(size!!)
+            textView.text.clear()
+        }
+    }
+
+    private fun validate(view: View): String? {
+        val textView = findViewById<EditText>(R.id.categoryAddEditor)
+        val text = textView.text.toString()
+
+        if (text.length !in valRange) {
+            return errorCategoryLength
+        } else if (db?.categoryDao()?.findByName(text) != null) {
+            return errorCategoryDuplication
         }
 
-        val size = db?.categoryDao()?.getAll()?.size
-        viewAdapter.notifyItemInserted(size!!)
-        recyclerView.scrollToPosition(size!!)
-        editText.text.clear()
+        return null
     }
 
 }
