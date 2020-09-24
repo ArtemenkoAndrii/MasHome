@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_fragment_expense">
+
+    <fragment
+        android:id="@+id/nav_fragment_expense"
+        android:name = "com.mas.mobile.fragments.ExpenseFragment"
+        tools:layout="@layout/expense_fragment">
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_fragment_group"
+        android:name = "com.mas.mobile.fragments.GroupFragment"
+        tools:layout = "@layout/group_fragment">
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_fragment_category"
+        android:name = "com.mas.mobile.fragments.CategoryFragment"
+        tools:layout = "@layout/category_fragment">
+    </fragment>
+
+</navigation>

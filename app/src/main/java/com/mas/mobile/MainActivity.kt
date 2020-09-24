@@ -4,71 +4,32 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.mas.mobile.adapters.CategoryAdapter
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mas.mobile.db.AppDatabase
 import com.mas.mobile.db.entity.CategoryEntity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private val errorCategoryLength = "Valid length is 2..25"
-    private val errorCategoryDuplication = "Already exist"
-    private val valRange = 2..25
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
-
-    private var db: AppDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.main_activity)
 
-        db = AppDatabase.getInstance(this)
-
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = CategoryAdapter(db!!)
-
-        recyclerView = findViewById<RecyclerView>(R.id.categoryList).apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
+        setSupportActionBar(findViewById(R.id.toolbar))
+        val host: NavHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_view) as NavHostFragment? ?: return
+        val navController = host.navController
+        setUpBottomNav(navController)
     }
 
-    fun addCategory(view: View) {
-        val textView = findViewById<EditText>(R.id.categoryAddEditor)
-        val error = validate(view)
-
-        error?.let {
-            textView.requestFocus()
-            textView.error = error
-        } ?: run {
-            val category = CategoryEntity(name = textView.text.toString())
-            GlobalScope.launch {
-                db?.categoryDao()?.insertAll(category)
-            }
-            val size = db?.categoryDao()?.getAll()?.size
-            viewAdapter.notifyItemInserted(size!!)
-            recyclerView.scrollToPosition(size!!)
-            textView.text.clear()
-        }
+    private fun setUpBottomNav(navController: NavController) {
+        val bottomNav = findViewById<BottomNavigationView>(R.id.nav_bottom_view)
+        bottomNav?.setupWithNavController(navController)
     }
-
-    private fun validate(view: View): String? {
-        val textView = findViewById<EditText>(R.id.categoryAddEditor)
-        val text = textView.text.toString()
-
-        if (text.length !in valRange) {
-            return errorCategoryLength
-        } else if (db?.categoryDao()?.findByName(text) != null) {
-            return errorCategoryDuplication
-        }
-
-        return null
-    }
-
 }
