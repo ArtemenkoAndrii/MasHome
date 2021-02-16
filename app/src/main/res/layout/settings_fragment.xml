@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.mas.mobile.presentation.activity.converter.MoneyConverter"/>
+        <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
+        <import type="com.mas.mobile.model.Period"/>
+
+        <variable name="settings"
+            type="com.mas.mobile.presentation.viewmodel.SettingsViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:text="@string/label_settings_period" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{settings.period.equals(Period.MONTH)}"
+                android:onClick="@{() -> settings.setMonthPeriod()}"
+                android:text="@string/btn_settings_month"/>
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{settings.period.equals(Period.TWO_WEEKS)}"
+                android:onClick="@{() -> settings.set2Week2Period()}"
+                android:text="@string/btn_settings_week" />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{settings.period.equals(Period.WEEK)}"
+                android:onClick="@{() -> settings.setWeekPeriod()}"
+                android:text="@string/btn_settings_two_weeks" />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{settings.period.equals(Period.QUARTER)}"
+                android:onClick="@{() -> settings.setQuarterPeriod()}"
+                android:text="@string/btn_settings_quarter" />
+            <RadioButton
+                android:checked="@{settings.period.equals(Period.YEAR)}"
+                android:onClick="@{() -> settings.setYearPeriod()}"
+                android:id="@+id/rb_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_settings_year" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20px"
+            android:text="@string/label_settings_start" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@{settings.availableDaysOfMonth}"
+            android:selection="@={settings.startDayOfMonth}"
+            android:visibility="@{settings.startDayOfMonthVisible ? View.VISIBLE : View.GONE}"
+            android:spinnerMode="dropdown"
+            android:text="@string/btn_settings_month" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@{settings.availableDaysOfWeek}"
+            android:selection="@={settings.startDayOfWeek}"
+            android:visibility="@{settings.startDayOfWeekVisible ? View.VISIBLE : View.GONE}"
+            android:spinnerMode="dropdown"
+            android:text="@string/btn_settings_month" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_settings_capture_sms"
+            android:checked="@={settings.captureSms}"/>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_settings_capture_notifications"
+            android:checked="@={settings.captureNotifications}"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{@string/label_app_version + settings.appVersion}" />
+
+        <Button
+            android:id="@+id/settingsSaveButton"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/btn_save" />
+    </LinearLayout>
+</layout>

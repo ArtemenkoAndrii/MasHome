@@ -1,5 +1,107 @@
 <resources>
     <string name="app_name">MasHome</string>
-    <string name="add_category_editor">New category</string>
-    <string name="add_category_button">Add</string>
+
+    <!-- HINTS -->
+    <string name="hint_budget_name">name</string>
+    <string name="hint_budget_plan">plan</string>
+    <string name="hint_budget_fact">fact</string>
+    <string name="hint_budget_starts_on">start date</string>
+    <string name="hint_budget_last_day_at">end date</string>
+    <string name="hint_budget_comment">comment</string>
+
+    <string name="hint_expenditure_name">name</string>
+    <string name="hint_expenditure_plan">plan</string>
+    <string name="hint_expenditure_fact">fact</string>
+    <string name="hint_expenditure_comment">comment</string>
+
+    <string name="hint_spending_amount">amount</string>
+    <string name="hint_spending_comment">comment</string>
+    <string name="hint_spending_date">date</string>
+    <string name="hint_spending_expenditure">expenditure</string>
+
+    <string name="hint_message_rule_sender">Sender</string>
+    <string name="hint_message_rule_expenditure_matcher">Expenditure matcher</string>
+    <string name="hint_message_rule_amount_matcher">Amount matcher</string>
+    <string name="hint_message_rule_expenditure">Expenditure</string>
+
+    <!-- BUTTONS -->
+    <string name="btn_add">Add</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_settings_month">month</string>
+    <string name="btn_settings_two_weeks">two weeks</string>
+    <string name="btn_settings_week">one week</string>
+    <string name="btn_settings_quarter">quarter</string>
+    <string name="btn_settings_year">year</string>
+    <string name="btn_settings_capture_sms">Capture SMS</string>
+    <string name="btn_settings_capture_notifications">Capture notifications</string>
+
+    <!-- MENU -->
+    <string name="menu_view">View</string>
+    <string name="menu_add">Add</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_clone">Clone</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_budget_expenditures">See expenditures</string>
+    <string name="menu_budget_spendings">See spendings</string>
+    <string name="menu_budget_activate">Activate</string>
+    <string name="menu_budget_template">Template</string>
+    <string name="menu_budget_settings">Settings</string>
+    <string name="expenditure_list_row_spend_menu">Spend</string>
+    <string name="expenditure_list_row_report_menu">Report</string>
+    <string name="expenditure_list_row_more_menu">More</string>
+    <string name="menu_message_bind">Bind</string>
+    <string name="menu_spending_message_rules">Rules</string>
+    <string name="menu_spending">Spending</string>
+    <string name="menu_messages">Messages</string>
+    <string name="menu_expenditures">Expenditures</string>
+    <string name="menu_budgets">Budgets</string>
+
+    <!-- DIALOG -->
+    <string name="dialog_confirmation_yes">Yes</string>
+    <string name="dialog_confirmation_no">No</string>
+    <string name="dialog_confirmation_gotit">Got it</string>
+    <string name="dialog_confirmation_remove">Are you sure?</string>
+
+    <!-- MESSAGES -->
+    <string name="message_settings_first_launch">Before you start please select the desired period of your budget.</string>
+    <string name="message_expenditures_first_launch">Create your usual expenditures. You can do this later if you wish.</string>
+    <string name="message_budget_removing">Budgets can only be removed from the end.</string>
+    <string name="message_budget_date">You can change end date only for the last budget.</string>
+
+    <!-- FORMATTER -->
+    <string name="formatter_money">%.2f</string>
+
+    <!-- VALIDATOR -->
+    <string name="validator_min_length">At least %d characters!</string>
+    <string name="validator_only_future">The date should be greater than current</string>
+    <string name="validator_max_length">Max length is %d!</string>
+    <string name="validator_value_required">The value is required!</string>
+    <string name="validator_already_exists">Already exists</string>
+
+    <!-- FRAGMENT TITLES -->
+    <string name="title_budget">Budget</string>
+    <string name="title_budget_list">Budgets</string>
+    <string name="title_budget_template">TEMPLATE</string>
+    <string name="title_expenditure">Expenditure</string>
+    <string name="title_expenditure_list">Expenditures</string>
+    <string name="title_spending">Spending</string>
+    <string name="title_spending_list">Spendings</string>
+    <string name="title_message_list">Messages</string>
+    <string name="title_message_rule">Message rule</string>
+    <string name="title_message_rule_list">Message rule list</string>
+    <string name="title_settings">Settings</string>
+
+    <!-- FRAGMENT LABELS -->
+    <string name="label_settings_period">Budget type</string>
+    <string name="label_settings_start">Start day</string>
+    <string name="label_app_version">Version: </string>
+
+    <!-- Constants -->
+    <string name="constant_budget_truncated">The start date was automatically truncated. Original value is %s</string>
+
+    <!-- ERRORS -->
+    <string name="error_unexpected">Ups, something went wrong</string>
+
+    <!-- TOASTS -->
+    <string name="unexpected_error">Ups, something went wrong</string>
 </resources>

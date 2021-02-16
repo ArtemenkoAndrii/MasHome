@@ -2,25 +2,396 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/nav_fragment_expense">
+    android:id="@+id/nav_graph">
 
+    <!-- Spending Message List flow-->
     <fragment
-        android:id="@+id/nav_fragment_expense"
-        android:name = "com.mas.mobile.fragments.ExpenseFragment"
-        tools:layout="@layout/expense_fragment">
+        android:id="@+id/nav_message_list_fragment"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MessageListFragment"
+        android:label="@string/title_message_list"
+        tools:layout="@layout/message_list_fragment">
+
+        <argument
+            android:name="spending_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_spending"
+            app:destination="@id/nav_expenditure_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="EDIT"
+                app:argType="string"/>
+        </action>
+        <action
+            android:id="@+id/action_to_message_rules"
+            app:destination="@id/nav_message_rules_list" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+        </action>
+    </fragment>
+
+
+    <!-- Expenditure flow-->
+    <fragment
+        android:id = "@+id/nav_expenditure_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.ExpenditureListFragment"
+        android:label="@string/title_expenditure_list"
+        tools:layout = "@layout/expenditure_list_fragment">
+
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_expenditure_spending"
+            app:destination="@id/nav_expenditure_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="spending_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
     </fragment>
 
     <fragment
-        android:id = "@+id/nav_fragment_group"
-        android:name = "com.mas.mobile.fragments.GroupFragment"
-        tools:layout = "@layout/group_fragment">
+        android:id = "@+id/nav_expenditure_spending"
+        android:name = "com.mas.mobile.presentation.activity.fragment.SpendingFragment"
+        android:label="@string/title_spending"
+        tools:layout = "@layout/spending_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="spending_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+
+    <!-- Spending flow-->
+    <fragment
+        android:id = "@+id/nav_spending_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.SpendingListFragment"
+        android:label="@string/title_spending_list"
+        tools:layout = "@layout/spending_list_fragment">
+
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_spending"
+            app:destination="@id/nav_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="spending_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
     </fragment>
 
     <fragment
-        android:id = "@+id/nav_fragment_category"
-        android:name = "com.mas.mobile.fragments.CategoryFragment"
-        tools:layout = "@layout/category_fragment">
+        android:id = "@+id/nav_spending"
+        android:name = "com.mas.mobile.presentation.activity.fragment.SpendingFragment"
+        android:label="@string/title_spending"
+        tools:layout = "@layout/spending_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="spending_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+    <!-- Budget flow -->
+    <fragment
+        android:id = "@+id/nav_budget_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.BudgetListFragment"
+        android:label="@string/title_budget_list"
+        tools:layout = "@layout/budget_list_fragment">
+
+        <action
+            android:id="@+id/action_to_budget"
+            app:destination="@id/nav_budget" >
+
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_budget_template"
+            app:destination="@id/nav_budget_expenditure_list" >
+            <argument
+                android:name="budget_id"
+                android:defaultValue="1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_budget_expenditure_list"
+            app:destination="@id/nav_budget_expenditure_list" >
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_budget_spending_list"
+            app:destination="@id/nav_budget_spending_list" >
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_budget_settings"
+            app:destination="@id/nav_settings" >
+        </action>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_budget"
+        android:name = "com.mas.mobile.presentation.activity.fragment.BudgetFragment"
+        android:label="@string/title_budget"
+        tools:layout = "@layout/budget_fragment">
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_budget_expenditure_list"
+            app:destination="@id/nav_budget_expenditure_list" >
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_budget_spending_list"
+            app:destination="@id/nav_budget_spending_list" >
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_budget_expenditure_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.BudgetExpenditureListFragment"
+        android:label="@string/title_expenditure_list"
+        tools:layout = "@layout/expenditure_list_fragment">
+
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_budget_expenditure"
+            app:destination="@id/nav_budget_expenditure" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_budget_expenditure"
+        android:name = "com.mas.mobile.presentation.activity.fragment.ExpenditureFragment"
+        android:label="@string/title_expenditure"
+        tools:layout = "@layout/expenditure_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_budget_spending_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.BudgetSpendingListFragment"
+        android:label="@string/title_spending_list"
+        tools:layout = "@layout/spending_list_fragment">
+
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_spending"
+            app:destination="@id/nav_budget_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="spending_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_budget_spending"
+        android:name = "com.mas.mobile.presentation.activity.fragment.SpendingFragment"
+        android:label="@string/title_spending"
+        tools:layout = "@layout/spending_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="spending_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+    <!-- Message Rules flow -->
+    <fragment
+        android:id="@+id/nav_message_rules_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MessageRuleListFragment"
+        android:label="@string/title_message_rule_list"
+        tools:layout="@layout/message_rule_list_fragment">
+
+        <argument
+            android:name="message_rule_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_message_rules"
+            app:destination="@id/nav_message_rule" >
+            <argument
+                android:name="action"
+                android:defaultValue="EDIT"
+                app:argType="string"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id = "@+id/nav_message_rule"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MessageRuleFragment"
+        android:label="@string/title_message_rule"
+        tools:layout = "@layout/spending_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="message_rule_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+    <!-- Settings flow-->
+    <fragment
+        android:id = "@+id/nav_settings"
+        android:name = "com.mas.mobile.presentation.activity.fragment.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout = "@layout/settings_fragment">
+
+        <argument
+            android:name="isFirstLaunch"
+            android:defaultValue="false"
+            app:argType="boolean"/>
+
+        <action
+            android:id="@+id/action_to_template_expenditures"
+            app:destination="@id/nav_budget_expenditure_list"
+            app:popUpTo="@id/nav_settings"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
     </fragment>
 
 </navigation>

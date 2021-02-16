@@ -1,0 +1,80 @@
+package com.mas.mobile.presentation.activity.fragment
+
+import android.os.Bundle
+import android.view.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mas.mobile.R
+import com.mas.mobile.appComponent
+import com.mas.mobile.databinding.BudgetListFragmentBinding
+import com.mas.mobile.presentation.adapter.BudgetAdapter
+import com.mas.mobile.presentation.viewmodel.BudgetListViewModel
+import com.mas.mobile.presentation.viewmodel.validator.Action
+import com.mas.mobile.repository.db.entity.Budget
+
+class BudgetListFragment: BaseListFragment(), ListMenu<Budget> {
+    private val budgetListViewModel: BudgetListViewModel by lazyViewModel {
+        this.requireContext().appComponent.budgetListViewModel().create()
+    }
+    private lateinit var binding: BudgetListFragmentBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        setHasOptionsMenu(true)
+        val layout = inflater.inflate(R.layout.budget_list_fragment, container, false)
+
+        val adapter = BudgetAdapter(this)
+        binding = BudgetListFragmentBinding.bind(layout)
+        binding.budgetList.adapter = adapter
+        binding.budgetList.layoutManager = LinearLayoutManager(this.requireContext())
+
+        budgetListViewModel.budgets.observe(viewLifecycleOwner) { budget ->
+            adapter.setItems(budget)
+        }
+
+        binding.budgetAddBtn.setOnClickListener {
+            budgetListViewModel.createBudget()
+            //this.findNavController().navigate(resolveAddButtonDestination())
+        }
+
+        return layout
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.budget_list_menu , menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.budget_list_menu_add -> go(resolveAddButtonDestination()).let { true }
+            R.id.budget_list_menu_template -> go(BudgetListFragmentDirections.actionToBudgetTemplate()).let { true }
+            R.id.budget_list_menu_settings -> go(BudgetListFragmentDirections.actionToBudgetSettings()).let { true }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun resolveAddButtonDestination() = BudgetListFragmentDirections.actionToBudget(Action.ADD.name)
+
+    override fun onRowMenuSelected(menuItem: MenuItem, item: Budget): Boolean {
+        when (menuItem.itemId) {
+            R.id.budget_row_menu_edit -> go(BudgetListFragmentDirections.actionToBudget(Action.EDIT.name, item.id))
+            R.id.budget_row_menu_expenditure_list -> go(BudgetListFragmentDirections.actionToBudgetExpenditureList(item.id))
+            R.id.budget_row_menu_spending_list -> go(BudgetListFragmentDirections.actionToBudgetSpendingList(item.id))
+            R.id.budget_row_menu_remove -> deleteItem(item)
+        }
+        return false
+    }
+
+    private fun deleteItem(item: Budget) {
+        if (budgetListViewModel.isChangeable(item)) {
+            showConfirmationDialog {
+                budgetListViewModel.remove(item)
+            }
+        } else {
+            showInfoDialog(getResourceService().budgetRemoveMessage()) {}
+        }
+    }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id = "@+id/nav_expenditure_list"
+        android:title = "@string/menu_expenditures"
+        android:icon="@drawable/ic_expense"
+        android:orderInCategory = "100"
+        />
+    <item
+        android:id = "@+id/nav_spending_list"
+        android:title = "@string/menu_spending"
+        android:icon="@drawable/ic_spending"
+        android:orderInCategory = "101"
+        />
+    <item
+        android:id = "@+id/nav_message_list_fragment"
+        android:title = "@string/menu_messages"
+        android:icon="@drawable/message"
+        android:orderInCategory = "102"
+        />
+    <item
+        android:id = "@+id/nav_budget_list"
+        android:title = "@string/menu_budgets"
+        android:icon="@drawable/ic_budget"
+        android:orderInCategory = "103"
+        />
+</menu>
