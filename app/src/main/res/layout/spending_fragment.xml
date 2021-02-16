@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.mas.mobile.presentation.activity.converter.MoneyConverter"/>
+        <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
+
+        <variable name="model"
+            type="com.mas.mobile.presentation.viewmodel.SpendingViewModel"/>
+    </data>
+
+    <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical"
+        tools:context=".presentation.activity.MainActivity">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_amount"
+            android:enabled="@{model.isEditable()}"
+            app:error="@{model.amountError}"
+            app:errorEnabled='@{!(model.amountError == "")}'>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="@={MoneyConverter.doubleToString(model.amount)}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_date"
+            android:enabled="@{model.isEditable()}"
+            app:error="@{model.dateError}"
+            app:errorEnabled='@{!(model.dateError == "")}'>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/spendingDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="none"
+                android:textAlignment="textStart"
+                android:text="@={DateConverter.dateTimeToString(model.date)}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_comment"
+            android:enabled="@{model.isEditable()}"
+            app:error="@{model.commentError}"
+            app:errorEnabled='@{!(model.commentError == "")}'>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@={model.comment}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_expenditure"
+            android:enabled="@{model.isEditable()}"
+            app:error="@{model.expenditureIdError}"
+            app:errorEnabled='@{!(model.expenditureIdError == "")}'>
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/spendingExpenditure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@={model.expenditureName}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/spendingSaveButton"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.isEditable() ? View.VISIBLE : View.GONE}"
+            android:text="@string/btn_save" />
+    </LinearLayout>
+</layout>

@@ -1,20 +1,25 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name = "AppTheme" parent = "Theme.AppCompat.Light.DarkActionBar">
+    <style name = "AppTheme" parent = "Theme.MaterialComponents.DayNight">
         <!-- Customize your theme here. -->
-        <item name = "colorPrimary">@color/colorPrimary</item>
-        <item name = "colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name = "colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name = "AppTheme.NoActionBar">
-        <item name = "windowActionBar">false</item>
+        <item name = "windowActionBar">true</item>
         <item name = "windowNoTitle">true</item>
+
+        <!-- Hotfix for options menu text color -->
+        <item name="android:itemTextAppearance">@style/PopupMenuTextAppearance</item>
     </style>
 
-    <style name = "AppTheme.AppBarOverlay" parent = "ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="PopupMenuTextAppearance" parent="TextAppearance.AppCompat.Menu">
+        <item name="android:textColor">@color/cardview_dark_background</item>
+    </style>
 
-    <style name = "AppTheme.PopupOverlay" parent = "ThemeOverlay.AppCompat.Light" />
-
+    <style name="Widget.App.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
 </resources>

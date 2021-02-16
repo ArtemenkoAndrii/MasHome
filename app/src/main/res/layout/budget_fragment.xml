@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.mas.mobile.presentation.activity.converter.MoneyConverter"/>
+        <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
+
+        <variable name="budget"
+            type="com.mas.mobile.presentation.viewmodel.BudgetViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/budgetNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}"
+            app:error="@{budget.nameError}"
+            app:errorEnabled='@{!(budget.nameError == "")}'>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/budgetName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_budget_name"
+                android:singleLine="true"
+                android:text="@={budget.name}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}"
+            app:error="@{budget.startsOnError}"
+            app:errorEnabled='@{!(budget.startsOnError == "")}'>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/budgetStartsOn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="none"
+                android:hint="@string/hint_budget_starts_on"
+                android:textAlignment="textStart"
+                android:text="@={DateConverter.dateToString(budget.startsOn)}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/budgetPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_budget_plan"
+                android:inputType="number|numberDecimal"
+                android:singleLine="true"
+                android:text="@={MoneyConverter.doubleToString(budget.plan)}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}"
+            android:hint="@string/hint_budget_base">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/budgetBase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/budgetCommentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/budgetComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_budget_comment"
+                android:singleLine="true"
+                android:text="@={budget.comment}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/budgetSaveButton"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:visibility="@{budget.isEditable() ? View.VISIBLE : View.GONE}"
+            android:text="@string/btn_save" />
+
+    </LinearLayout>
+</layout>

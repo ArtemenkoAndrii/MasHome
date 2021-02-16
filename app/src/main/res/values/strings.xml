@@ -1,5 +1,56 @@
 <resources>
     <string name="app_name">MasHome</string>
-    <string name="add_category_editor">New category</string>
-    <string name="add_category_button">Add</string>
+
+    <!-- HINTS -->
+    <string name="hint_budget_name">name</string>
+    <string name="hint_budget_plan">plan</string>
+    <string name="hint_budget_starts_on">starts on</string>
+    <string name="hint_budget_base">based on</string>
+    <string name="hint_budget_comment">comment</string>
+
+    <string name="hint_expenditure_name">name</string>
+    <string name="hint_expenditure_plan">plan</string>
+    <string name="hint_expenditure_fact">fact</string>
+    <string name="hint_expenditure_comment">comment</string>
+
+    <string name="hint_spending_amount">amount</string>
+    <string name="hint_spending_comment">comment</string>
+    <string name="hint_spending_date">date</string>
+    <string name="hint_spending_expenditure">expenditure</string>
+
+    <!-- BUTTONS -->
+    <string name="btn_add">Add</string>
+    <string name="btn_save">Save</string>
+
+    <!-- MENU -->
+    <string name="menu_view">View</string>
+    <string name="menu_add">Add</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_clone">Clone</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_budget_expenditures">Expenditures</string>
+    <string name="menu_budget_spendings">Spendings</string>
+    <string name="menu_budget_activate">Activate</string>
+    <string name="expenditure_list_row_spend_menu">Spend</string>
+    <string name="expenditure_list_row_report_menu">Report</string>
+    <string name="expenditure_list_row_more_menu">More</string>
+
+    <!-- FORMATTER -->
+    <string name="formatter_money">%.2f</string>
+
+    <!-- VALIDATOR -->
+    <string name="validator_min_length">At least %d characters!</string>
+    <string name="validator_max_length">Max length is %d!</string>
+    <string name="validator_value_required">The value is required!</string>
+
+    <!-- TITLES -->
+    <string name="title_budget">Budget</string>
+    <string name="title_budget_list">Budgets</string>
+    <string name="title_expenditure">Expenditure</string>
+    <string name="title_expenditure_list">Expenditures</string>
+    <string name="title_spending">Spending</string>
+    <string name="title_spending_list">Spendings</string>
+
+    <!-- TOASTS -->
+    <string name="unexpected_error">Ups, something went wrong</string>
 </resources>
