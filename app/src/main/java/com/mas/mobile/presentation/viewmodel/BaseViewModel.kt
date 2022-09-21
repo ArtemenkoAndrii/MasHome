@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.repository.db.BaseRepository
-import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.service.CoroutineService
 
 const val NEW_ITEM = -1
@@ -87,7 +86,7 @@ abstract class BaseViewModel<T: Any>(
     }
 
     private fun isValid() =
-        validators.values.map { it.invoke() }.firstOrNull{ !it } ?: true
+        validators.values.firstOrNull { !it.invoke() } == null
 
     private suspend fun doSave() {
         if (this.isNew) {
