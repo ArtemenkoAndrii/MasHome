@@ -49,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
                 android:singleLine="true"
-                android:text="@={MoneyConverter.doubleToString(expenditure.plan)}" />
+                android:text="@={expenditure.plan}"
+                app:onFocusLost="@{expenditure.plan}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -65,7 +66,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
                 android:singleLine="true"
-                android:text="@{MoneyConverter.doubleToString(expenditure.fact)}" />
+                android:text="@={expenditure.fact}"
+                app:onFocusLost="@{expenditure.fact}"  />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

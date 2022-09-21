@@ -89,7 +89,8 @@
                 android:hint="@string/hint_budget_plan"
                 android:inputType="number|numberDecimal"
                 android:singleLine="true"
-                android:text="@={MoneyConverter.doubleToString(budget.plan)}" />
+                android:text="@={budget.plan}"
+                app:onFocusLost="@{budget.plan}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -105,7 +106,8 @@
                 android:hint="@string/hint_budget_fact"
                 android:inputType="number|numberDecimal"
                 android:singleLine="true"
-                android:text="@={MoneyConverter.doubleToString(budget.fact)}" />
+                android:text="@={budget.fact}"
+                app:onFocusLost="@{budget.fact}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
