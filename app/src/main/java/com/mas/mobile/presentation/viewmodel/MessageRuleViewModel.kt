@@ -52,25 +52,12 @@ class MessageRuleViewModel @AssistedInject constructor(
         expenditureMatcher.value = item.expenditureMatcher
         expenditureMatcher.observeForever { item.expenditureMatcher = it }
 
-        expenditureName.value = item.expenditure.name
+        expenditureName.value = item.expenditureName
         expenditureName.observeForever { name ->
+            item.expenditureName = name
             validateOnChange(expenditureNameError) {
                 fieldValidator.minLength(name.trim(), EXPENDITURE_MIN_LENGTH)
             }
-        }
-    }
-
-    override fun beforeSave(item: MessageRule) {
-        if (expenditureId == NEW_ITEM) {
-            val newExpenditure = expenditureRepository.createNew().also {
-                it.data.name = expenditureName.value ?: ""
-                it.data.budget_id = this.activeBudgetId
-            }
-
-            item.expenditure = newExpenditure.data
-            item.expenditureId = newExpenditure.data.id
-        } else {
-            item.expenditureId = expenditureId
         }
     }
 

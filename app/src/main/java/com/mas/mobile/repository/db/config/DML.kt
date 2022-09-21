@@ -23,8 +23,8 @@ class DML {
         """.trimIndent()
 
         val GREETING_MESSAGE_RULES = """
-            INSERT INTO message_rules(id, name, expenditure_id, expenditure_matcher, amount_matcher)
-            VALUES(1, "Default", 1, "Puzata Khata", "poslugu {amount} UAH");
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
+            VALUES(1, "Default", "Food", "Puzata Khata", "poslugu {amount} UAH");
         """.trimIndent()
     }
 }

@@ -1,6 +1,5 @@
 package com.mas.mobile.service
 
-import android.content.Context
 import com.mas.mobile.repository.SpendingMessageRepository
 import com.mas.mobile.repository.SpendingRepository
 import kotlinx.coroutines.GlobalScope
@@ -13,7 +12,7 @@ class SpendingMessageService @Inject constructor(
     private val suggestionService: SuggestionService,
     private val spendingMessageRepository: SpendingMessageRepository,
     private val spendingRepository: SpendingRepository,
-    context: Context,
+    private val coroutineService: CoroutineService
 ) {
 
     fun processMessage(message: Message) {
@@ -41,7 +40,7 @@ class SpendingMessageService @Inject constructor(
             it.suggestedAmount = suggestion.amount
         }
 
-        GlobalScope.launch {
+        coroutineService.backgroundTask {
             val ids = spendingRepository.insert(spending)
             spendingMessageRepository.insert(spendingMessage.also { it.spendingId = ids.toInt() })
         }
@@ -56,7 +55,7 @@ class SpendingMessageService @Inject constructor(
             it.suggestedAmount = suggestion.amount
         }
 
-        GlobalScope.launch {
+        coroutineService.backgroundTask {
             spendingMessageRepository.insert(spendingMessage)
         }
     }

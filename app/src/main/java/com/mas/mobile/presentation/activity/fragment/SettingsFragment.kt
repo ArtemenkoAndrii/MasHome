@@ -119,7 +119,7 @@ class SettingsFragment : CommonFragment() {
     }
 
     private fun isNotifyServiceAllowed(context: Context): Boolean {
-        val component = ComponentName(this.requireContext(), NotificationListener::class.java) //.flattenToString()
+        val component = ComponentName(this.requireContext(), NotificationListener::class.java)
         return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.isNotificationListenerAccessGranted(component)

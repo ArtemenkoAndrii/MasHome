@@ -17,7 +17,7 @@ import com.mas.mobile.repository.db.entity.*
         SpendingData::class,
         ExpenditureData::class,
         SpendingMessageData::class,
-        MessageRuleData::class,
+        MessageRule::class,
         Settings::class
         ],
 //    autoMigrations = [
