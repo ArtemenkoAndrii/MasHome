@@ -42,8 +42,7 @@ abstract class BaseListFragment: CommonFragment() {
 
     private fun updateMenu(isEnabled: Boolean) {
         this.activity?.let {
-            val menu = it.findViewById<BottomNavigationView>(R.id.nav_bottom_view).menu
-            menu.setGroupVisible(0, isEnabled)
+            it.findViewById<BottomNavigationView>(R.id.nav_bottom_view)?.menu?.setGroupVisible(0, isEnabled)
         }
     }
 
