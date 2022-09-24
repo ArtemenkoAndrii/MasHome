@@ -98,6 +98,8 @@
 
     <!-- Constants -->
     <string name="constant_budget_truncated">The start date was automatically truncated. Original value is %s</string>
+    <string name="constant_yesterday">Yesterday</string>
+    <string name="constant_today">Today</string>
 
     <!-- ERRORS -->
     <string name="error_unexpected">Ups, something went wrong</string>

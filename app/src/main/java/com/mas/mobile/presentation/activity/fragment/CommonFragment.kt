@@ -26,7 +26,7 @@ abstract class CommonFragment : Fragment() {
         lateinit var resourceService: ResourceService
     }
 
-    protected fun getResourceService() = wrapper.resourceService
+    fun getResourceService() = wrapper.resourceService
 
     protected fun showConfirmationDialog(
         message: String = getResourceService().messageAreYouSure(),

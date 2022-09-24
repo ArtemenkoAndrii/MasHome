@@ -20,4 +20,7 @@ class ResourceService @Inject constructor(
     fun messageSettingsFirstLaunch() = context.getString(R.string.message_settings_first_launch)
     fun messageExpenditureFirstLaunch() = context.getString(R.string.message_expenditures_first_launch)
     fun messageAreYouSure() = context.getString(R.string.dialog_confirmation_remove)
+
+    fun constantToday() = context.getString(R.string.constant_today)
+    fun constantYesterday() = context.getString(R.string.constant_yesterday)
 }

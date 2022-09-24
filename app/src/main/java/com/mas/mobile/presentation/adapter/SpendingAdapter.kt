@@ -7,13 +7,17 @@ import com.mas.mobile.R
 import com.mas.mobile.databinding.SpendingListRowBinding
 import com.mas.mobile.presentation.activity.fragment.SpendingListFragment
 import com.mas.mobile.presentation.activity.fragment.SpendingListFragmentDirections
-import com.mas.mobile.presentation.viewmodel.SpendingListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.repository.db.entity.Spending
+import com.mas.mobile.util.DateTool
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class SpendingAdapter(
     private val fragment: SpendingListFragment
 ): BaseAdapter<Spending, SpendingListRowBinding>(R.layout.spending_list_row) {
+    private val today = fragment.getResourceService().constantToday()
+    private val yesterday = fragment.getResourceService().constantYesterday()
 
     override fun bind(binding: SpendingListRowBinding, item: Spending, prior: Spending?) {
         val rowView = binding.spendingListRowLayout
@@ -21,6 +25,7 @@ class SpendingAdapter(
         if (prior?.date?.toLocalDate() == item.date.toLocalDate()) {
             binding.spendingListRowDate.visibility = View.GONE
         }
+        binding.spendingListRowDate.setText(calcRelativeDate(item.date))
         binding.callback = View.OnClickListener { viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)
@@ -54,6 +59,15 @@ class SpendingAdapter(
         binding.spendingListRowLayout.setOnClickListener {
             val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id)
             rowView.findNavController().navigate(action)
+        }
+    }
+
+    private fun calcRelativeDate(value: LocalDateTime): String {
+        val date = value.toLocalDate()
+        return when {
+            date.equals(LocalDate.now()) -> this.today
+            date.equals(LocalDate.now().minusDays(1)) -> this.yesterday
+            else -> DateTool.dateToString(date)
         }
     }
 

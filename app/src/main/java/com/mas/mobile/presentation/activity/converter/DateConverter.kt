@@ -1,6 +1,5 @@
 package com.mas.mobile.presentation.activity.converter
 
-import android.util.Log
 import androidx.databinding.InverseMethod
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
@@ -31,27 +30,8 @@ object DateConverter {
         return DateTool.stringToDateTime(value)
     }
 
-    @InverseMethod("relativeDateAsStringToDateTime")
-    @JvmStatic
-    fun dateTimeToRelativeDateAsString(value: LocalDateTime): String {
-        return DateTool.relativeDate(value)
-    }
-
-    @JvmStatic
-    fun relativeDateAsStringToDateTime(value: String): LocalDateTime {
-        Log.e(this::class.simpleName, "relativeDateAsStringToDateTime is not implemented!")
-        return LocalDateTime.now()
-    }
-
-    @InverseMethod("timeAsStringToDateTime")
     @JvmStatic
     fun dateTimeToTimeAsString(value: LocalDateTime): String {
         return DateTool.timeAsString(value)
-    }
-
-    @JvmStatic
-    fun timeAsStringToDateTime(value: String): LocalDateTime {
-        Log.e(this::class.simpleName, "timeAsStringToDateTime is not implemented!")
-        return LocalDateTime.now()
     }
 }
