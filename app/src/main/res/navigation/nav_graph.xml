@@ -17,11 +17,31 @@
             app:argType="integer"/>
 
         <action
-            android:id="@+id/action_to_spending"
+            android:id="@+id/action_to_existing_spending"
             app:destination="@id/nav_expenditure_spending" >
             <argument
                 android:name="action"
-                android:defaultValue="EDIT"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="spending_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="envelop"
+                android:defaultValue=""
+                app:argType="string"/>
+        </action>
+        <action
+            android:id="@+id/action_to_new_spending"
+            app:destination="@id/nav_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="ADD"
+                app:argType="string"/>
+            <argument
+                android:name="envelop"
+                android:defaultValue=""
                 app:argType="string"/>
         </action>
         <action
@@ -87,6 +107,10 @@
             android:name="budget_id"
             android:defaultValue="-1"
             app:argType="integer"/>
+        <argument
+            android:name="envelop"
+            android:defaultValue=""
+            app:argType="string"/>
     </fragment>
 
 
@@ -142,6 +166,10 @@
             android:name="budget_id"
             android:defaultValue="-1"
             app:argType="integer"/>
+        <argument
+            android:name="envelop"
+            android:defaultValue=""
+            app:argType="string"/>
     </fragment>
 
     <!-- Budget flow -->
@@ -330,6 +358,10 @@
             android:name="budget_id"
             android:defaultValue="-1"
             app:argType="integer"/>
+        <argument
+            android:name="envelop"
+            android:defaultValue=""
+            app:argType="string"/>
     </fragment>
 
     <!-- Message Rules flow -->

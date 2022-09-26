@@ -9,6 +9,16 @@ data class Message(
 )
 
 sealed interface Suggestion
-data class AutoSuggestion(val ruleId: Int, val expenditureId: Int, val amount: Double): Suggestion
-data class ManualSuggestion(val ruleId: Int, val amount: Double): Suggestion
+
+data class AutoSuggestion(
+    val ruleId: Int,
+    val expenditureName: String,
+    val amount: Double,
+    val time: LocalDateTime): Suggestion
+
+data class ManualSuggestion(
+    val ruleId: Int,
+    val amount: Double,
+    val time: LocalDateTime): Suggestion
+
 object NoSuggestion : Suggestion

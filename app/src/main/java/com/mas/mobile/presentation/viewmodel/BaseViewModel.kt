@@ -45,7 +45,7 @@ abstract class BaseViewModel<T: Any>(
     abstract fun getRepository(): BaseRepository<T>
     abstract fun afterLoad(item: T)
     open fun beforeSave(item: T) {}
-    open fun afterSave(item: T) {}
+    open suspend fun afterSave(item: T) {}
     open fun afterRemove() {}
 
     fun save(): Boolean {

@@ -2,8 +2,6 @@ package com.mas.mobile.service
 
 import com.mas.mobile.repository.SpendingMessageRepository
 import com.mas.mobile.repository.SpendingRepository
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,23 +10,26 @@ class SpendingMessageService @Inject constructor(
     private val suggestionService: SuggestionService,
     private val spendingMessageRepository: SpendingMessageRepository,
     private val spendingRepository: SpendingRepository,
+    private val expenditureService: ExpenditureService,
     private val coroutineService: CoroutineService
 ) {
 
     fun processMessage(message: Message) {
         when (val suggestion = suggestionService.makeSuggestions(message)) {
             is AutoSuggestion -> processAutoSuggestion(message, suggestion)
-            //is ManualSuggestion -> processManualSuggestion(message, suggestion)
+            is ManualSuggestion -> processManualSuggestion(message, suggestion)
             else -> {}
         }
     }
 
     private fun processAutoSuggestion(message: Message, suggestion: AutoSuggestion) {
+        val expenditure = expenditureService.findOrCreate(suggestion.expenditureName)
+
         val spending = spendingRepository.createNew().also {
             it.data.date = message.date
             it.data.amount = suggestion.amount
             it.data.comment = message.text
-            it.data.expenditureId = suggestion.expenditureId
+            it.data.expenditureId = expenditure.id
         }
 
         val spendingMessage = spendingMessageRepository.createNew().also {
@@ -36,7 +37,7 @@ class SpendingMessageService @Inject constructor(
             it.message = message.text
             it.receivedAt = message.date
             it.ruleId = suggestion.ruleId
-            it.suggestedExpenditureId = suggestion.expenditureId
+            it.suggestedExpenditureName = expenditure.name
             it.suggestedAmount = suggestion.amount
         }
 

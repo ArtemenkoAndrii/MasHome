@@ -2,11 +2,13 @@ package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.mas.mobile.model.SpendingMessageEnvelop
 import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel.Companion.EXPENDITURE_MIN_LENGTH
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.repository.ExpenditureRepository
+import com.mas.mobile.repository.SpendingMessageRepository
 import com.mas.mobile.repository.SpendingRepository
 import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.repository.db.entity.Spending
@@ -20,13 +22,15 @@ import java.time.LocalDateTime
 class SpendingViewModel @AssistedInject constructor(
     private val spendingRepository: SpendingRepository,
     private val expenditureRepository: ExpenditureRepository,
+    private val spendingMessageRepository: SpendingMessageRepository,
     private val fieldValidator: FieldValidator,
+    private val coroutineService: CoroutineService,
     budgetService: BudgetService,
-    coroutineService: CoroutineService,
     @Assisted private val action: Action,
     @Assisted("spendingId") pSpendingId: Int,
     @Assisted("expenditureId") pExpenditureId: Int,
-    @Assisted("budgetId") pBudgetId: Int
+    @Assisted("budgetId") pBudgetId: Int,
+    @Assisted("envelop") private val envelop: String,
 ) : BaseViewModel<Spending>(pSpendingId, action, coroutineService) {
     var comment = MutableLiveData<String?>()
     var commentError = MutableLiveData(Validator.NO_ERRORS)
@@ -44,6 +48,7 @@ class SpendingViewModel @AssistedInject constructor(
                             } else {
                                 pBudgetId
                             }
+
     init {
         load()
 
@@ -78,6 +83,13 @@ class SpendingViewModel @AssistedInject constructor(
                 fieldValidator.minLength(expenditureName.value, EXPENDITURE_MIN_LENGTH)
             }
         }
+
+        if (this.action == Action.ADD) {
+            getDependantSpendingMessage()?.let {
+                amount.value = it.amount
+                comment.value = it.text
+            }
+        }
     }
 
     override fun beforeSave(item: Spending) {
@@ -98,6 +110,17 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
+    override suspend fun afterSave(item: Spending) {
+        getDependantSpendingMessage()?.let {
+            val message = spendingMessageRepository.getById(it.id)
+            if (message != null) {
+                message.spendingId = item.id
+                message.suggestedExpenditureName = item.expenditure.name
+                spendingMessageRepository.update(message)
+            }
+        }
+    }
+
     private fun loadSuggestedExpenditure(expenditureId: Int) {
         expenditureRepository.getById(expenditureId)?.let {
             this.expenditureId = expenditureId
@@ -105,11 +128,14 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
+    private fun getDependantSpendingMessage() = SpendingMessageEnvelop.fromString(this.envelop)
+
     @AssistedFactory
     interface Factory {
         fun create(@Assisted("spendingId") messageRuleId: Int,
                    @Assisted("expenditureId") expenditureId: Int,
                    @Assisted("budgetId") budgetId: Int,
+                   @Assisted("envelop") envelop: String,
                    action: Action): SpendingViewModel
     }
 

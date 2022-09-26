@@ -95,6 +95,7 @@
     <string name="label_settings_period">Budget type</string>
     <string name="label_settings_start">Start day</string>
     <string name="label_app_version">Version: </string>
+    <string name="label_spending_message_click">Click to bind</string>
 
     <!-- Constants -->
     <string name="constant_budget_truncated">The start date was automatically truncated. Original value is %s</string>

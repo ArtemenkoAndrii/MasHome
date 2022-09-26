@@ -16,7 +16,7 @@ import com.mas.mobile.repository.db.entity.*
         Budget::class,
         SpendingData::class,
         ExpenditureData::class,
-        SpendingMessageData::class,
+        SpendingMessage::class,
         MessageRule::class,
         Settings::class
         ],

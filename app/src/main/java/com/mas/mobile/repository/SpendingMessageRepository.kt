@@ -2,10 +2,7 @@ package com.mas.mobile.repository
 
 import com.mas.mobile.repository.db.BaseRepository
 import com.mas.mobile.repository.db.config.AppDatabase
-import com.mas.mobile.repository.db.entity.ExpenditureData
-import com.mas.mobile.repository.db.entity.SpendingData
 import com.mas.mobile.repository.db.entity.SpendingMessage
-import com.mas.mobile.repository.db.entity.SpendingMessageData
 import javax.inject.Inject
 
 class SpendingMessageRepository @Inject constructor(
@@ -18,14 +15,14 @@ class SpendingMessageRepository @Inject constructor(
 
     override fun getById(id: Int) = db.spendingMessageDao().getById(id)
 
-    override fun clone(item: SpendingMessage) = item.copy(data = item.data.copy(id = 0))
+    override fun clone(item: SpendingMessage) = item.copy(id = 0)
 
-    override fun createNew() = SpendingMessage(SpendingMessageData(), SpendingData(), ExpenditureData())
+    override fun createNew() = SpendingMessage()
 
     override suspend fun insert(item: SpendingMessage) = db.spendingMessageDao().insert(item)
 
     override suspend fun update(item: SpendingMessage) {
-        db.spendingMessageDao().insert(item)
+        db.spendingMessageDao().update(item)
     }
 
     override suspend fun delete(item: SpendingMessage) {

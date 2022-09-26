@@ -9,12 +9,19 @@ import dagger.assisted.AssistedInject
 
 class MessageListViewModel @AssistedInject constructor(
     private val messageRepository: SpendingMessageRepository,
-    coroutineService: CoroutineService,
+    private val coroutineService: CoroutineService,
     @Assisted param: String
 ): BaseListViewModel<SpendingMessage>(coroutineService) {
     val messages = messageRepository.live.getAll()
 
     override fun getRepository() = messageRepository
+
+    fun markAsRead(item: SpendingMessage) {
+        coroutineService.backgroundTask {
+            item.isNew = false
+            messageRepository.update(item)
+        }
+    }
 
     @AssistedFactory
     interface Factory {

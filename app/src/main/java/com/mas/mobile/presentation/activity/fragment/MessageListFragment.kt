@@ -10,6 +10,7 @@ import com.mas.mobile.databinding.MessageListFragmentBinding
 import com.mas.mobile.presentation.adapter.SpendingMessageAdapter
 import com.mas.mobile.presentation.viewmodel.MessageListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
+import com.mas.mobile.repository.db.entity.SpendingMessage
 
 class MessageListFragment: BaseListFragment() {
     private lateinit var binding: MessageListFragmentBinding
@@ -26,7 +27,7 @@ class MessageListFragment: BaseListFragment() {
         setHasOptionsMenu(true)
         val layout = inflater.inflate(R.layout.message_list_fragment, container, false)
 
-        val adapter = SpendingMessageAdapter(messageListViewModel)
+        val adapter = SpendingMessageAdapter(this)
         binding = MessageListFragmentBinding.bind(layout)
         binding.messageList.adapter = adapter
         binding.messageList.layoutManager = LinearLayoutManager(this.requireContext())
@@ -58,4 +59,14 @@ class MessageListFragment: BaseListFragment() {
 
     override fun resolveAddButtonDestination() =
         MessageListFragmentDirections.actionToMessageRules(Action.VIEW.name)
+
+    fun removeItem(item: SpendingMessage) {
+        showConfirmationDialog {
+            messageListViewModel.remove(item)
+        }
+    }
+
+    fun markAsRead(item: SpendingMessage) {
+        messageListViewModel.markAsRead(item)
+    }
 }

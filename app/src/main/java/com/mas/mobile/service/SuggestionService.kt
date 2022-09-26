@@ -1,51 +1,44 @@
 package com.mas.mobile.service
 
-import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.MessageRuleRepository
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SuggestionService @Inject constructor(
-    private val messageRuleRepository: MessageRuleRepository,
-    private val expenditureRepository: ExpenditureRepository,
-    private val budgetService: BudgetService
+    private val messageRuleRepository: MessageRuleRepository
 ) {
 
     fun makeSuggestions(message: Message): Suggestion {
-        val rule = messageRuleRepository.getAll()
+        val bySenderAndAmount = messageRuleRepository.getAll()
             .filter { message.sender.contains(it.name) }
             .filter { matchAmount(it.amountMatcher, message.text) }
+
+        if (bySenderAndAmount.isEmpty()) {
+            return NoSuggestion
+        }
+
+        val alsoByExpenditure =  bySenderAndAmount
             .firstOrNull { matchExpenditure(it.expenditureMatcher, message.text) }
 
-        return if (rule != null) {
-            val amount = extractAmount(rule.amountMatcher, message.text, AMOUNT_WITH_DOT_MASK)
-                ?: extractAmount(rule.amountMatcher, message.text, AMOUNT_WITH_COMMA_MASK)
-
-            AutoSuggestion(rule.id, findExpenditureId(rule.expenditureName), amount ?: 0.0)
+        return if (alsoByExpenditure != null) {
+            val amount = extractAnyAmount(alsoByExpenditure.amountMatcher, message.text)
+            AutoSuggestion(
+                alsoByExpenditure.id,
+                alsoByExpenditure.expenditureName,
+                amount ?: 0.0,
+                message.date
+            )
         } else {
-            NoSuggestion
+            val manual = bySenderAndAmount.first()
+            val amount = extractAnyAmount(manual.amountMatcher, message.text)
+            ManualSuggestion(manual.id, amount ?: 0.0, message.date)
         }
     }
 
-    private fun findExpenditureId(name: String): Int {
-        val expenditureName = name.trim().uppercase()
-        val activeBudgetId = budgetService.getActiveOrCreate().id
-        val expenditure = expenditureRepository.getByBudgetId(activeBudgetId)
-            .firstOrNull { it.name.uppercase() == expenditureName }
-        return expenditure?.id ?: createExpenditure(name, activeBudgetId).toInt()
-    }
-
-    private fun createExpenditure(name: String, budgetId: Int): Long {
-        val newExpenditure = expenditureRepository.createNew().also {
-            it.data.name = name
-            it.data.budget_id = budgetId
-        }
-        return runBlocking {
-            expenditureRepository.insert(newExpenditure)
-        }
-    }
+    private fun extractAnyAmount(matcher: String, text: String) =
+        extractAmount(matcher, text, AMOUNT_WITH_DOT_MASK)
+            ?: extractAmount(matcher, text, AMOUNT_WITH_COMMA_MASK)
 
     private fun extractAmount(matcher: String, text: String, mask: String): Double? =
         matcher.replace(AMOUNT_PLACEHOLDER, mask)

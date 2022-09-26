@@ -24,6 +24,7 @@ class SpendingFragment : BaseFragment<SpendingViewModel>() {
             args.spendingId,
             args.expenditureId,
             args.budgetId,
+            args.envelop,
             action)
     }
 

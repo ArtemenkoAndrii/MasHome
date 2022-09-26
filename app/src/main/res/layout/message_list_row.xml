@@ -5,17 +5,17 @@
 
     <data>
         <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
-        <import type="com.mas.mobile.presentation.activity.converter.ImageConverter"/>
         <import type="android.view.View"/>
 
         <variable name="message"
             type="com.mas.mobile.repository.db.entity.SpendingMessage"/>
         <variable name="callback"
             type="android.view.View.OnClickListener"/>
+        <variable name="expenditureCallback"
+            type="android.view.View.OnClickListener"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/message_list_row_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -23,79 +23,62 @@
         android:layout_marginBottom="10dp"
         android:clickable="false"
         android:focusable="false"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/message_list_row_line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
+            <TextView
+                android:id="@+id/message_list_row_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{DateConverter.dateTimeToString(message.receivedAt)}"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:boxBackgroundMode="none"
+                app:hintEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
             <ImageView
-                android:id="@+id/messageListRowStatus"
+                android:id="@+id/message_list_new_message"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:scaleType="center"
-                android:src="@{context.getDrawable(ImageConverter.intToImg(message.spendingId))}"
-                android:visibility="gone"
+                android:scaleType="fitStart"
+                android:src="@drawable/ic_dot_24"
+                android:visibility="@{message.isNew ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/message_list_row_date"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="Icon" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:clickable="false"
-            android:focusable="false"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/constraintLayout3"
-            app:layout_constraintStart_toEndOf="@+id/constraintLayout2"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/message_list_row_line2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/messageListRowDateTime"
+                android:id="@+id/message_list_row_sender"
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:text="@{DateConverter.dateTimeToTimeAsString(message.receivedAt)}"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/messageListRowMessage"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:paddingStart="10dp"
-                android:text="@{message.message}"
+                android:text="@{message.name}"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 app:boxBackgroundMode="none"
                 app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/messageListRowTime"
                 app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
             <Button
-                android:id="@+id/spendingRowMenu"
+                android:id="@+id/message_list_row_menu"
                 style="@style/Widget.App.Button.OutlinedButton.IconOnly"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
@@ -103,8 +86,55 @@
                 app:icon="@drawable/ic_baseline_more_vert_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/message_list_row_line3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/message_list_row_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:text="@{message.message}"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:boxBackgroundMode="none"
+                app:hintEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/message_list_row_menu_fake1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/message_list_row_menu_fake1"
+                style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:icon="@drawable/ic_baseline_more_vert_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/message_list_row_line4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/message_list_row_suggested_expenditure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{expenditureCallback}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>
