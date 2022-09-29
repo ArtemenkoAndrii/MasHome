@@ -37,7 +37,6 @@ class MessageListFragment: BaseListFragment() {
         }
 
         binding.messageAddBtn.visibility = View.GONE
-
         return layout
     }
 

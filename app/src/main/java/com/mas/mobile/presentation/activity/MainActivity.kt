@@ -15,15 +15,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.mas.mobile.BuildConfig
 import com.mas.mobile.R
+import com.mas.mobile.appComponent
+import com.mas.mobile.repository.SpendingMessageRepository
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration : AppBarConfiguration
+    @Inject
+    lateinit var messageRepository: SpendingMessageRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        this.appComponent.injectMainActivity(this)
 
+        setContentView(R.layout.main_activity)
         setSupportActionBar(findViewById(R.id.toolbar))
 
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_view) as NavHostFragment).navController
@@ -34,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             it.addArgument("isFirstLaunch", NavArgument.Builder().setDefaultValue(isThisFirstRun).build())
         }
         navController.graph = graph
-
 
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawer_layout)
         appBarConfiguration = AppBarConfiguration(
@@ -61,6 +66,17 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavMenu(navController: NavController) {
         val bottomNav = findViewById<BottomNavigationView>(R.id.nav_bottom_view)
         bottomNav?.setupWithNavController(navController)
+
+
+        messageRepository.countUnreadLive().observeForever {
+            val badge = bottomNav.getOrCreateBadge(R.id.nav_message_list_fragment)
+            if (it > 0) {
+                badge.number = it
+                badge.isVisible = true
+            } else {
+                badge.isVisible = false
+            }
+        }
     }
 
     private fun isThisFirstRun(): Boolean {

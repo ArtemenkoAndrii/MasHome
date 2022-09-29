@@ -21,6 +21,8 @@ class SpendingMessageRepository @Inject constructor(
 
     override suspend fun insert(item: SpendingMessage) = db.spendingMessageDao().insert(item)
 
+    fun countUnreadLive() = db.spendingMessageDao().countUnreadLive()
+
     override suspend fun update(item: SpendingMessage) {
         db.spendingMessageDao().update(item)
     }

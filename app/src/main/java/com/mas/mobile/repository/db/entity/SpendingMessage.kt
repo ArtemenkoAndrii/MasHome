@@ -33,6 +33,6 @@ data class SpendingMessage(
     @ColumnInfo(name = "suggested_amount")
     var suggestedAmount: Double = 0.0,
 
-    @ColumnInfo(name = "isNew")
+    @ColumnInfo(name = "is_new")
     var isNew: Boolean = true,
 ): Searchable(id, name)
