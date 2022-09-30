@@ -5,13 +5,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.MessageRuleListRowBinding
+import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragment
 import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragmentDirections
-import com.mas.mobile.presentation.viewmodel.MessageRuleListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.repository.db.entity.MessageRule
 
 class MessageRuleAdapter(
-    private val messageRuleListViewModel: MessageRuleListViewModel
+    private val fragment: MessageRuleListFragment
 ): BaseAdapter<MessageRule, MessageRuleListRowBinding>(R.layout.message_rule_list_row) {
     override fun bind(binding: MessageRuleListRowBinding, item: MessageRule, prior: MessageRule?) {
         val rowView = binding.messageRuleRowLayout
@@ -37,7 +37,7 @@ class MessageRuleAdapter(
                         true
                     }
                     R.id.standard_row_menu_remove -> {
-                        //messageRuleListViewModel.remove(item)
+                        fragment.deleteItem(item)
                         true
                     }
                     else -> false

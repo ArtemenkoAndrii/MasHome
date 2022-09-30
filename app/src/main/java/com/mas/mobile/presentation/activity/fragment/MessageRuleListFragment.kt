@@ -2,21 +2,18 @@ package com.mas.mobile.presentation.activity.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.iterator
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.MessageRuleListFragmentBinding
 import com.mas.mobile.presentation.adapter.MessageRuleAdapter
 import com.mas.mobile.presentation.viewmodel.MessageRuleListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
+import com.mas.mobile.repository.db.entity.MessageRule
 
 open class MessageRuleListFragment : BaseListFragment() {
     private val args: SpendingListFragmentArgs by navArgs()
@@ -34,7 +31,7 @@ open class MessageRuleListFragment : BaseListFragment() {
         setHasOptionsMenu(true)
         val layout = inflater.inflate(R.layout.message_rule_list_fragment, container, false)
 
-        val adapter = MessageRuleAdapter(messageRuleListViewModel)
+        val adapter = MessageRuleAdapter(this)
         binding = MessageRuleListFragmentBinding.bind(layout)
         binding.messageRuleList.adapter = adapter
         binding.messageRuleList.layoutManager = LinearLayoutManager(this.requireContext())
@@ -58,6 +55,12 @@ open class MessageRuleListFragment : BaseListFragment() {
     override fun onDestroy() {
         showBottomMenu()
         super.onDestroy()
+    }
+
+    fun deleteItem(item: MessageRule) {
+        showConfirmationDialog {
+            messageRuleListViewModel.remove(item)
+        }
     }
 }
 
