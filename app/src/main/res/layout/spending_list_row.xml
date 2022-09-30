@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginBottom="10dp"
         android:clickable="false"
         android:focusable="false"
@@ -46,7 +46,8 @@
             android:id="@+id/spendingListRowTopLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="15dp">
+            android:paddingStart="15dp"
+            android:paddingEnd="0dp">
 
             <TextView
                 android:id="@+id/spendingListRowTime"
@@ -65,6 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
+                android:paddingEnd="0dp"
                 android:text="@{spending.expenditure.name}"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 app:boxBackgroundMode="none"
@@ -103,6 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
+            android:paddingEnd="0dp"
             android:visibility="@{spending.comment.empty ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

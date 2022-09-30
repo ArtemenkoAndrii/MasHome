@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginBottom="10dp"
         android:clickable="false"
         android:focusable="false"
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{DateConverter.dateTimeToString(message.receivedAt)}"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
+
                 app:boxBackgroundMode="none"
                 app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/message_list_row_date"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="Icon" />
+                android:contentDescription="@string/hint_message_new_message" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/message_list_row_line2"
@@ -69,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
+                android:paddingEnd="0dp"
                 android:text="@{message.name}"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 app:boxBackgroundMode="none"
@@ -99,8 +100,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
+                android:paddingEnd="0dp"
                 android:text="@{message.message}"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:textAppearance="?attr/textAppearanceBody2"
                 app:boxBackgroundMode="none"
                 app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -123,6 +125,8 @@
             android:id="@+id/message_list_row_line4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -131,6 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="@{expenditureCallback}"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

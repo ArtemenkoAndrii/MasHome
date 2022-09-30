@@ -1,6 +1,7 @@
 package com.mas.mobile.presentation.adapter
 
 import android.view.View
+import androidx.core.view.setPadding
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.ExpenditureListRowBinding
@@ -13,6 +14,7 @@ import com.mas.mobile.repository.db.entity.Expenditure
 open class ExpenditureAdapter: BaseAdapter<Expenditure, ExpenditureListRowBinding>(R.layout.expenditure_list_row) {
     override fun bind(binding: ExpenditureListRowBinding, item: Expenditure, prior: Expenditure?) {
         binding.expenditureRowMenu.visibility = View.GONE
+        binding.expenditureRowSpace.visibility = View.VISIBLE
         binding.expenditure = item
         binding.expenditureRowLayout.setOnClickListener {
             ExpenditureListFragmentDirections.actionToExpenditureSpending(

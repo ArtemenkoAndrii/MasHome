@@ -23,6 +23,7 @@
     <string name="hint_message_rule_expenditure_matcher">Expenditure matcher</string>
     <string name="hint_message_rule_amount_matcher">Amount matcher</string>
     <string name="hint_message_rule_expenditure">Expenditure</string>
+    <string name="hint_message_new_message">New message</string>
 
     <!-- BUTTONS -->
     <string name="btn_add">Add</string>
