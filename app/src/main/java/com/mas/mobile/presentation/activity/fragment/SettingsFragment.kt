@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,12 +16,12 @@ import android.provider.Settings.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.SettingsFragmentBinding
@@ -76,6 +77,13 @@ class SettingsFragment : CommonFragment() {
                 requestNotificationPermissions()
             }
         )
+
+        binding.settingsRadiogroup.orientation =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                LinearLayout.HORIZONTAL
+            } else {
+                LinearLayout.VERTICAL
+            }
 
         return layout
     }

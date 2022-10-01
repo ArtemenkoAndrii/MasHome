@@ -1,6 +1,7 @@
 package com.mas.mobile.presentation.activity.fragment
 
 import android.content.Context
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -21,7 +22,7 @@ abstract class CommonFragment : Fragment() {
         context.appComponent.injectCommonFragment(wrapper)
     }
 
-    class CommonFragmentWrapper() {
+    class CommonFragmentWrapper {
         @Inject
         lateinit var resourceService: ResourceService
     }
@@ -53,10 +54,10 @@ abstract class CommonFragment : Fragment() {
     }
 
     protected fun menuVisibility(isEnabled: Boolean) {
-        this.activity?.let {
-            val menu = it.findViewById<BottomNavigationView>(R.id.nav_bottom_view).menu
-            menu.setGroupVisible(0, isEnabled)
-            it.findViewById<BottomNavigationView>(R.id.toolbar).isVisible = isEnabled
+        this.activity?.let { activity ->
+            activity.findViewById<BottomNavigationView>(R.id.nav_bottom_view)
+                ?.menu?.setGroupVisible(0, isEnabled)
+            activity.findViewById<View>(R.id.toolbar)?.isVisible = isEnabled
         }
     }
 }

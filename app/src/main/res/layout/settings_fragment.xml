@@ -24,38 +24,45 @@
             android:text="@string/label_settings_period" />
 
         <RadioGroup
+            android:id="@+id/settings_radiogroup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <RadioButton
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.MONTH)}"
                 android:onClick="@{() -> settings.setMonthPeriod()}"
-                android:text="@string/btn_settings_month"/>
+                android:text="@string/btn_settings_month" />
+
             <RadioButton
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.TWO_WEEKS)}"
                 android:onClick="@{() -> settings.set2Week2Period()}"
                 android:text="@string/btn_settings_week" />
+
             <RadioButton
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.WEEK)}"
                 android:onClick="@{() -> settings.setWeekPeriod()}"
                 android:text="@string/btn_settings_two_weeks" />
+
             <RadioButton
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.QUARTER)}"
                 android:onClick="@{() -> settings.setQuarterPeriod()}"
                 android:text="@string/btn_settings_quarter" />
+
             <RadioButton
+                android:id="@+id/rb_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.YEAR)}"
                 android:onClick="@{() -> settings.setYearPeriod()}"
-                android:id="@+id/rb_year"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="@string/btn_settings_year" />
         </RadioGroup>
 
