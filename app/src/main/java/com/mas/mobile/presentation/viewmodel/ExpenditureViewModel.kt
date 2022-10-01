@@ -17,8 +17,10 @@ class ExpenditureViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
     @Assisted("expenditureId") expenditureId: Int,
     @Assisted("budgetId") private val budgetId: Int,
-    @Assisted action: Action,
+    @Assisted private val action: Action,
 ) : BaseViewModel<Expenditure>(expenditureId, action, coroutineService) {
+    private var originalName = ""
+
     val name = MutableLiveData<String>()
     val nameError = MutableLiveData(Validator.NO_ERRORS)
     val plan = MutableLiveData<Double>()
@@ -32,6 +34,7 @@ class ExpenditureViewModel @AssistedInject constructor(
     }
 
     override fun afterLoad(item: Expenditure) {
+        originalName = item.name
         name.value = item.name
         name.observeForever {
             item.name = it.trim()
@@ -66,12 +69,17 @@ class ExpenditureViewModel @AssistedInject constructor(
 
     override fun getRepository() = expenditureRepository
 
-    private fun ifExpenditureExists(name: String?) =
-        if (name.isNullOrEmpty()) {
+    private fun ifExpenditureExists(name: String?): Boolean {
+        if (action == Action.EDIT && name == originalName) {
+            return false
+        }
+
+        return if (name.isNullOrEmpty()) {
             false
         } else {
             expenditureRepository.getByName(name.trim(), budgetId) != null
         }
+    }
 
     @AssistedFactory
     interface Factory {
