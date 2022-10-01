@@ -5,11 +5,21 @@ import java.time.LocalDate
 
 data class Settings (
     var period: Period = Period.MONTH,
-    var startDayOfMonth: DayOfMonth = DayOfMonth(LocalDate.now().dayOfMonth),
-    var startDayOfWeek: DayOfWeek = LocalDate.now().dayOfWeek,
+    var startDayOfMonth: DayOfMonth = LocalDate.now().startDayOfMonth(),
+    var startDayOfWeek: DayOfWeek = LocalDate.now().startDayOfWeek(),
     var captureSms: Boolean = false,
     var captureNotifications: Boolean = false
 )
+
+fun LocalDate.startDayOfWeek(): DayOfWeek = this.dayOfWeek
+fun LocalDate.startDayOfMonth(): DayOfMonth {
+    val result = if (this.dayOfMonth > 28) {
+        28
+    } else {
+        this.dayOfMonth
+    }
+    return DayOfMonth(result)
+}
 
 enum class Period {
     MONTH, WEEK, TWO_WEEKS, QUARTER, YEAR

@@ -42,7 +42,7 @@ class SettingsViewModel @AssistedInject constructor(
         DayOfWeek.SUNDAY to DateTool.formatToDayOfWeek(DayOfWeek.SUNDAY)
     )
 
-    val availableDaysOfMonth = (1..31).toList()
+    val availableDaysOfMonth = (1..28).toList()
     val availableDaysOfWeek = dayOfWeekMap.map { it.second }.toList()
 
     init {
