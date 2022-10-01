@@ -21,7 +21,7 @@ import com.mas.mobile.repository.db.entity.Expenditure
 
 open class ExpenditureListFragment : BaseListFragment() {
     private val args: ExpenditureListFragmentArgs by navArgs()
-    private lateinit var binding: ExpenditureListFragmentBinding
+    protected lateinit var binding: ExpenditureListFragmentBinding
 
     protected val expenditureViewModel: ExpenditureListViewModel by lazyViewModel {
         this.requireContext().appComponent.expenditureListViewModel().create(args.budgetId)
@@ -78,7 +78,12 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
     ): View? {
         hideBottomMenu()
         setTitle { "${expenditureViewModel.budgetName} $it" }
-        return super.onCreateView(inflater, container, savedInstanceState)
+        val layout = super.onCreateView(inflater, container, savedInstanceState)
+
+        if (expenditureViewModel.isFirstLaunchSession()) {
+            handleFirstLaunch()
+        }
+        return layout
     }
 
     override fun onDestroy() {
@@ -92,6 +97,17 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
     }
 
     override fun getAdapter() = BudgetExpenditureAdapter(this)
+
+    private fun handleFirstLaunch() {
+        binding.expenditureListFinish.visibility = View.VISIBLE
+        binding.expenditureListFinish.setOnClickListener {
+            showBottomMenu()
+            this.findNavController().navigate(R.id.nav_expenditure_list)
+        }
+        if (expenditureViewModel.isFirstLaunchInfo()) {
+            showInfoDialog(getResourceService().messageExpenditureFirstLaunch()) {}
+        }
+    }
 
     fun removeItem(item: Expenditure) {
         showConfirmationDialog {

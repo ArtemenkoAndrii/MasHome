@@ -8,6 +8,7 @@ import com.mas.mobile.model.Period
 import com.mas.mobile.model.Period.*
 import com.mas.mobile.repository.SettingsRepository
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.service.SettingsService
 import com.mas.mobile.util.DateTool
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -15,7 +16,8 @@ import java.time.DayOfWeek
 
 class SettingsViewModel @AssistedInject constructor(
     private val settingsRepository: SettingsRepository,
-    private val coroutineService: CoroutineService
+    private val coroutineService: CoroutineService,
+    private val settingsService: SettingsService
 ) : ViewModel() {
     private var item = settingsRepository.get()
 
@@ -46,6 +48,8 @@ class SettingsViewModel @AssistedInject constructor(
     init {
         afterLoad()
     }
+
+    fun isThisFirstLaunch() = settingsService.isThisFirstLaunch()
 
     fun save() {
         coroutineService.backgroundTask {

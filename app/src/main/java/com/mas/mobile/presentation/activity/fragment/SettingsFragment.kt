@@ -31,7 +31,6 @@ import com.mas.mobile.service.NotificationListener
 
 class SettingsFragment : CommonFragment() {
     private lateinit var binding: SettingsFragmentBinding
-    private val args: SettingsFragmentArgs by navArgs()
     private var closeAction = { findNavController().popBackStack() }
 
     private val settingsViewModel: SettingsViewModel by lazyViewModel {
@@ -55,7 +54,9 @@ class SettingsFragment : CommonFragment() {
             closeAction()
         }
 
-        handleFirstLaunch()
+        if (settingsViewModel.isThisFirstLaunch()) {
+            handleFirstLaunch()
+        }
 
         val requestPermissionLauncher = this.registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
@@ -130,14 +131,12 @@ class SettingsFragment : CommonFragment() {
     }
 
     private fun handleFirstLaunch() {
-        if (args.isFirstLaunch) {
-            menuVisibility(false)
-            showInfoDialog(getResourceService().messageSettingsFirstLaunch()) {}
-            closeAction = {
-                menuVisibility(true)
-                go(SettingsFragmentDirections.actionToTemplateExpenditures(TEMPLATE_BUDGET_ID))
-                true
-            }
+        menuVisibility(false)
+        showInfoDialog(getResourceService().messageSettingsFirstLaunch()) {}
+        closeAction = {
+            menuVisibility(true)
+            go(SettingsFragmentDirections.actionToTemplateExpenditures(TEMPLATE_BUDGET_ID))
+            true
         }
     }
 }

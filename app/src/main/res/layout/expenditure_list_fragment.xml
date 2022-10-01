@@ -20,6 +20,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/expenditure_list_finish"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/btn_add"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/expenditureAddSpending"
+            app:srcCompat="@drawable/ic_finish_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/expenditureAddSpending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
