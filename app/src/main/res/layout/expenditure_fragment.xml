@@ -32,8 +32,9 @@
                 android:id="@+id/expenditureName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="30"
                 android:singleLine="true"
-                android:text="@={expenditure.name}"/>
+                android:text="@={expenditure.name}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -48,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
+                android:maxLength="10"
                 android:singleLine="true"
                 android:text="@={expenditure.plan}"
                 app:onFocusLost="@{expenditure.plan}" />
@@ -65,9 +67,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
+                android:maxLength="10"
                 android:singleLine="true"
                 android:text="@={expenditure.fact}"
-                app:onFocusLost="@{expenditure.fact}"  />
+                app:onFocusLost="@{expenditure.fact}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -81,6 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_expenditure_comment"
+                android:maxLength="100"
                 android:singleLine="true"
                 android:text="@={expenditure.comment}" />
         </com.google.android.material.textfield.TextInputLayout>

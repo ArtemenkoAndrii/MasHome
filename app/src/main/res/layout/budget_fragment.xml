@@ -30,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_budget_name"
+                android:maxLength="30"
                 android:singleLine="true"
                 android:text="@={budget.name}" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -88,9 +89,10 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_budget_plan"
                 android:inputType="number|numberDecimal"
+                android:maxLength="10"
                 android:singleLine="true"
                 android:text="@={budget.plan}"
-                app:onFocusLost="@{budget.plan}"/>
+                app:onFocusLost="@{budget.plan}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -105,9 +107,10 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_budget_fact"
                 android:inputType="number|numberDecimal"
+                android:maxLength="10"
                 android:singleLine="true"
                 android:text="@={budget.fact}"
-                app:onFocusLost="@{budget.fact}"/>
+                app:onFocusLost="@{budget.fact}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -121,8 +124,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_budget_comment"
+                android:maxLength="100"
                 android:singleLine="true"
-                android:text="@={budget.comment}"/>
+                android:text="@={budget.comment}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

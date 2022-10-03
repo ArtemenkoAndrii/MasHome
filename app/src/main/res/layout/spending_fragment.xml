@@ -34,10 +34,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
+                android:maxLength="10"
                 android:selectAllOnFocus="false"
                 android:singleLine="true"
                 android:text="@={model.amount}"
-                app:onFocusLost="@{model.amount}"/>
+                app:onFocusLost="@{model.amount}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -74,8 +75,9 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="100"
                 android:singleLine="true"
-                android:text="@={model.comment}"/>
+                android:text="@={model.comment}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -93,8 +95,9 @@
                 android:id="@+id/spendingExpenditure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="30"
                 android:singleLine="true"
-                android:text="@={model.expenditureName}"/>
+                android:text="@={model.expenditureName}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
