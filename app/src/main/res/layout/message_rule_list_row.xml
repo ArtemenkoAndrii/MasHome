@@ -58,13 +58,24 @@
 
             <TextView
                 android:id="@+id/message_rule_expenditure_name"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
                 android:text="@{messageRule.expenditureName}"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/message_rule_list_menu_fake"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/message_rule_expenditure_matcher"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@{messageRule.expenditureMatcher}"
+                android:textAppearance="?attr/textAppearanceListItemSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/message_rule_list_menu_fake"
+                app:layout_constraintStart_toEndOf="@+id/message_rule_expenditure_name"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
@@ -87,10 +98,10 @@
             android:visibility="@{messageRule.expenditureMatcher.empty ? View.GONE : View.VISIBLE}">
 
             <TextView
-                android:id="@+id/message_rule_expenditure_matcher"
+                android:id="@+id/message_rule_amount_matcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{messageRule.expenditureMatcher}"
+                android:text="@{messageRule.amountMatcher}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/message_rule_list_menu_fake2"
                 app:layout_constraintStart_toStartOf="parent"
