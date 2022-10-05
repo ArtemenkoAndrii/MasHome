@@ -2,12 +2,9 @@ package com.mas.mobile.service
 
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import com.mas.mobile.appComponent
 import java.time.Instant
 import java.time.LocalDateTime
@@ -30,14 +27,10 @@ class NotificationListener: NotificationListenerService() {
         if (sbn != null) {
             val postDate = toLocalDateTime(sbn.postTime)
             val sender = extractSender(sbn).toString()
-
             val title = sbn.notification.extras[EXTRA_TITLE]?.toString()
             val text = sbn.notification.extras[EXTRA_TEXT]?.toString()
             val message = "$title\n$text"
-
-            if (postDate!= null && sender!= null && message != null) {
-                process(Message(sender, postDate, message))
-            }
+            process(Message(sender, postDate, message))
         }
     }
 
@@ -50,15 +43,5 @@ class NotificationListener: NotificationListenerService() {
     private fun toLocalDateTime(time: Long): LocalDateTime =
         LocalDateTime.ofInstant(
             Instant.ofEpochMilli(time),
-            TimeZone.getDefault().toZoneId());
-
-    override fun onBind(intent: Intent?): IBinder? {
-        Log.d("WWWW", "onBind")
-        return super.onBind(intent)
-    }
-
-    init {
-        Log.d("WWWW", "init")
-        val w1 = null
-    }
+            TimeZone.getDefault().toZoneId())
 }
