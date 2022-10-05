@@ -16,6 +16,10 @@ class MessageRuleAdapter(
     override fun bind(binding: MessageRuleListRowBinding, item: MessageRule, prior: MessageRule?) {
         val rowView = binding.messageRuleRowLayout
         binding.messageRule = item
+        binding.messageRuleRowLayout.setOnClickListener {
+            val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.VIEW.name, item.id)
+            rowView.findNavController().navigate(action)
+        }
         binding.callback = View.OnClickListener{ viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)
