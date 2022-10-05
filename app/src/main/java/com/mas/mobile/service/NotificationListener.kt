@@ -3,6 +3,7 @@ package com.mas.mobile.service
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -28,14 +29,23 @@ class NotificationListener: NotificationListenerService() {
     private fun ifMessage(sbn: StatusBarNotification?, process: (message: Message) -> Unit) {
         if (sbn != null) {
             val postDate = toLocalDateTime(sbn.postTime)
-            val sender = sbn.notification.extras[EXTRA_TITLE]?.toString()
-            val message = sbn.notification.extras[EXTRA_TEXT]?.toString()
+            val sender = extractSender(sbn).toString()
+
+            val title = sbn.notification.extras[EXTRA_TITLE]?.toString()
+            val text = sbn.notification.extras[EXTRA_TEXT]?.toString()
+            val message = "$title\n$text"
 
             if (postDate!= null && sender!= null && message != null) {
                 process(Message(sender, postDate, message))
             }
         }
     }
+
+    private fun extractSender(sbn: StatusBarNotification) =
+        this.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            .firstOrNull { it.packageName == sbn.packageName }?.let {
+                this.packageManager.getApplicationLabel(it)
+            }
 
     private fun toLocalDateTime(time: Long): LocalDateTime =
         LocalDateTime.ofInstant(
