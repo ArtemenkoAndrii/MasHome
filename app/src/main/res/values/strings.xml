@@ -68,6 +68,8 @@
     <string name="message_expenditures_first_launch">Create your usual expenditures. You can do this later if you wish.</string>
     <string name="message_budget_removing">Budgets can only be removed from the end.</string>
     <string name="message_budget_date">You can change end date only for the last budget.</string>
+    <string name="message_allow_sms">Please allow SMS permission for this application</string>
+    <string name="message_allow_notifications">Please allow notification access for this application</string>
 
     <!-- FORMATTER -->
     <string name="formatter_money">%.2f</string>

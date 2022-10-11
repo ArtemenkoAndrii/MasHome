@@ -20,6 +20,8 @@ class ResourceService @Inject constructor(
     fun messageSettingsFirstLaunch() = context.getString(R.string.message_settings_first_launch)
     fun messageExpenditureFirstLaunch() = context.getString(R.string.message_expenditures_first_launch)
     fun messageAreYouSure() = context.getString(R.string.dialog_confirmation_remove)
+    fun messageAllowSms() = context.getString(R.string.message_allow_sms)
+    fun messageAllowNotifications() = context.getString(R.string.message_allow_notifications)
 
     fun spendingMessageClickToAdd() = context.getString(R.string.label_spending_message_click)
 

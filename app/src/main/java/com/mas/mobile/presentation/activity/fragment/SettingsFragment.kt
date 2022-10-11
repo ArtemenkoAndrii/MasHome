@@ -2,6 +2,7 @@ package com.mas.mobile.presentation.activity.fragment
 
 import android.Manifest
 import android.app.NotificationManager
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -117,14 +118,24 @@ class SettingsFragment : CommonFragment() {
             it.putExtra(EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, component.flattenToString())
             it.flags = FLAG_ACTIVITY_NEW_TASK
         }
-        startActivity(intent)
+
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            showInfoDialog(getResourceService().messageAllowNotifications()) {}
+        }
     }
 
     private fun showSMSSettings() {
         val intent = Intent(ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + this.requireContext().packageName)).also {
             it.flags = FLAG_ACTIVITY_NEW_TASK
         }
-        startActivity(intent)
+
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            showInfoDialog(getResourceService().messageAllowSms()) {}
+        }
     }
 
     private fun isNotifyServiceAllowed(context: Context): Boolean {
