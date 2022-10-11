@@ -24,6 +24,7 @@ class SpendingMessageAdapter(
         binding.messageListRowSuggestedExpenditure.setText(expenditureName)
 
         binding.expenditureCallback = View.OnClickListener { goToSpending(item) }
+        binding.messageListRowLayout.setOnClickListener { goToSpending(item) }
 
         binding.callback = View.OnClickListener { viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)

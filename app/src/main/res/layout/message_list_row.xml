@@ -15,6 +15,7 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/message_list_row_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
