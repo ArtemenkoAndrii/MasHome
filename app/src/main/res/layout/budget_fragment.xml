@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="@{budget.isEditable()}"
+            android:enabled="false"
             app:error="@{budget.nameError}"
             app:errorEnabled='@{!(budget.nameError == "")}'>
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="@{budget.isEditable()}"
+            android:enabled="false"
             app:error="@{budget.startsOnError}"
             app:errorEnabled='@{!(budget.startsOnError == "")}'>
 
@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="@{budget.isEditable()}">
+            android:enabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"

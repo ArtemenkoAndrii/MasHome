@@ -68,10 +68,6 @@ class BudgetViewModel @AssistedInject constructor(
         comment.observeForever {
             item.comment = it
         }
-
-        validateOnSave(nameError) {
-            fieldValidator.alreadyExists(ifBudgetExists(name.value))
-        }
     }
 
     override fun getRepository() = budgetRepository
@@ -80,13 +76,6 @@ class BudgetViewModel @AssistedInject constructor(
         budgetRepository.getLastCompletedOn(LocalDate.MAX)?.let {
             it.id == budgetId
         } ?: true
-
-    private fun ifBudgetExists(name: String?) =
-        if (name.isNullOrEmpty()) {
-            false
-        } else {
-            budgetRepository.getByName(name.trim()) != null
-        }
 
     override fun afterRemove() {
         // Just for case if the only budget will be removed
