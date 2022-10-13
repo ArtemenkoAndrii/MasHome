@@ -39,6 +39,8 @@ open class ExpenditureListFragment : BaseListFragment() {
         binding = ExpenditureListFragmentBinding.bind(layout)
         binding.expenditureList.adapter = adapter
         binding.expenditureList.layoutManager = LinearLayoutManager(this.requireContext())
+        binding.model = expenditureViewModel
+        binding.lifecycleOwner = this
 
         expenditureViewModel.expenditures.observe(viewLifecycleOwner) { expenditure ->
             adapter.setItems(expenditure)
@@ -99,6 +101,7 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
     override fun getAdapter() = BudgetExpenditureAdapter(this)
 
     private fun handleFirstLaunch() {
+        binding.expenditureListProgress.visibility = View.GONE
         binding.expenditureListFinish.visibility = View.VISIBLE
         binding.expenditureListFinish.setOnClickListener {
             showBottomMenu()

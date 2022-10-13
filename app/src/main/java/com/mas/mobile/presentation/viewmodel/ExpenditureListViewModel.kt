@@ -2,7 +2,9 @@ package com.mas.mobile.presentation.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.mas.mobile.R
+import com.mas.mobile.presentation.activity.converter.MoneyConverter
 import com.mas.mobile.presentation.viewmodel.BudgetViewModel.Companion.TEMPLATE_BUDGET_ID
 import com.mas.mobile.repository.BudgetRepository
 import com.mas.mobile.repository.ExpenditureRepository
@@ -28,21 +30,34 @@ class ExpenditureListViewModel @AssistedInject constructor(
     }
     private var isFirstLaunchInfo = isFirstLaunchSession
 
-    val expenditures: LiveData<List<Expenditure>>
+    private val budget  = if (budgetId == ACTIVE_BUDGET) {
+        budgetService.getActiveOrCreate()
+    } else {
+        budgetRepository.getById(budgetId)!!
+    }
+    private val liveBudget = budgetRepository.live.getById(budget.id)
+
+    val expenditures: LiveData<List<Expenditure>> = expenditureRepository.live.getByBudgetId(budget.id)
     val budgetName: String
+    val progress: LiveData<Int> = Transformations.map(liveBudget) { budget ->
+        (budget.fact * 100 / budget.plan).toInt()
+    }
+    val status: LiveData<String> = Transformations.map(liveBudget) { budget ->
+        "${MoneyConverter.doubleToString(budget.fact)} / ${MoneyConverter.doubleToString(budget.plan)}"
+    }
+    val color: LiveData<Int> = Transformations.map(progress) {
+        when {
+            it > 150 -> R.color.colorRed
+            it > 100 -> R.color.colorYellow
+            else -> R.color.colorAccent
+        }
+    }
 
     init {
-        val id = if (budgetId == ACTIVE_BUDGET) {
-            budgetService.getActiveOrCreate().id
-        } else {
-            budgetId
-        }
-
-        expenditures = expenditureRepository.live.getByBudgetId(id)
         budgetName = if (budgetId == TEMPLATE_BUDGET_ID) {
             context.getString(R.string.title_budget_template)
         } else {
-            budgetRepository.getById(id)?.name ?: ""
+            budget.name
         }
     }
 

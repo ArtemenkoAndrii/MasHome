@@ -2,6 +2,7 @@ package com.mas.mobile.presentation.activity.binding
 
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.mas.mobile.presentation.activity.converter.MoneyConverter
 
@@ -46,5 +47,12 @@ fun TextInputEditText.onFocusLost(value: Double) {
             // Clear the input for the new value
             if (value == 0.0) { this.setText("") }
         }
+    }
+}
+
+@BindingAdapter("app:progressColor")
+fun LinearProgressIndicator.onFocusLost(value: Int?) {
+    if (value != null){
+        this.setIndicatorColor(this.context.getColor(value))
     }
 }
