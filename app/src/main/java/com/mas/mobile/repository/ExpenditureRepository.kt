@@ -6,7 +6,9 @@ import com.mas.mobile.repository.db.entity.Budget
 import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ExpenditureRepository @Inject constructor(
      private val db: AppDatabase
 ) : BaseRepository<Expenditure> {

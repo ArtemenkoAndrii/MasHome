@@ -8,7 +8,9 @@ import com.mas.mobile.repository.db.entity.SpendingData
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Callable
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SpendingRepository @Inject constructor(
      private val db: AppDatabase
 ) : BaseRepository<Spending> {

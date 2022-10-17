@@ -9,8 +9,10 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import javax.inject.Singleton
 import com.mas.mobile.repository.db.entity.Settings as SettingsEntity
 
+@Singleton
 class SettingsRepository  @Inject constructor(
     private val db: AppDatabase
 ) {

@@ -8,7 +8,9 @@ import com.mas.mobile.service.BudgetService
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BudgetRepository @Inject constructor(
      db: AppDatabase
 ) : BaseRepository<Budget> {

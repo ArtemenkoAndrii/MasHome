@@ -4,7 +4,9 @@ import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.db.entity.Expenditure
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ExpenditureService @Inject constructor(
     private val budgetService: BudgetService,
     private val expenditureRepository: ExpenditureRepository

@@ -5,7 +5,9 @@ import com.mas.mobile.R
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ResourceService @Inject constructor(
     private val context: Context
 ) {

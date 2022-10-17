@@ -5,7 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class CoroutineService @Inject constructor(
     private val errorHandler: ErrorHandler
 ) {

@@ -4,7 +4,9 @@ import com.mas.mobile.repository.db.BaseRepository
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.db.entity.SpendingMessage
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SpendingMessageRepository @Inject constructor(
     private val db: AppDatabase
 ) : BaseRepository<SpendingMessage> {
