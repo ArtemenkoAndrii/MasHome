@@ -17,14 +17,30 @@ class DML {
             INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
             VALUES(1, "Food", 100.00, 0.00, "Automatically generated", 1);
         """.trimIndent()
+
         val TEMPLATE_EXPENDITURES2 = """
             INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(2, "Purchases", 100.00, 0.00, "Automatically generated", 1);
+            VALUES(2, "Purchases", 1000.00, 0.00, "Automatically generated", 1);
         """.trimIndent()
 
-        val GREETING_MESSAGE_RULES = """
+        val GREETING_MESSAGE_RULES_1 = """
             INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
-            VALUES(1, "Default", "Food", "Puzata Khata", "poslugu {amount} UAH");
+            VALUES(1, "BANK OF AMERICA", "Food", "walmart", "{amount}");
+        """.trimIndent()
+
+        val GREETING_MESSAGE_RULES_2 = """
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
+            VALUES(2, "BBVA", "Purchases", "amazon", "Purchase of {amount} EUR");
+        """.trimIndent()
+
+        val GREETING_MESSAGE_RULES_3 = """
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
+            VALUES(3, "BANK OF SCOT", "Food", "burgerkg", "You spent £{amount} at");
+        """.trimIndent()
+
+        val GREETING_MESSAGE_RULES_4 = """
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
+            VALUES(4, "Revolut", "Food", "McDonalds", "Paid €{amount} at");
         """.trimIndent()
     }
 }

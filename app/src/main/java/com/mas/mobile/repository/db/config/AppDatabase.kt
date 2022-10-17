@@ -47,7 +47,10 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQL(DML.TEMPLATE_BUDGET)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES1)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES2)
-                            db.execSQL(DML.GREETING_MESSAGE_RULES)
+                            db.execSQL(DML.GREETING_MESSAGE_RULES_1)
+                            db.execSQL(DML.GREETING_MESSAGE_RULES_2)
+                            db.execSQL(DML.GREETING_MESSAGE_RULES_3)
+                            db.execSQL(DML.GREETING_MESSAGE_RULES_4)
                         }
                     })
                     .build()
