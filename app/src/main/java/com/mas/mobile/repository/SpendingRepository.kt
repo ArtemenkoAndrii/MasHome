@@ -15,8 +15,6 @@ class SpendingRepository @Inject constructor(
      val live = Live(db)
      class Live(val db: AppDatabase) {
           fun getById(id: Int) = db.spendingDao().getByIdLive(id)
-          fun getByBudgetId(budgetId: Int) = db.spendingDao().getByBudgetIdLive(budgetId)
-          fun getByExpenditureId(expenditure: Int) = db.spendingDao().getByExpenditureIdLive(expenditure)
      }
 
      override fun getById(id: Int) = db.spendingDao().getById(id)
@@ -24,6 +22,8 @@ class SpendingRepository @Inject constructor(
      override fun clone(item: Spending) = item.copy(data = item.data.copy(id = 0))
 
      override fun createNew() = Spending(data = SpendingData(), expenditure = ExpenditureData())
+
+     fun getByBudgetId(budgetId: Int) = db.spendingDao().getByBudgetId(budgetId)
 
      override suspend fun insert(item: Spending): Long =
           updateDependencies(item) {

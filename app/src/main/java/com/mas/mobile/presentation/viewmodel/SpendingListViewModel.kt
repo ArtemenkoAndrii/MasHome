@@ -1,7 +1,6 @@
 package com.mas.mobile.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import com.mas.mobile.repository.BudgetRepository
+import androidx.lifecycle.Transformations
 import com.mas.mobile.repository.SpendingRepository
 import com.mas.mobile.repository.db.entity.Spending
 import com.mas.mobile.service.BudgetService
@@ -12,24 +11,13 @@ import dagger.assisted.AssistedInject
 
 class SpendingListViewModel @AssistedInject constructor(
     private val spendingRepository: SpendingRepository,
-    budgetRepository: BudgetRepository,
     budgetService: BudgetService,
     coroutineService: CoroutineService,
     @Assisted budgetId: Int
 ): BaseListViewModel<Spending>(coroutineService) {
-    val spendings: LiveData<List<Spending>>
-    val budgetName: String
-
-    init {
-        spendings = if (budgetId == ACTIVE_BUDGETS) {
-            budgetService.getActiveOrCreate().run {
-                spendingRepository.live.getByBudgetId(this.id)
-            }
-        } else {
-            spendingRepository.live.getByBudgetId(budgetId)
-        }
-
-        budgetName = budgetRepository.getById(budgetId)?.name ?: ""
+    val budget = budgetService.getBudget(budgetId)
+    val spendings = Transformations.map(budget) {
+        spendingRepository.getByBudgetId(it.id)
     }
 
     override fun getRepository() = spendingRepository
@@ -37,9 +25,5 @@ class SpendingListViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(budgetId: Int): SpendingListViewModel
-    }
-
-    private companion object {
-        const val ACTIVE_BUDGETS = -1
     }
 }

@@ -1,5 +1,7 @@
 package com.mas.mobile.presentation.activity
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,12 +16,15 @@ import com.google.android.material.navigation.NavigationView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.repository.SpendingMessageRepository
+import com.mas.mobile.service.DateListener
 import com.mas.mobile.service.SettingsService
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+    private val dateListener = DateListener()
     private lateinit var appBarConfiguration : AppBarConfiguration
+
     @Inject
     lateinit var messageRepository: SpendingMessageRepository
     @Inject
@@ -51,6 +56,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBar(navController, appBarConfiguration)
         setupNavigationMenu(navController)
         setupBottomNavMenu(navController)
+        this.applicationContext.registerReceiver(dateListener, IntentFilter(Intent.ACTION_TIME_TICK))
+    }
+
+    override fun onDestroy() {
+        this.applicationContext.unregisterReceiver(dateListener)
+        super.onDestroy()
     }
 
     private fun setupActionBar(navController: NavController, appBarConfig : AppBarConfiguration) {

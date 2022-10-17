@@ -6,6 +6,7 @@ import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.activity.fragment.CommonFragment
 import com.mas.mobile.presentation.viewmodel.*
 import com.mas.mobile.repository.db.config.AppDatabase
+import com.mas.mobile.service.DateListener
 import com.mas.mobile.service.NotificationListener
 import com.mas.mobile.service.SmsListener
 import dagger.BindsInstance
@@ -52,6 +53,7 @@ interface AppComponent {
     fun settingsModel(): SettingsViewModel.Factory
 
     fun injectSmsListener(smsListener: SmsListener)
+    fun injectDateListener(dateListener: DateListener)
     fun injectNotificationListener(notificationListener: NotificationListener)
     fun injectCommonFragment(wrapper: CommonFragment.CommonFragmentWrapper)
 

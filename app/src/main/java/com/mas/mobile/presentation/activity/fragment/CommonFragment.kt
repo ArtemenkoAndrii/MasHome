@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
+import com.mas.mobile.repository.db.entity.Budget
+import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.ResourceService
 import javax.inject.Inject
 
@@ -25,9 +27,12 @@ abstract class CommonFragment : Fragment() {
     class CommonFragmentWrapper {
         @Inject
         lateinit var resourceService: ResourceService
+        @Inject
+        lateinit var budgetService: BudgetService
     }
 
     fun getResourceService() = wrapper.resourceService
+    fun getBudgetService() = wrapper.budgetService
 
     protected fun showConfirmationDialog(
         message: String = getResourceService().messageAreYouSure(),

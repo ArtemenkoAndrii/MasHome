@@ -57,7 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:max="100"
-                android:progress="@{model.progress}"
+                android:progress="@{model.budget.progress}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,13 +67,11 @@
                 app:trackThickness="20dp" />
 
             <TextView
-                android:id="@+id/autocompleteName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="@{model.status}"
+                android:text="@{model.budget.status}"
                 android:textAlignment="center"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

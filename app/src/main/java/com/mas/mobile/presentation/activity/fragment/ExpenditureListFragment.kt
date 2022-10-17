@@ -79,7 +79,9 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         hideBottomMenu()
-        setTitle { "${expenditureViewModel.budgetName} $it" }
+        expenditureViewModel.budget.observe(viewLifecycleOwner) { budget ->
+            setTitle { "${budget.name} $it" }
+        }
         val layout = super.onCreateView(inflater, container, savedInstanceState)
 
         if (expenditureViewModel.isFirstLaunchSession()) {

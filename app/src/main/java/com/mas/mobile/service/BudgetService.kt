@@ -1,6 +1,8 @@
 package com.mas.mobile.service
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.mas.mobile.model.Period
 import com.mas.mobile.repository.BudgetRepository
 import com.mas.mobile.repository.ExpenditureRepository
@@ -10,7 +12,9 @@ import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BudgetService @Inject constructor(
     settingsRepository: SettingsRepository,
     private val budgetRepository: BudgetRepository,
@@ -18,6 +22,25 @@ class BudgetService @Inject constructor(
     private val resourceService: ResourceService
 ) {
     private val settings = settingsRepository.get()
+    private val trigger = MutableLiveData<Int>()
+    private val activeBudget = Transformations.switchMap(trigger) {
+        budgetRepository.live.getById(it)
+    }
+
+    init {
+        reloadBudget()
+    }
+
+    fun reloadBudget() {
+        trigger.value = getActiveOrCreate().id
+    }
+
+    fun getBudget(budgetId: Int = -1) =
+        if (budgetId == -1) {
+            activeBudget
+        } else {
+            budgetRepository.live.getById(budgetId)
+        }
 
     fun getActiveOrCreate(): Budget {
         val budget = budgetRepository.getActive()

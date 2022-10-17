@@ -78,7 +78,9 @@ class BudgetSpendingListFragment: SpendingListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         hideBottomMenu()
-        setTitle { "${spendingViewModel.budgetName} $it" }
+        spendingViewModel.budget.observe(viewLifecycleOwner) { budget ->
+            setTitle { "${budget.name} $it" }
+        }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

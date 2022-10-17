@@ -17,7 +17,7 @@ interface SpendingDAO {
 
     @Transaction
     @Query("SELECT s.* FROM spendings s INNER JOIN expenditures e ON s.expenditure_id = e.id WHERE e.budget_id = :budgetId ORDER BY s.date DESC")
-    fun getByBudgetIdLive(budgetId: Int): LiveData<List<Spending>>
+    fun getByBudgetId(budgetId: Int): List<Spending>
 
     @Transaction
     @Query("SELECT * FROM spendings WHERE id = :spendingId")
