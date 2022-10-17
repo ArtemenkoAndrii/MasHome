@@ -25,29 +25,29 @@
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/budget_plan"
+            app:layout_constraintEnd_toStartOf="@+id/budget_row_fact"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:text="@{budget.name}"/>
 
         <TextView
-            android:id="@+id/budget_plan"
-            android:layout_width="80dp"
-            android:gravity="center|end"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:text="@{@string/formatter_money(budget.plan)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/budget_fact"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/budget_fact"
+            android:id="@+id/budget_row_fact"
             android:layout_width="80dp"
             android:gravity="center|end"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             android:text="@{@string/formatter_money(budget.fact)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/budget_row_plan"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/budget_row_plan"
+            android:layout_width="80dp"
+            android:gravity="center|end"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:text="@{@string/formatter_money(budget.plan)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/budget_menu"
             app:layout_constraintTop_toTopOf="parent"/>

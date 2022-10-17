@@ -27,28 +27,28 @@
             android:textAppearance="?attr/textAppearanceSubtitle1"
             android:text="@{expenditure.name}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/expenditureRowPlan"
+            app:layout_constraintEnd_toStartOf="@+id/expenditure_row_fact"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/expenditureRowPlan"
-            android:layout_width="80dp"
-            android:gravity="center|end"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:text="@{@string/formatter_money(expenditure.plan)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/expenditureRowFact"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/expenditureRowFact"
+            android:id="@+id/expenditure_row_fact"
             android:layout_width="80dp"
             android:gravity="center|end"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             android:text="@{@string/formatter_money(expenditure.fact)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/expenditure_row_plan"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/expenditure_row_plan"
+            android:layout_width="80dp"
+            android:gravity="center|end"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:text="@{@string/formatter_money(expenditure.plan)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/expenditureRowMenu"
             app:layout_constraintTop_toTopOf="parent"/>
