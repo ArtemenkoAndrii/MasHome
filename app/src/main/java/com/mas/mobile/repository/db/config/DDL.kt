@@ -43,8 +43,8 @@ class DDL {
             CREATE TRIGGER after_expenditure_update AFTER UPDATE ON expenditures
             BEGIN
                 UPDATE budgets
-                SET fact = fact + NEW.fact,
-                    plan = plan + NEW.plan
+                SET fact = fact - OLD.fact + NEW.fact,
+                    plan = plan - OLD.plan + NEW.plan
                 WHERE id = NEW.budget_id;
             END;
         """.trimIndent()
