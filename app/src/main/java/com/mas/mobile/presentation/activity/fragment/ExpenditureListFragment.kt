@@ -106,6 +106,7 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         binding.expenditureListProgress.visibility = View.GONE
         binding.expenditureListFinish.visibility = View.VISIBLE
         binding.expenditureListFinish.setOnClickListener {
+            expenditureViewModel.recreateActiveBudget()
             showBottomMenu()
             this.findNavController().navigate(R.id.nav_expenditure_list)
         }

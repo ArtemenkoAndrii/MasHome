@@ -19,12 +19,15 @@ class BudgetService @Inject constructor(
     settingsRepository: SettingsRepository,
     private val budgetRepository: BudgetRepository,
     private val expenditureRepository: ExpenditureRepository,
-    private val resourceService: ResourceService
+    private val resourceService: ResourceService,
+    private val coroutineService: CoroutineService
 ) {
     private val settings = settingsRepository.get()
     private val trigger = MutableLiveData<Int>()
     private val activeBudget = Transformations.switchMap(trigger) {
-        budgetRepository.live.getById(it)
+        Transformations.map(budgetRepository.live.getById(it)) { budget ->
+            budget ?: getActiveOrCreate()
+        }
     }
 
     init {
@@ -32,10 +35,17 @@ class BudgetService @Inject constructor(
     }
 
     fun reloadBudget() {
-        trigger.value = getActiveOrCreate().id
+        trigger.postValue(getActiveOrCreate().id)
     }
 
-    fun getBudget(budgetId: Int = -1) =
+    fun recreateActiveBudget() {
+        coroutineService.backgroundTask {
+            budgetRepository.delete(getActiveOrCreate())
+        }
+        reloadBudget()
+    }
+
+    fun getBudgetLive(budgetId: Int = -1) =
         if (budgetId == -1) {
             activeBudget
         } else {
@@ -47,7 +57,7 @@ class BudgetService @Inject constructor(
         return if (budget != null) {
             budget
         } else {
-            createNewBudget(LocalDate.now())
+            createNew(LocalDate.now())
             budgetRepository.getActive()?: throw Exception().also {
                 Log.e(this::class.simpleName, "Active budget was not generated.", it)
             }
@@ -56,11 +66,11 @@ class BudgetService @Inject constructor(
 
     fun createNext() {
         budgetRepository.getLastCompletedOn(LocalDate.MAX)?.let {
-            createNewBudget(it.lastDayAt.plusDays(1))
+            createNew(it.lastDayAt.plusDays(1))
         }
     }
 
-    fun createNewBudget(onDate: LocalDate) {
+    fun createNew(onDate: LocalDate) {
         val lastCompleted = budgetRepository.getLastCompletedOn(onDate)
         val startDate = if (lastCompleted == null) {
             onDate

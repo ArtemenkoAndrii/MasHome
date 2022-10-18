@@ -79,7 +79,7 @@ class BudgetViewModel @AssistedInject constructor(
 
     override fun afterRemove() {
         // Just for case if the only budget will be removed
-        budgetService.getActiveOrCreate()
+        budgetService.reloadBudget()
     }
 
     @AssistedFactory

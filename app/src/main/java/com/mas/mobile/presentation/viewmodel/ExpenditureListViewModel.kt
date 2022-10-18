@@ -16,8 +16,8 @@ import dagger.assisted.AssistedInject
 class ExpenditureListViewModel @AssistedInject constructor(
     private val expenditureRepository: ExpenditureRepository,
     private val settingsService: SettingsService,
+    private val budgetService: BudgetService,
     coroutineService: CoroutineService,
-    budgetService: BudgetService,
     @Assisted budgetId: Int
 ) : BaseListViewModel<Expenditure>(coroutineService) {
     private val isFirstLaunchSession = settingsService.isThisFirstLaunch().also {
@@ -25,16 +25,20 @@ class ExpenditureListViewModel @AssistedInject constructor(
     }
     private var isFirstLaunchInfo = isFirstLaunchSession
 
-    val budget = budgetService.getBudget(budgetId)
+    val budget = budgetService.getBudgetLive(budgetId)
     val expenditures: LiveData<List<Expenditure>> = Transformations.map(budget) {
             expenditureRepository.getByBudgetId(it.id)
         }
     val color = Transformations.map(budget) { calcColor(it) }
 
-    override fun getRepository() = expenditureRepository
+    fun recreateActiveBudget() {
+        budgetService.recreateActiveBudget()
+    }
 
     fun isFirstLaunchSession() = isFirstLaunchSession
     fun isFirstLaunchInfo() = isFirstLaunchInfo.also { isFirstLaunchInfo = false }
+
+    override fun getRepository() = expenditureRepository
 
     private fun calcColor(budget: Budget) =
         when {

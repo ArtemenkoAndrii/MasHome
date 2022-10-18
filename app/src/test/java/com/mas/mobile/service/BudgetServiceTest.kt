@@ -1,5 +1,6 @@
 package com.mas.mobile.service
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.mas.mobile.model.DayOfMonth
 import com.mas.mobile.model.Period
 import com.mas.mobile.model.Settings
@@ -12,17 +13,22 @@ import com.mas.mobile.repository.db.entity.ExpenditureData
 import io.mockk.*
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class BudgetServiceTest {
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
     private val mockBudgetRepository = mockk<BudgetRepository>(relaxed = true)
     private val mockExpenditureRepository = mockk<ExpenditureRepository>(relaxed = true)
     private val mockResourceService = mockk<ResourceService>(relaxed = true)
     private val mockSettingsRepository = mockk<SettingsRepository>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
+    private val mockCoroutineService = mockk<CoroutineService>(relaxed = true)
 
     private lateinit var testInstance: BudgetService
 
@@ -34,7 +40,7 @@ class BudgetServiceTest {
     @Before
     fun setUp() {
         every { mockSettingsRepository.get() } returns mockSettings
-        testInstance = BudgetService(mockSettingsRepository, mockBudgetRepository, mockExpenditureRepository, mockResourceService)
+        testInstance = BudgetService(mockSettingsRepository, mockBudgetRepository, mockExpenditureRepository, mockResourceService, mockCoroutineService)
 
         every { mockBudgetRepository.getActive() } returnsMany listOf(null, Budget(id = NEW_BUDGET_ID.toInt()))
         every { mockBudgetRepository.getLastCompletedOn(any()) } returns null
@@ -124,7 +130,7 @@ class BudgetServiceTest {
     private fun createBudgetAndValidate(index: Int, case: Case) {
         val idx = (index + 1).toString()
 
-        testInstance.createNewBudget(case.actualStartDate())
+        testInstance.createNew(case.actualStartDate())
         val newBudget = insertedBudgetSlot.captured
 
         // validate budget

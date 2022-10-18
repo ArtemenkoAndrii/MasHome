@@ -28,7 +28,7 @@ class BudgetListViewModel @AssistedInject constructor(
         coroutineService.backgroundTask {
             getRepository().delete(item)
             // Just for case if the only budget will be removed
-            budgetService.getActiveOrCreate()
+            budgetService.reloadBudget()
         }
     }
 

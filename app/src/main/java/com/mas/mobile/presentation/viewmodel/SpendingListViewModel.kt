@@ -15,7 +15,7 @@ class SpendingListViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
     @Assisted budgetId: Int
 ): BaseListViewModel<Spending>(coroutineService) {
-    val budget = budgetService.getBudget(budgetId)
+    val budget = budgetService.getBudgetLive(budgetId)
     val spendings = Transformations.map(budget) {
         spendingRepository.getByBudgetId(it.id)
     }
