@@ -2,7 +2,9 @@ package com.mas.mobile.presentation.activity.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.mas.mobile.R
@@ -25,14 +27,13 @@ abstract class BaseFragment<V: BaseViewModel<*>>: CommonFragment() {
         }
     }
 
-    protected fun showDateDialog(editor: TextInputEditText) {
-        val dialog =
-            DatePickerFragment.newInstance { _, year, month, day ->
-                val date = LocalDate.of(year, month + 1, day)
-                editor.setText(DateTool.dateToString(date))
-            }
-
-        dialog.show(requireActivity().supportFragmentManager, "dateTimePicker")
+    protected fun showDateDialog(startDate: LocalDate = LocalDate.now(),
+                                 minDate: LocalDate? = null,
+                                 maxDate: LocalDate? = null,
+                                 callback: (LocalDate) -> Unit) {
+        DatePickerFragment(startDate, minDate, maxDate) { _, year, month, day ->
+            callback(LocalDate.of(year, month + 1, day))
+        }.show(requireActivity().supportFragmentManager, "dateTimePicker")
     }
 
     protected fun showDateTimeDialog(editor: TextInputEditText) {
@@ -88,12 +89,12 @@ abstract class BaseFragment<V: BaseViewModel<*>>: CommonFragment() {
     }
 
     open fun onRemove() {
-        showConfirmationDialog(getLabel(R.string.dialog_confirmation_remove)) {
+        showConfirmationDialog(getLabel()) {
             getViewModel().remove()
             this.findNavController().popBackStack()
         }
     }
 
-    private fun getLabel(resourceId: Int) =
+    private fun getLabel() =
         context?.getString(R.string.dialog_confirmation_remove) ?: ""
 }

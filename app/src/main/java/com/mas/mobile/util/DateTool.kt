@@ -52,3 +52,6 @@ class DateTool {
             LocalDate.now().withDayOfMonth(dayOfWeek.value).format(DateTimeFormatter.ofPattern("EEEE"))
     }
 }
+
+fun LocalDate.toEpochMilli() =
+    this.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()

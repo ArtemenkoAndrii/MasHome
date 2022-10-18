@@ -4,25 +4,25 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import java.util.*
+import com.mas.mobile.util.toEpochMilli
+import java.time.LocalDate
 
-class DatePickerFragment: DialogFragment() {
-    private var listener: DatePickerDialog.OnDateSetListener? = null
+class DatePickerFragment(
+    private var startDate: LocalDate,
+    private var minDate: LocalDate?,
+    private var maxDate: LocalDate?,
+    private var listener: DatePickerDialog.OnDateSetListener
+): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+        return DatePickerDialog(requireActivity(), listener, startDate.year, startDate.month.value-1, startDate.dayOfMonth).also {
+            if (this.minDate != null) {
+                it.datePicker.minDate = this.minDate!!.toEpochMilli()
+            }
 
-        return DatePickerDialog(requireActivity(), listener, year, month, day)
-    }
-
-    companion object {
-        fun newInstance(listener: DatePickerDialog.OnDateSetListener): DatePickerFragment {
-            val fragment = DatePickerFragment()
-            fragment.listener = listener
-            return fragment
+            if (this.maxDate != null) {
+                it.datePicker.maxDate = this.maxDate!!.toEpochMilli()
+            }
         }
     }
 }

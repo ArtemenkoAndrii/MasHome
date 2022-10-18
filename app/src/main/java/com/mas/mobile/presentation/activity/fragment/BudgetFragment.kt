@@ -9,6 +9,7 @@ import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.BudgetFragmentBinding
 import com.mas.mobile.presentation.viewmodel.BudgetViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
+import com.mas.mobile.util.DateTool
 
 class BudgetFragment : BaseFragment<BudgetViewModel>() {
     private lateinit var binding: BudgetFragmentBinding
@@ -37,13 +38,14 @@ class BudgetFragment : BaseFragment<BudgetViewModel>() {
             saveAndClose(budgetViewModel)
         }
 
-//        Disabled until future decision
-//        binding.budgetStartsOn.setOnClickListener {
-//            showDateDialog(binding.budgetStartsOn)
-//        }
         binding.budgetLastDayAt.setOnClickListener {
             if (budgetViewModel.isChangeable()) {
-                showDateDialog(binding.budgetLastDayAt)
+                showDateDialog(
+                    startDate= budgetViewModel.lastDayAtValue,
+                    minDate = budgetViewModel.startsOnValue
+                ) {
+                    binding.budgetLastDayAt.setText(DateTool.dateToString(it))
+                }
             } else {
                 showInfoDialog(getResourceService().budgetChangeDateMessage()) { }
             }

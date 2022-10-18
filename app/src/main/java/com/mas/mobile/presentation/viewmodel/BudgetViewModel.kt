@@ -16,8 +16,8 @@ import java.time.LocalDate
 class BudgetViewModel @AssistedInject constructor(
     private val budgetRepository: BudgetRepository,
     private val fieldValidator: FieldValidator,
-    private val coroutineService: CoroutineService,
     private val budgetService: BudgetService,
+    coroutineService: CoroutineService,
     @Assisted private val action: Action,
     @Assisted private val budgetId: Int = NEW_ITEM,
 ) : BaseViewModel<Budget>(budgetId, action, coroutineService) {
@@ -30,6 +30,9 @@ class BudgetViewModel @AssistedInject constructor(
     val lastDayAt = MutableLiveData<LocalDate>()
     val lastDayAtError = MutableLiveData(Validator.NO_ERRORS)
     val comment = MutableLiveData<String?>()
+
+    var startsOnValue: LocalDate = LocalDate.now()
+    var lastDayAtValue: LocalDate = LocalDate.now()
 
     init {
         load()
@@ -57,11 +60,13 @@ class BudgetViewModel @AssistedInject constructor(
         startsOn.value = item.startsOn
         startsOn.observeForever {
             item.startsOn = it
+            startsOnValue = it
         }
 
         lastDayAt.value = item.lastDayAt
         lastDayAt.observeForever {
             item.lastDayAt = it
+            lastDayAtValue = it
         }
 
         comment.value = item.comment
