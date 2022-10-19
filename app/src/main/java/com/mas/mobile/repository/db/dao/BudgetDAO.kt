@@ -16,6 +16,9 @@ interface BudgetDAO {
     @Query("SELECT * FROM budgets WHERE id = :budgetId")
     fun getById(budgetId: Int): Budget?
 
+    @Query("SELECT * FROM budgets WHERE name = :name")
+    fun getByName(name: String): Budget?
+
     @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY lastDayAt DESC LIMIT 1")
     fun getLatestEndedOn(date: LocalDate): Budget?
 

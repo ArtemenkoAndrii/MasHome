@@ -41,14 +41,14 @@
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.TWO_WEEKS)}"
                 android:onClick="@{() -> settings.set2Week2Period()}"
-                android:text="@string/btn_settings_week" />
+                android:text="@string/btn_settings_two_weeks" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="@{settings.period.equals(Period.WEEK)}"
                 android:onClick="@{() -> settings.setWeekPeriod()}"
-                android:text="@string/btn_settings_two_weeks" />
+                android:text="@string/btn_settings_week" />
 
             <RadioButton
                 android:layout_width="wrap_content"

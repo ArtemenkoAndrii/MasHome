@@ -29,6 +29,8 @@ class BudgetRepository @Inject constructor(
 
      override fun createNew(): Budget = Budget()
 
+     fun getByName(name: String): Budget? = dao.getByName(name)
+
      fun getActive() = dao.getActiveOn(LocalDate.now())
 
      fun getLastCompletedOn(date: LocalDate) = dao.getLatestEndedOn(date)

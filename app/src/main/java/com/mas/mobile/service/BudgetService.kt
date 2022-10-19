@@ -16,13 +16,14 @@ import javax.inject.Singleton
 
 @Singleton
 class BudgetService @Inject constructor(
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
     private val budgetRepository: BudgetRepository,
     private val expenditureRepository: ExpenditureRepository,
     private val resourceService: ResourceService,
     private val coroutineService: CoroutineService
 ) {
-    private val settings = settingsRepository.get()
+    private val settings
+        get() = settingsRepository.get()
     private val trigger = MutableLiveData<Int>()
     private val activeBudget = Transformations.switchMap(trigger) {
         Transformations.map(budgetRepository.live.getById(it)) { budget ->
@@ -82,6 +83,7 @@ class BudgetService @Inject constructor(
     }
 
     private fun saveWithExpenditures(budget: Budget) {
+        makeNameUnique(budget)
         runBlocking {
             val id = budgetRepository.insert(budget)
             if (id > 0) {
@@ -94,6 +96,17 @@ class BudgetService @Inject constructor(
                 Log.w(this::class.simpleName, "Budget was inserted with non-positive id")
             }
         }
+    }
+
+    private fun makeNameUnique(budget: Budget) {
+        var name = budget.name
+        var i = 2
+        while (budgetRepository.getByName(name) != null) {
+            name = budget.name + "($i)"
+            i++
+        }
+
+        budget.name = name
     }
 
     private fun createBudget(startDate: LocalDate) =
