@@ -4,6 +4,7 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
+import java.time.temporal.TemporalAdjusters
 
 class DateTool {
     companion object {
@@ -49,7 +50,7 @@ class DateTool {
         fun formatToQuarterWithYear(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("QQQ yyyy"))
         fun formatToYear(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("yyyy"))
         fun formatToDayOfWeek(dayOfWeek: DayOfWeek): String =
-            LocalDate.now().withDayOfMonth(dayOfWeek.value).format(DateTimeFormatter.ofPattern("EEEE"))
+            LocalDate.now().with(TemporalAdjusters.next(dayOfWeek)).format(DateTimeFormatter.ofPattern("EEEE"))
     }
 }
 
