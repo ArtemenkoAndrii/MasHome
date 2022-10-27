@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MasHome</string>
+    <string name="app_name">MasMoney</string>
 
     <!-- HINTS -->
     <string name="hint_budget_name">name</string>
