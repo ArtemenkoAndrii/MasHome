@@ -11,6 +11,6 @@ object MoneyConverter {
 
     @JvmStatic
     fun stringToDouble(value: String): Double {
-        return value.toDouble()
+        return value.replace(",", ".").toDouble()
     }
 }
