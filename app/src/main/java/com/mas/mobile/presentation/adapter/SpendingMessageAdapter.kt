@@ -18,6 +18,7 @@ class SpendingMessageAdapter(
     override fun bind(binding:MessageListRowBinding, item: SpendingMessage, prior: SpendingMessage?) {
         binding.message = item
 
+        binding.messageListRowSuggestedExpenditure.setChipBackgroundColorResource(R.color.colorGray)
         val expenditureName = prepareExpenditureName(item) {
             binding.messageListRowSuggestedExpenditure.setChipBackgroundColorResource(R.color.colorAccent)
         }
