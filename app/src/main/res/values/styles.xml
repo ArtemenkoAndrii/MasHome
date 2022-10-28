@@ -4,13 +4,14 @@
         <!-- Customize your theme here. -->
         <item name = "windowActionBar">true</item>
         <item name = "windowNoTitle">true</item>
-
-        <!-- Hotfix for options menu text color -->
-        <item name="android:itemTextAppearance">@style/PopupMenuTextAppearance</item>
     </style>
 
-    <style name="PopupMenuTextAppearance" parent="TextAppearance.AppCompat.Menu">
-        <item name="android:textColor">@color/cardview_dark_background</item>
+    <style name="DefaultActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="DefaultActionBarPopup" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:background">@color/colorSurface</item>
     </style>
 
     <style name="Widget.App.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.TextButton">
