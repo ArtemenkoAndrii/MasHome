@@ -78,7 +78,7 @@
 
             <TextView
                 android:id="@+id/spendingListRowAmount"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{@string/formatter_money(spending.amount)}"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
