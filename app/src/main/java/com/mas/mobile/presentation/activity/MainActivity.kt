@@ -78,6 +78,15 @@ class MainActivity : AppCompatActivity() {
         bottomNav?.setupWithNavController(navController)
 
         if (bottomNav != null) {
+            // Do not keep stack for every tab
+            bottomNav.setOnItemReselectedListener {
+                navController.popBackStack(it.itemId, inclusive = false)
+            }
+            bottomNav.setOnItemSelectedListener {
+                NavigationUI.onNavDestinationSelected(it, navController, false)
+                true
+            }
+
             messageRepository.countUnreadLive().observeForever {
                 val badge = bottomNav.getOrCreateBadge(R.id.nav_message_list_fragment)
                 if (it > 0) {
