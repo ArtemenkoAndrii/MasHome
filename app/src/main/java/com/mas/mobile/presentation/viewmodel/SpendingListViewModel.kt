@@ -11,7 +11,7 @@ import dagger.assisted.AssistedInject
 
 class SpendingListViewModel @AssistedInject constructor(
     private val spendingRepository: SpendingRepository,
-    budgetService: BudgetService,
+    private val budgetService: BudgetService,
     coroutineService: CoroutineService,
     @Assisted budgetId: Int
 ): BaseListViewModel<Spending>(coroutineService) {
@@ -21,6 +21,10 @@ class SpendingListViewModel @AssistedInject constructor(
     }
 
     override fun getRepository() = spendingRepository
+
+    override suspend fun afterRemove(item: Spending) {
+        budgetService.calculateBudget(item.expenditure.budget_id)
+    }
 
     @AssistedFactory
     interface Factory {

@@ -21,6 +21,8 @@ class SpendingRepository @Inject constructor(
 
      override fun getById(id: Int) = db.spendingDao().getById(id)
 
+     fun getByExpenditureId(expenditureId: Int) = db.spendingDao().getByExpenditureId(expenditureId)
+
      override fun clone(item: Spending) = item.copy(data = item.data.copy(id = 0))
 
      override fun createNew() = Spending(data = SpendingData(), expenditure = ExpenditureData())

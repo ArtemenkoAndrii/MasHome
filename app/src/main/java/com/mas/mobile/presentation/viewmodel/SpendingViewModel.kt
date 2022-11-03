@@ -1,19 +1,17 @@
 package com.mas.mobile.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mas.mobile.model.SpendingMessageEnvelop
 import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel.Companion.EXPENDITURE_MIN_LENGTH
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
-import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.SpendingMessageRepository
 import com.mas.mobile.repository.SpendingRepository
-import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.repository.db.entity.Spending
 import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.service.ExpenditureService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,11 +19,11 @@ import java.time.LocalDateTime
 
 class SpendingViewModel @AssistedInject constructor(
     private val spendingRepository: SpendingRepository,
-    private val expenditureRepository: ExpenditureRepository,
+    private val expenditureService: ExpenditureService,
+    private val budgetService: BudgetService,
     private val spendingMessageRepository: SpendingMessageRepository,
     private val fieldValidator: FieldValidator,
     private val coroutineService: CoroutineService,
-    budgetService: BudgetService,
     @Assisted private val action: Action,
     @Assisted("spendingId") pSpendingId: Int,
     @Assisted("expenditureId") pExpenditureId: Int,
@@ -39,24 +37,19 @@ class SpendingViewModel @AssistedInject constructor(
     var amount = MutableLiveData<Double>()
     var amountError = MutableLiveData(Validator.NO_ERRORS)
     var expenditureName = MutableLiveData<String>()
-    var expenditureId: Int = pExpenditureId
-    var expenditureIdError = MutableLiveData(Validator.NO_ERRORS)
+    var expenditureNameError = MutableLiveData(Validator.NO_ERRORS)
+    private var expenditureNameValue = ""
 
-    val availableExpenditures: LiveData<List<Expenditure>>
     private val budgetId = if (pBudgetId == ACTIVE_BUDGET) {
                                 budgetService.getActiveOrCreate().id
                             } else {
                                 pBudgetId
                             }
+    val availableExpenditures = expenditureService.expenditureRepository.live.getByBudgetId(budgetId)
 
     init {
         load()
-
-        availableExpenditures = expenditureRepository.live.getByBudgetId(budgetId)
-
-        if (action == Action.ADD && pExpenditureId > 0) {
-            loadSuggestedExpenditure(pExpenditureId)
-        }
+        initDefaultExpenditure(pExpenditureId)
     }
 
     override fun getRepository() = spendingRepository
@@ -79,7 +72,8 @@ class SpendingViewModel @AssistedInject constructor(
 
         expenditureName.value = item.expenditure.name
         expenditureName.observeForever {
-            validateOnChange(expenditureIdError) {
+            expenditureNameValue = it
+            validateOnChange(expenditureNameError) {
                 fieldValidator.minLength(expenditureName.value, EXPENDITURE_MIN_LENGTH)
             }
         }
@@ -93,24 +87,14 @@ class SpendingViewModel @AssistedInject constructor(
     }
 
     override fun beforeSave(item: Spending) {
-        if (action == Action.CLONE) {
-            expenditureId = item.expenditureId
-        }
-
-        if (expenditureId == NEW_ITEM) {
-            val newExpenditure = expenditureRepository.createNew().also {
-                it.data.name = expenditureName.value ?: ""
-                it.data.budget_id = budgetId
-            }
-
-            item.expenditure = newExpenditure.data
-            item.expenditureId = newExpenditure.data.id
-        } else {
-            item.expenditureId = expenditureId
+        if (action == Action.ADD || action == Action.EDIT) {
+            item.expenditureId = expenditureService.findOrCreate(expenditureNameValue, budgetId).id
         }
     }
 
     override suspend fun afterSave(item: Spending) {
+        budgetService.calculateBudget(budgetId)
+
         getDependantSpendingMessage()?.let {
             val message = spendingMessageRepository.getById(it.id)
             if (message != null) {
@@ -121,10 +105,13 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun loadSuggestedExpenditure(expenditureId: Int) {
-        expenditureRepository.getById(expenditureId)?.let {
-            this.expenditureId = expenditureId
-            expenditureName.value = it.name
+    override suspend fun afterRemove(item: Spending) {
+        budgetService.calculateBudget(item.expenditure.budget_id)
+    }
+
+    private fun initDefaultExpenditure(expenditureId: Int) {
+        if (action == Action.ADD && expenditureId > 0) {
+            expenditureName.value = expenditureService.expenditureRepository.getById(expenditureId)?.name ?: ""
         }
     }
 

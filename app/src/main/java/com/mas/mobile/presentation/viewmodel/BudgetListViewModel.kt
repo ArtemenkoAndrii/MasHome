@@ -24,12 +24,9 @@ class BudgetListViewModel @AssistedInject constructor(
             it.id == item.id
         } ?: true
 
-    override fun remove(item: Budget) {
-        coroutineService.backgroundTask {
-            getRepository().delete(item)
-            // Just for case if the only budget will be removed
-            budgetService.reloadBudget()
-        }
+    override suspend fun afterRemove(item: Budget) {
+        // Just for case if the only budget will be removed
+        budgetService.reloadBudget()
     }
 
     @AssistedFactory

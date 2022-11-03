@@ -8,6 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class SpendingMessageService @Inject constructor(
     private val suggestionService: SuggestionService,
+    private val budgetService: BudgetService,
     private val spendingMessageRepository: SpendingMessageRepository,
     private val spendingRepository: SpendingRepository,
     private val expenditureService: ExpenditureService,
@@ -23,7 +24,7 @@ class SpendingMessageService @Inject constructor(
     }
 
     private fun processAutoSuggestion(message: Message, suggestion: AutoSuggestion) {
-        val expenditure = expenditureService.findOrCreate(suggestion.expenditureName)
+        val expenditure = expenditureService.findOrCreate(suggestion.expenditureName, budgetService.getActiveOrCreate().id)
 
         val spending = spendingRepository.createNew().also {
             it.data.date = message.date
@@ -42,8 +43,9 @@ class SpendingMessageService @Inject constructor(
         }
 
         coroutineService.backgroundTask {
-            val ids = spendingRepository.insert(spending)
-            spendingMessageRepository.insert(spendingMessage.also { it.spendingId = ids.toInt() })
+            val id = spendingRepository.insert(spending)
+            spendingMessageRepository.insert(spendingMessage.also { it.spendingId = id.toInt() })
+            budgetService.calculateBudget()
         }
     }
 

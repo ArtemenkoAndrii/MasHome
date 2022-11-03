@@ -37,8 +37,9 @@ abstract class BaseViewModel<T: Any>(
 
     fun remove() {
         coroutineService.backgroundTask {
-            getRepository().delete(this@BaseViewModel.model)
-            afterRemove()
+            val item = this@BaseViewModel.model
+            getRepository().delete(item)
+            afterRemove(item)
         }
     }
 
@@ -46,7 +47,7 @@ abstract class BaseViewModel<T: Any>(
     abstract fun afterLoad(item: T)
     open fun beforeSave(item: T) {}
     open suspend fun afterSave(item: T) {}
-    open fun afterRemove() {}
+    open suspend fun afterRemove(item: T) {}
 
     fun save(): Boolean {
         if (!isValid()) {

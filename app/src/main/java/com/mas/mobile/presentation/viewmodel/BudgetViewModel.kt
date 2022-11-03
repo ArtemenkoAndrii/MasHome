@@ -82,7 +82,7 @@ class BudgetViewModel @AssistedInject constructor(
             it.id == budgetId
         } ?: true
 
-    override fun afterRemove() {
+    override suspend fun afterRemove(item: Budget) {
         // Just for case if the only budget will be removed
         budgetService.reloadBudget()
     }
@@ -93,7 +93,6 @@ class BudgetViewModel @AssistedInject constructor(
     }
 
     companion object {
-        const val TEMPLATE_BUDGET_ID = 1
         const val EXPENDITURE_MIN_LENGTH = 3
     }
 }

@@ -88,8 +88,8 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_expenditure"
             android:enabled="@{model.isEditable()}"
-            app:error="@{model.expenditureIdError}"
-            app:errorEnabled='@{!(model.expenditureIdError == "")}'>
+            app:error="@{model.expenditureNameError}"
+            app:errorEnabled='@{!(model.expenditureNameError == "")}'>
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/spendingExpenditure"

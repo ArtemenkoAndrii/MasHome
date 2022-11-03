@@ -6,6 +6,7 @@ import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.db.entity.Expenditure
+import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -13,6 +14,7 @@ import dagger.assisted.AssistedInject
 
 class ExpenditureViewModel @AssistedInject constructor(
     private val expenditureRepository: ExpenditureRepository,
+    private val budgetService: BudgetService,
     private val fieldValidator: FieldValidator,
     coroutineService: CoroutineService,
     @Assisted("expenditureId") expenditureId: Int,
@@ -65,6 +67,14 @@ class ExpenditureViewModel @AssistedInject constructor(
 
     override fun beforeSave(item: Expenditure) {
         item.data.budget_id = budgetId
+    }
+
+    override suspend fun afterSave(item: Expenditure) {
+        budgetService.calculateBudget(item.budget.id)
+    }
+
+    override suspend fun afterRemove(item: Expenditure) {
+        budgetService.calculateBudget(item.budget.id)
     }
 
     override fun getRepository() = expenditureRepository

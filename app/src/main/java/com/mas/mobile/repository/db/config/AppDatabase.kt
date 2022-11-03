@@ -37,13 +37,6 @@ abstract class AppDatabase : RoomDatabase() {
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            db.execSQL(DDL.AFTER_SPENDING_INSERT)
-                            db.execSQL(DDL.AFTER_SPENDING_UPDATE)
-                            db.execSQL(DDL.AFTER_SPENDING_DELETE)
-                            db.execSQL(DDL.AFTER_EXPENDITURE_INSERT)
-                            db.execSQL(DDL.AFTER_EXPENDITURE_UPDATE)
-                            db.execSQL(DDL.AFTER_EXPENDITURE_DELETE)
-
                             db.execSQL(DML.TEMPLATE_BUDGET)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES1)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES2)

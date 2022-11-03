@@ -13,9 +13,12 @@ abstract class BaseListViewModel<T: Any>(
 ): ViewModel() {
     abstract fun getRepository(): BaseRepository<T>
 
-    open fun remove(item: T) {
+    fun remove(item: T) {
         coroutineService.backgroundTask {
             getRepository().delete(item)
+            afterRemove(item)
         }
     }
+
+    open suspend fun afterRemove(item: T) {}
 }

@@ -40,6 +40,10 @@ class ExpenditureListViewModel @AssistedInject constructor(
 
     override fun getRepository() = expenditureRepository
 
+    override suspend fun afterRemove(item: Expenditure) {
+        budgetService.calculateBudget(item.budget.id)
+    }
+
     private fun calcColor(budget: Budget) =
         when {
             budget.getProgress() > 150 -> R.color.colorRed

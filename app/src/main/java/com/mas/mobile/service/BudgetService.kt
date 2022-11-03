@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.mas.mobile.model.Period
 import com.mas.mobile.repository.BudgetRepository
-import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.SettingsRepository
 import com.mas.mobile.repository.db.entity.Budget
 import com.mas.mobile.util.DateTool
@@ -16,11 +15,11 @@ import javax.inject.Singleton
 
 @Singleton
 class BudgetService @Inject constructor(
-    private val settingsRepository: SettingsRepository,
-    private val budgetRepository: BudgetRepository,
-    private val expenditureRepository: ExpenditureRepository,
+    private val expenditureService: ExpenditureService,
     private val resourceService: ResourceService,
-    private val coroutineService: CoroutineService
+    private val coroutineService: CoroutineService,
+    private val settingsRepository: SettingsRepository,
+    private val budgetRepository: BudgetRepository
 ) {
     private val settings
         get() = settingsRepository.get()
@@ -33,6 +32,25 @@ class BudgetService @Inject constructor(
 
     init {
         reloadBudget()
+    }
+
+    fun calculateBudget() {
+        calculateBudget(getActiveOrCreate().id)
+    }
+
+    fun calculateBudget(budgetId: Int) {
+        val budget = budgetRepository.getById(budgetId)
+        if (budget != null) {
+            coroutineService.backgroundTask {
+                with(expenditureService) {
+                    calculateExpenditures(budgetId)
+                    val expenditures = expenditureRepository.getByBudgetId(budgetId)
+                    budget.plan = expenditures.sumOf { it.plan }
+                    budget.fact = expenditures.sumOf { it.fact }
+                    budgetRepository.update(budget)
+                }
+            }
+        }
     }
 
     fun reloadBudget() {
@@ -87,15 +105,12 @@ class BudgetService @Inject constructor(
         runBlocking {
             val id = budgetRepository.insert(budget)
             if (id > 0) {
-                expenditureRepository.getByBudgetId(TEMPLATE_BUDGET_ID).forEach { template ->
-                    val exp = expenditureRepository.clone(template).also { it.data.budget_id = id.toInt() }
-                    expenditureRepository.insert(exp)
-                }
-            }
-            else {
+                expenditureService.cloneExpenditures(TEMPLATE_BUDGET_ID, id.toInt())
+            } else {
                 Log.w(this::class.simpleName, "Budget was inserted with non-positive id")
             }
         }
+        calculateBudget()
     }
 
     private fun makeNameUnique(budget: Budget) {

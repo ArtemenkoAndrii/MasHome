@@ -12,20 +12,20 @@ interface SpendingDAO {
     fun getAllLive(): LiveData<List<Spending>>
 
     @Transaction
-    @Query("SELECT * FROM spendings WHERE expenditure_id = :expenditureId ORDER BY date DESC")
-    fun getByExpenditureIdLive(expenditureId: Int): LiveData<List<Spending>>
-
-    @Transaction
-    @Query("SELECT s.* FROM spendings s INNER JOIN expenditures e ON s.expenditure_id = e.id WHERE e.budget_id = :budgetId ORDER BY s.date DESC")
-    fun getByBudgetId(budgetId: Int): List<Spending>
+    @Query("SELECT * FROM spendings WHERE id = :spendingId")
+    fun getById(spendingId: Int): Spending
 
     @Transaction
     @Query("SELECT * FROM spendings WHERE id = :spendingId")
     fun getByIdLive(spendingId: Int): LiveData<Spending>
 
     @Transaction
-    @Query("SELECT * FROM spendings WHERE id = :spendingId")
-    fun getById(spendingId: Int): Spending
+    @Query("SELECT * FROM spendings WHERE expenditure_id = :expenditureId ORDER BY date DESC")
+    fun getByExpenditureId(expenditureId: Int): List<Spending>
+
+    @Transaction
+    @Query("SELECT s.* FROM spendings s INNER JOIN expenditures e ON s.expenditure_id = e.id WHERE e.budget_id = :budgetId ORDER BY s.date DESC")
+    fun getByBudgetId(budgetId: Int): List<Spending>
 
     @Ignore
     suspend fun insert(spending: Spending) =

@@ -1,9 +1,6 @@
 package com.mas.mobile.service
 
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,6 +10,12 @@ class CoroutineService @Inject constructor(
 ) {
     fun backgroundTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch(coroutineErrorHandler) {
+            wrapper(this)
+        }
+    }
+
+    fun blockingTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
+        runBlocking {
             wrapper(this)
         }
     }

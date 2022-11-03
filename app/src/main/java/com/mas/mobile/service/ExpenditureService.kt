@@ -1,6 +1,7 @@
 package com.mas.mobile.service
 
 import com.mas.mobile.repository.ExpenditureRepository
+import com.mas.mobile.repository.SpendingRepository
 import com.mas.mobile.repository.db.entity.Expenditure
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -8,15 +9,30 @@ import javax.inject.Singleton
 
 @Singleton
 class ExpenditureService @Inject constructor(
-    private val budgetService: BudgetService,
-    private val expenditureRepository: ExpenditureRepository
+    val expenditureRepository: ExpenditureRepository,
+    private val spendingRepository: SpendingRepository
 ) {
-    fun findOrCreate(name: String): Expenditure {
+    suspend fun calculateExpenditures(budgetId: Int) {
+        expenditureRepository.getByBudgetId(budgetId).forEach { expenditure ->
+            expenditure.fact = spendingRepository.getByExpenditureId(expenditure.id).sumOf { it.amount }
+            expenditureRepository.update(expenditure)
+        }
+    }
+
+    suspend fun cloneExpenditures(budgetIdFrom: Int, budgetIdTo: Int) {
+        with(expenditureRepository) {
+            getByBudgetId(budgetIdFrom).forEach { expenditure ->
+                val clone = clone(expenditure).also { it.data.budget_id = budgetIdTo }
+                insert(clone)
+            }
+        }
+    }
+
+    fun findOrCreate(name: String, budgetId: Int): Expenditure {
         val nameForSearch = name.trim().uppercase()
-        val activeBudgetId = budgetService.getActiveOrCreate().id
-        val expenditure = expenditureRepository.getByBudgetId(activeBudgetId)
+        val expenditure = expenditureRepository.getByBudgetId(budgetId)
             .firstOrNull { it.name.uppercase() == nameForSearch }
-        return expenditure ?: createExpenditure(nameForSearch, activeBudgetId)
+        return expenditure ?: createExpenditure(name, budgetId)
     }
 
     private fun createExpenditure(name: String, budgetId: Int): Expenditure {
