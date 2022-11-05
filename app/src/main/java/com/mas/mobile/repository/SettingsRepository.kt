@@ -23,6 +23,7 @@ class SettingsRepository  @Inject constructor(
         getValue(START_DAY_OF_WEEK)?.let { settings.startDayOfWeek = DayOfWeek.of(it.toInt()) }
         getValue(CAPTURE_SMS)?.let { settings.captureSms = it.toBoolean() }
         getValue(CAPTURE_NOTIFICATIONS)?.let { settings.captureNotifications = it.toBoolean() }
+        getValue(POLICY_VERSION)?.let { settings.policyVersion = it }
         return  settings
     }
 
@@ -33,6 +34,7 @@ class SettingsRepository  @Inject constructor(
             merge(START_DAY_OF_WEEK, settings.startDayOfWeek.value.toString())
             merge(CAPTURE_SMS, settings.captureSms.toString())
             merge(CAPTURE_NOTIFICATIONS, settings.captureNotifications.toString())
+            merge(POLICY_VERSION, settings.policyVersion)
         }
     }
 
@@ -54,5 +56,6 @@ class SettingsRepository  @Inject constructor(
         const val START_DAY_OF_WEEK = "budget.startDayOfWeek"
         const val CAPTURE_SMS = "budget.captureSMS"
         const val CAPTURE_NOTIFICATIONS = "budget.captureNotifications"
+        const val POLICY_VERSION = "policy.version"
     }
 }

@@ -35,6 +35,8 @@
     <string name="btn_settings_year">year</string>
     <string name="btn_settings_capture_sms">Capture SMS</string>
     <string name="btn_settings_capture_notifications">Capture notifications</string>
+    <string name="btn_policy_agree">Agree</string>
+    <string name="btn_policy_decline">Decline</string>
 
     <!-- MENU -->
     <string name="menu_view">View</string>

@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         this.appComponent.injectMainActivity(this)
 
+        checkPrivacyPolicy()
+
         setContentView(R.layout.main_activity)
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -62,6 +64,12 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         this.applicationContext.unregisterReceiver(dateListener)
         super.onDestroy()
+    }
+
+    private fun checkPrivacyPolicy() {
+        if (settingsService.needToShowPolicy())  {
+            Intent(this, PolicyActivity::class.java).also { startActivity(it) }
+        }
     }
 
     private fun setupActionBar(navController: NavController, appBarConfig : AppBarConfiguration) {

@@ -3,6 +3,7 @@ package com.mas.mobile
 import android.app.Application
 import android.content.Context
 import com.mas.mobile.presentation.activity.MainActivity
+import com.mas.mobile.presentation.activity.PolicyActivity
 import com.mas.mobile.presentation.activity.fragment.CommonFragment
 import com.mas.mobile.presentation.viewmodel.*
 import com.mas.mobile.repository.db.config.AppDatabase
@@ -58,6 +59,7 @@ interface AppComponent {
     fun injectCommonFragment(wrapper: CommonFragment.CommonFragmentWrapper)
 
     fun injectMainActivity(mainActivity: MainActivity)
+    fun injectPolicyActivity(policyActivity: PolicyActivity)
 
     @Component.Builder
     interface Builder {
