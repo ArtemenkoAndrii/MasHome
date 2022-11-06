@@ -95,11 +95,11 @@ class SettingsFragment : CommonFragment() {
                 true
             }
             PERMISSION_DENIED -> {
-                showSMSSettings()
+                launcher.launch(Manifest.permission.RECEIVE_SMS)
                 false
             }
             else -> {
-                launcher.launch(Manifest.permission.RECEIVE_SMS)
+                showSMSSettings()
                 false
             }
         }
