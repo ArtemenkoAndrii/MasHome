@@ -9,7 +9,7 @@ class FieldValidator @Inject constructor(
     private val context: Context
 ) {
     fun minLength(value: String?, minLength: Int) =
-        if (value == null || value.length < minLength) {
+        if (value == null || value.trim().length < minLength) {
             getValidationMessage(R.string.validator_min_length, minLength)
         } else {
             NO_ERRORS

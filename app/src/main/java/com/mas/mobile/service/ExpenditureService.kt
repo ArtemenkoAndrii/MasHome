@@ -28,12 +28,14 @@ class ExpenditureService @Inject constructor(
         }
     }
 
-    fun findOrCreate(name: String, budgetId: Int): Expenditure {
+    fun find(name: String, budgetId: Int): Expenditure? {
         val nameForSearch = name.trim().uppercase()
-        val expenditure = expenditureRepository.getByBudgetId(budgetId)
+        return expenditureRepository.getByBudgetId(budgetId)
             .firstOrNull { it.name.uppercase() == nameForSearch }
-        return expenditure ?: createExpenditure(name, budgetId)
     }
+
+    fun findOrCreate(name: String, budgetId: Int): Expenditure =
+        find(name, budgetId) ?: createExpenditure(name, budgetId)
 
     private fun createExpenditure(name: String, budgetId: Int): Expenditure {
         val newExpenditure = expenditureRepository.createNew().also {

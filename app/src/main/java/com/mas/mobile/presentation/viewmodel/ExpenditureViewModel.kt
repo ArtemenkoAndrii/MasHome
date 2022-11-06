@@ -8,12 +8,13 @@ import com.mas.mobile.repository.ExpenditureRepository
 import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.service.ExpenditureService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class ExpenditureViewModel @AssistedInject constructor(
-    private val expenditureRepository: ExpenditureRepository,
+    private val expenditureService: ExpenditureService,
     private val budgetService: BudgetService,
     private val fieldValidator: FieldValidator,
     coroutineService: CoroutineService,
@@ -29,7 +30,7 @@ class ExpenditureViewModel @AssistedInject constructor(
     val fact = MutableLiveData<Double>()
     val comment = MutableLiveData<String?>()
 
-    val availableExpenditures = expenditureRepository.live.getUniqueNames()
+    val availableExpenditures = expenditureService.expenditureRepository.live.getUniqueNames()
 
     init {
         load()
@@ -77,17 +78,13 @@ class ExpenditureViewModel @AssistedInject constructor(
         budgetService.calculateBudget(item.budget.id)
     }
 
-    override fun getRepository() = expenditureRepository
+    override fun getRepository() = expenditureService.expenditureRepository
 
     private fun ifExpenditureExists(name: String?): Boolean {
-        if (action == Action.EDIT && name == originalName) {
-            return false
-        }
-
-        return if (name.isNullOrEmpty()) {
-            false
+        return if (name != originalName || action == Action.ADD) {
+            expenditureService.find(name ?: "", budgetId) != null
         } else {
-            expenditureRepository.getByName(name.trim(), budgetId) != null
+            false
         }
     }
 
