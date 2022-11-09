@@ -41,8 +41,4 @@ class SmsListener: BroadcastReceiver() {
             }
         }
     }
-
-    init {
-        val tees = ""
-    }
 }

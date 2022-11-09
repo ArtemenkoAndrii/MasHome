@@ -8,6 +8,7 @@ import com.mas.mobile.model.Period
 import com.mas.mobile.model.Period.*
 import com.mas.mobile.repository.SettingsRepository
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.service.PermissionService
 import com.mas.mobile.service.SettingsService
 import com.mas.mobile.util.DateTool
 import dagger.assisted.AssistedFactory
@@ -17,7 +18,8 @@ import java.time.DayOfWeek
 class SettingsViewModel @AssistedInject constructor(
     private val settingsRepository: SettingsRepository,
     private val coroutineService: CoroutineService,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
+    private val permissionService: PermissionService
 ) : ViewModel() {
     private var item = settingsRepository.get()
 
@@ -30,8 +32,8 @@ class SettingsViewModel @AssistedInject constructor(
     var captureNotifications = MutableLiveData<Boolean>()
     val appVersion = BuildConfig.VERSION_NAME
 
-    private var isNotificationsAllowed: () -> Boolean = { true }
-    private var isSMSAllowed: () -> Boolean = { true }
+    private var onRequestSMSPermissions: () -> Unit = {  }
+    private var onRequestNotificationPermissions: () -> Unit = {  }
     private val dayOfWeekMap = listOf(
         DayOfWeek.MONDAY to DateTool.formatToDayOfWeek(DayOfWeek.MONDAY),
         DayOfWeek.TUESDAY to DateTool.formatToDayOfWeek(DayOfWeek.TUESDAY),
@@ -76,19 +78,23 @@ class SettingsViewModel @AssistedInject constructor(
 
         captureSms.value = item.captureSms
         captureSms.observeForever {
-            if (!isSMSAllowed() && it == true) {
-                captureSms.value = false
-            } else {
+            if (item.captureSms != it) {
                 item.captureSms = it
+
+                if (it && !permissionService.isSMSAllowed()) {
+                    onRequestSMSPermissions()
+                }
             }
         }
 
         captureNotifications.value = item.captureNotifications
         captureNotifications.observeForever {
-            if (!isNotificationsAllowed() && it == true) {
-                captureNotifications.value = false
-            } else {
+            if (item.captureNotifications != it) {
                 item.captureNotifications = it
+
+                if (it && !permissionService.isNotificationsAllowed()) {
+                    onRequestNotificationPermissions()
+                }
             }
         }
     }
@@ -113,11 +119,12 @@ class SettingsViewModel @AssistedInject constructor(
         period.value = YEAR
     }
 
-    fun registerPermissionValidators(
-        smsPermissionsValidator: () -> Boolean = { true },
-        notificationsPermissionsValidator: () -> Boolean = {true}) {
-        isSMSAllowed = smsPermissionsValidator
-        isNotificationsAllowed = notificationsPermissionsValidator
+    fun onRequestSMSPermissions(handler: () -> Unit) {
+        onRequestSMSPermissions = handler
+    }
+
+    fun onRequestNotificationPermissions(handler: () -> Unit) {
+        onRequestNotificationPermissions = handler
     }
 
     private fun switchDateFields(period: Period) {
