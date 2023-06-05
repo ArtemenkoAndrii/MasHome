@@ -5,10 +5,11 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.BudgetListRowBinding
+import com.mas.mobile.domain.budget.Budget
 import com.mas.mobile.presentation.activity.fragment.BudgetListFragmentDirections
 import com.mas.mobile.presentation.activity.fragment.ListMenu
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Budget
+
 
 class BudgetAdapter(private val listMenu: ListMenu<Budget>): BaseAdapter<Budget, BudgetListRowBinding>(R.layout.budget_list_row) {
 
@@ -29,7 +30,7 @@ class BudgetAdapter(private val listMenu: ListMenu<Budget>): BaseAdapter<Budget,
 
         binding.budgetRowLayout.setOnClickListener {
             val action = BudgetListFragmentDirections
-                .actionToBudget(Action.VIEW.name, item.id)
+                .actionToBudget(Action.VIEW.name, item.id.value)
             rowView.findNavController().navigate(action)
         }
     }

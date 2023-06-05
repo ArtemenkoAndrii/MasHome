@@ -1,25 +1,18 @@
 package com.mas.mobile.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
-import com.mas.mobile.repository.MessageRuleRepository
-import com.mas.mobile.repository.db.entity.MessageRule
+import com.mas.mobile.domain.message.MessageRule
+import com.mas.mobile.domain.message.MessageRuleRepository
+import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MessageRuleListViewModel @AssistedInject constructor(
-    private val rulesRepository: MessageRuleRepository,
+    messageRuleRepository: MessageRuleRepository,
+    coroutineService: CoroutineService,
     @Assisted param: String
-): ViewModel() {
-    val messageRules = rulesRepository.live.getAll()
-
-    fun remove(item: MessageRule) {
-        GlobalScope.launch {
-            rulesRepository.delete(item)
-        }
-    }
+): ListViewModel<MessageRule>(coroutineService, messageRuleRepository) {
+    val messageRules = messageRuleRepository.getLiveMessageRules()
 
     @AssistedFactory
     interface Factory {

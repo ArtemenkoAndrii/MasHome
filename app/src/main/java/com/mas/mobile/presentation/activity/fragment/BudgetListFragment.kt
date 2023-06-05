@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.BudgetListFragmentBinding
+import com.mas.mobile.domain.budget.Budget
 import com.mas.mobile.presentation.adapter.BudgetAdapter
 import com.mas.mobile.presentation.viewmodel.BudgetListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Budget
 
-class BudgetListFragment: BaseListFragment(), ListMenu<Budget> {
-    private val budgetListViewModel: BudgetListViewModel by lazyViewModel {
+class BudgetListFragment: ListFragment(), ListMenu<Budget> {
+    private val listViewModel: BudgetListViewModel by lazyViewModel {
         this.requireContext().appComponent.budgetListViewModel().create()
     }
     private lateinit var binding: BudgetListFragmentBinding
@@ -30,12 +30,12 @@ class BudgetListFragment: BaseListFragment(), ListMenu<Budget> {
         binding.budgetList.adapter = adapter
         binding.budgetList.layoutManager = LinearLayoutManager(this.requireContext())
 
-        budgetListViewModel.budgets.observe(viewLifecycleOwner) { budget ->
+        listViewModel.budgets.observe(viewLifecycleOwner) { budget ->
             adapter.setItems(budget)
         }
 
         binding.budgetAddBtn.setOnClickListener {
-            budgetListViewModel.createBudget()
+            listViewModel.createBudget()
             //this.findNavController().navigate(resolveAddButtonDestination())
         }
 
@@ -60,18 +60,18 @@ class BudgetListFragment: BaseListFragment(), ListMenu<Budget> {
 
     override fun onRowMenuSelected(menuItem: MenuItem, item: Budget): Boolean {
         when (menuItem.itemId) {
-            R.id.budget_row_menu_edit -> go(BudgetListFragmentDirections.actionToBudget(Action.EDIT.name, item.id))
-            R.id.budget_row_menu_expenditure_list -> go(BudgetListFragmentDirections.actionToBudgetExpenditureList(item.id))
-            R.id.budget_row_menu_spending_list -> go(BudgetListFragmentDirections.actionToBudgetSpendingList(item.id))
+            R.id.budget_row_menu_edit -> go(BudgetListFragmentDirections.actionToBudget(Action.EDIT.name, item.id.value))
+            R.id.budget_row_menu_expenditure_list -> go(BudgetListFragmentDirections.actionToBudgetExpenditureList(item.id.value))
+            R.id.budget_row_menu_spending_list -> go(BudgetListFragmentDirections.actionToBudgetSpendingList(item.id.value))
             R.id.budget_row_menu_remove -> deleteItem(item)
         }
         return false
     }
 
     private fun deleteItem(item: Budget) {
-        if (budgetListViewModel.isChangeable(item)) {
+        if (listViewModel.isChangeable(item)) {
             showConfirmationDialog {
-                budgetListViewModel.remove(item)
+                listViewModel.remove(item)
             }
         } else {
             showInfoDialog(getResourceService().budgetRemoveMessage()) {}

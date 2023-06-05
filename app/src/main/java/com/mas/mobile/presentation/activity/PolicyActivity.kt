@@ -6,7 +6,7 @@ import android.webkit.WebView
 import android.widget.Button
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
-import com.mas.mobile.service.SettingsService
+import com.mas.mobile.domain.settings.SettingsService
 import javax.inject.Inject
 
 class PolicyActivity : Activity() {

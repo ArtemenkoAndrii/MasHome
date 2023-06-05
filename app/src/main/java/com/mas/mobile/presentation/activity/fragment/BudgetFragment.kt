@@ -11,13 +11,13 @@ import com.mas.mobile.presentation.viewmodel.BudgetViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.util.DateTool
 
-class BudgetFragment : BaseFragment<BudgetViewModel>() {
+class BudgetFragment : ItemFragment<BudgetViewModel>() {
     private lateinit var binding: BudgetFragmentBinding
     private val args: BudgetFragmentArgs by navArgs()
 
-    private val budgetViewModel: BudgetViewModel by lazyViewModel {
+    override val viewModel: BudgetViewModel by lazyViewModel {
         this.requireContext().appComponent.budgetViewModel()
-            .create(args.budgetId, action)
+            .create(action, args.budgetId)
     }
 
     override fun onCreateView(
@@ -31,18 +31,18 @@ class BudgetFragment : BaseFragment<BudgetViewModel>() {
         action = Action.valueOf(args.action)
 
         binding = BudgetFragmentBinding.bind(layout)
-        binding.budget = budgetViewModel
+        binding.budget = viewModel
         binding.lifecycleOwner = this
 
         binding.budgetSaveButton.setOnClickListener {
-            saveAndClose(budgetViewModel)
+            saveAndClose(viewModel)
         }
 
         binding.budgetLastDayAt.setOnClickListener {
-            if (budgetViewModel.isChangeable()) {
+            if (viewModel.isChangeable()) {
                 showDateDialog(
-                    startDate= budgetViewModel.lastDayAtValue,
-                    minDate = budgetViewModel.startsOnValue
+                    startDate= viewModel.lastDayAtValue,
+                    minDate = viewModel.startsOnValue
                 ) {
                     binding.budgetLastDayAt.setText(DateTool.dateToString(it))
                 }
@@ -62,12 +62,12 @@ class BudgetFragment : BaseFragment<BudgetViewModel>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.budget_menu_edit -> {
-                budgetViewModel.enableEditing()
+                viewModel.enableEditing()
                 action = Action.EDIT
                 true
             }
             R.id.budget_menu_remove -> showConfirmationDialog {
-                budgetViewModel.remove()
+                viewModel.remove()
                 findNavController().popBackStack()
             }.let { true }
             R.id.budget_menu_expenditure_list -> go(BudgetFragmentDirections.actionToBudgetExpenditureList(args.budgetId)).let { true }
@@ -75,6 +75,4 @@ class BudgetFragment : BaseFragment<BudgetViewModel>() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    override fun getViewModel() = budgetViewModel
 }

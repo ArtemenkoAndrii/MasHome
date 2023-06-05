@@ -12,11 +12,11 @@ import com.mas.mobile.presentation.viewmodel.MessageListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.repository.db.entity.SpendingMessage
 
-class MessageListFragment: BaseListFragment() {
+class MessageListFragment: ListFragment() {
     private lateinit var binding: MessageListFragmentBinding
 
-    private val messageListViewModel: MessageListViewModel by lazyViewModel {
-        this.requireContext().appComponent.messageListViewModel().create("test")
+    val listViewModel: MessageListViewModel by lazyViewModel {
+        this.requireContext().appComponent.messageListViewModel().create("dummy")
     }
 
     override fun onCreateView(
@@ -32,7 +32,7 @@ class MessageListFragment: BaseListFragment() {
         binding.messageList.adapter = adapter
         binding.messageList.layoutManager = LinearLayoutManager(this.requireContext())
 
-        messageListViewModel.messages.observe(viewLifecycleOwner) { message ->
+        listViewModel.messages.observe(viewLifecycleOwner) { message ->
             adapter.setItems(message)
         }
 
@@ -58,14 +58,4 @@ class MessageListFragment: BaseListFragment() {
 
     override fun resolveAddButtonDestination() =
         MessageListFragmentDirections.actionToMessageRules(Action.VIEW.name)
-
-    fun removeItem(item: SpendingMessage) {
-        showConfirmationDialog {
-            messageListViewModel.remove(item)
-        }
-    }
-
-    fun markAsRead(item: SpendingMessage) {
-        messageListViewModel.markAsRead(item)
-    }
 }

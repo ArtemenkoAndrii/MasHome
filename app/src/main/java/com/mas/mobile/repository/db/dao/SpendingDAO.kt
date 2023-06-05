@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mas.mobile.repository.db.entity.Spending
 import com.mas.mobile.repository.db.entity.SpendingData
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Dao
 interface SpendingDAO {
     @Transaction
-    @Query("SELECT * FROM spendings")
-    fun getAllLive(): LiveData<List<Spending>>
+    @Query("SELECT * FROM spendings WHERE date >= :from ORDER BY date DESC")
+    fun getLiveSpendings(from: LocalDateTime): LiveData<List<Spending>>
 
     @Transaction
     @Query("SELECT * FROM spendings WHERE id = :spendingId")
@@ -26,6 +28,10 @@ interface SpendingDAO {
     @Transaction
     @Query("SELECT s.* FROM spendings s INNER JOIN expenditures e ON s.expenditure_id = e.id WHERE e.budget_id = :budgetId ORDER BY s.date DESC")
     fun getByBudgetId(budgetId: Int): List<Spending>
+
+    @Transaction
+    @Query("SELECT s.* FROM spendings s INNER JOIN expenditures e ON s.expenditure_id = e.id WHERE e.budget_id = :budgetId ORDER BY s.date DESC")
+    fun getByBudgetIdLive(budgetId: Int): LiveData<List<Spending>>
 
     @Ignore
     suspend fun insert(spending: Spending) =
@@ -49,4 +55,10 @@ interface SpendingDAO {
 
     @Delete
     suspend fun deleteSpendingData(spending: SpendingData)
+
+    @Query("DELETE FROM spendings WHERE id = :spendingId")
+    suspend fun deleteSpendingById(spendingId: Int)
+
+    @Upsert
+    suspend fun upsert(spending: SpendingData): Long
 }

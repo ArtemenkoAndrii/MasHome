@@ -4,7 +4,7 @@
         <import type="android.view.View"/>
         <import type="com.mas.mobile.presentation.activity.converter.MoneyConverter"/>
         <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
-        <import type="com.mas.mobile.model.Period"/>
+        <import type="com.mas.mobile.domain.settings.Period"/>
 
         <variable name="settings"
             type="com.mas.mobile.presentation.viewmodel.SettingsViewModel"/>

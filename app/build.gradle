@@ -4,14 +4,14 @@ apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.mas.mobile"
         minSdkVersion 26
         targetSdkVersion 32
-        versionCode 12ss
+        versionCode 12
         versionName "1.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,8 +44,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.4.1"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
-    implementation "androidx.room:room-runtime:2.4.2"
-    implementation "androidx.room:room-ktx:2.4.2"
+    implementation "androidx.room:room-runtime:2.5.0"
+    implementation "androidx.room:room-ktx:2.5.0"
     implementation "androidx.navigation:navigation-fragment-ktx:2.4.1"
     implementation "androidx.navigation:navigation-ui-ktx:2.4.1"
     implementation "androidx.navigation:navigation-dynamic-features-fragment:2.4.1"
@@ -56,7 +56,7 @@ dependencies {
     implementation "com.google.android.material:material:1.5.0"
     debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
 
-    kapt "androidx.room:room-compiler:2.4.2"
+    kapt "androidx.room:room-compiler:2.5.0"
     kapt "com.google.dagger:dagger-compiler:2.40.1"
 
     testImplementation "junit:junit:4.13.2"

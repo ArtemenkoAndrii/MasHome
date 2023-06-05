@@ -6,7 +6,7 @@
         <import type="android.view.View"/>
 
         <variable name="messageRule"
-            type="com.mas.mobile.repository.db.entity.MessageRule"/>
+            type="com.mas.mobile.domain.message.MessageRule"/>
         <variable name="callback"
             type="android.view.View.OnClickListener"/>
     </data>

@@ -15,13 +15,12 @@ import com.mas.mobile.presentation.adapter.SpendingAdapter
 import com.mas.mobile.presentation.viewmodel.NEW_ITEM
 import com.mas.mobile.presentation.viewmodel.SpendingListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Spending
 
-open class SpendingListFragment : BaseListFragment() {
+open class SpendingListFragment : ListFragment() {
     private val args: SpendingListFragmentArgs by navArgs()
     private lateinit var binding: SpendingListFragmentBinding
 
-    protected val spendingViewModel: SpendingListViewModel by lazyViewModel {
+    val listViewModel: SpendingListViewModel by lazyViewModel {
         this.requireContext().appComponent.spendingListViewModel().create(args.budgetId)
     }
 
@@ -38,7 +37,7 @@ open class SpendingListFragment : BaseListFragment() {
         binding.spendingList.adapter = adapter
         binding.spendingList.layoutManager = LinearLayoutManager(this.requireContext())
 
-        spendingViewModel.spendings.observe(viewLifecycleOwner) { spending ->
+        listViewModel.spendings.observe(viewLifecycleOwner) { spending ->
             adapter.setItems(spending)
         }
 
@@ -57,12 +56,6 @@ open class SpendingListFragment : BaseListFragment() {
 
     override fun resolveAddButtonDestination() =
         SpendingListFragmentDirections.actionToSpending(Action.ADD.name)
-
-    fun removeItem(item: Spending) {
-        showConfirmationDialog() {
-            spendingViewModel.remove(item)
-        }
-    }
 }
 
 class BudgetSpendingListFragment: SpendingListFragment() {
@@ -78,7 +71,7 @@ class BudgetSpendingListFragment: SpendingListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         hideBottomMenu()
-        spendingViewModel.budget.observe(viewLifecycleOwner) { budget ->
+        listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }
         return super.onCreateView(inflater, container, savedInstanceState)

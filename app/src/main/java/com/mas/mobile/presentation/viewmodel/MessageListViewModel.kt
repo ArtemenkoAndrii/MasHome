@@ -1,25 +1,24 @@
 package com.mas.mobile.presentation.viewmodel
 
-import com.mas.mobile.repository.SpendingMessageRepository
-import com.mas.mobile.repository.db.entity.SpendingMessage
+import com.mas.mobile.domain.message.Message
+import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.time.LocalDate
 
 class MessageListViewModel @AssistedInject constructor(
-    private val messageRepository: SpendingMessageRepository,
+    private val messageRepository: MessageRepository,
     private val coroutineService: CoroutineService,
     @Assisted param: String
-): BaseListViewModel<SpendingMessage>(coroutineService) {
-    val messages = messageRepository.live.getAll()
+): ListViewModel<Message>(coroutineService, messageRepository) {
+    val messages = messageRepository.getLiveMessages(LocalDate.now().minusDays(30))
 
-    override fun getRepository() = messageRepository
-
-    fun markAsRead(item: SpendingMessage) {
+    fun markAsRead(item: Message) {
         coroutineService.backgroundTask {
             item.isNew = false
-            messageRepository.update(item)
+            messageRepository.save(item)
         }
     }
 

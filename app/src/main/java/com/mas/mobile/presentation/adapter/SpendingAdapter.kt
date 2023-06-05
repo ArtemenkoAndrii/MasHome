@@ -5,10 +5,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.SpendingListRowBinding
+import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.presentation.activity.fragment.SpendingListFragment
 import com.mas.mobile.presentation.activity.fragment.SpendingListFragmentDirections
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Spending
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,22 +32,26 @@ class SpendingAdapter(
             menu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.standard_row_menu_view -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_edit -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.EDIT.name, item.id)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.EDIT.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_clone -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.CLONE.name, item.id)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.CLONE.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_remove -> {
-                        fragment.removeItem(item)
+                        with(fragment) {
+                            showConfirmationDialog(getResourceService().messageAreYouSure()) {
+                                listViewModel.remove(item)
+                            }
+                        }
                         true
                     }
                     else -> false
@@ -57,7 +61,7 @@ class SpendingAdapter(
         }
 
         binding.spendingListRowLayout.setOnClickListener {
-            val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id)
+            val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id.value)
             rowView.findNavController().navigate(action)
         }
     }

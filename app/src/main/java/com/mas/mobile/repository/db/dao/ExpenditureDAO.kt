@@ -15,6 +15,9 @@ interface ExpenditureDAO {
     @Query("SELECT DISTINCT 1 `id`, `name`, 0 `plan`, 0 `fact`, '' `comment`, 1 `budget_id` FROM expenditures e")
     fun getUniqueNamesLive(): LiveData<List<Expenditure>>
 
+    @Query("SELECT DISTINCT `name` FROM expenditures")
+    fun getUniqueNames(): List<String>
+
     @Transaction
     @Query("SELECT * FROM expenditures WHERE budget_id = :budgetId")
     fun getByBudgetIdLive(budgetId: Int): LiveData<List<Expenditure>>
@@ -57,4 +60,10 @@ interface ExpenditureDAO {
 
     @Delete
     suspend fun deleteExpenditureData(expenditure: ExpenditureData)
+
+    @Query("DELETE FROM expenditures WHERE id = :expenditureId")
+    suspend fun deleteExpenditureById(expenditureId: Int)
+
+    @Upsert
+    suspend fun upsert(expenditure: ExpenditureData): Long
 }

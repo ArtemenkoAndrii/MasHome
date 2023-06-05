@@ -1,12 +1,12 @@
 package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import com.mas.mobile.domain.budget.Budget
+import com.mas.mobile.domain.budget.BudgetRepository
+import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
-import com.mas.mobile.repository.BudgetRepository
-import com.mas.mobile.repository.db.entity.Budget
-import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -14,13 +14,18 @@ import dagger.assisted.AssistedInject
 import java.time.LocalDate
 
 class BudgetViewModel @AssistedInject constructor(
-    private val budgetRepository: BudgetRepository,
-    private val fieldValidator: FieldValidator,
-    private val budgetService: BudgetService,
     coroutineService: CoroutineService,
+    private val fieldValidator: FieldValidator,
+    private val budgetRepository: BudgetRepository,
+    private val budgetService: BudgetService,
     @Assisted private val action: Action,
-    @Assisted private val budgetId: Int = NEW_ITEM,
-) : BaseViewModel<Budget>(budgetId, action, coroutineService) {
+    @Assisted private val budgetId: Int
+) : ItemViewModel<Budget>(coroutineService, budgetRepository) {
+    override val model: Budget = loadModel()
+
+    var startsOnValue: LocalDate = LocalDate.now()
+    var lastDayAtValue: LocalDate = LocalDate.now()
+
     val name = MutableLiveData<String>()
     val nameError = MutableLiveData(Validator.NO_ERRORS)
     val plan = MutableLiveData<Double>()
@@ -31,14 +36,19 @@ class BudgetViewModel @AssistedInject constructor(
     val lastDayAtError = MutableLiveData(Validator.NO_ERRORS)
     val comment = MutableLiveData<String?>()
 
-    var startsOnValue: LocalDate = LocalDate.now()
-    var lastDayAtValue: LocalDate = LocalDate.now()
-
     init {
-        load()
+        initProperties(model)
     }
 
-    override fun afterLoad(item: Budget) {
+    private fun loadModel() =
+        when(action) {
+            Action.ADD -> budgetService.createNext()
+            Action.VIEW -> budgetRepository.getBudget(budgetId)
+            Action.EDIT -> budgetRepository.getBudget(budgetId).also { enableEditing() }
+            else -> throw ActionNotSupportedException("BudgetViewModel does not support $action action")
+        } ?: throw ItemNotFoundException("Item not found id=$budgetId")
+
+    private fun initProperties(item: Budget) {
         name.value = item.name
         name.observeForever {
             item.name = it
@@ -75,21 +85,12 @@ class BudgetViewModel @AssistedInject constructor(
         }
     }
 
-    override fun getRepository() = budgetRepository
-
     fun isChangeable() =
-        budgetRepository.getLastCompletedOn(LocalDate.MAX)?.let {
-            it.id == budgetId
-        } ?: true
-
-    override suspend fun afterRemove(item: Budget) {
-        // Just for case if the only budget will be removed
-        budgetService.reloadBudget()
-    }
+        budgetRepository.getLast()?.let { it.id.value == budgetId } ?: true
 
     @AssistedFactory
     interface Factory {
-        fun create(budget: Int = NEW_ITEM, action: Action): BudgetViewModel
+        fun create(action: Action, budget: Int): BudgetViewModel
     }
 
     companion object {

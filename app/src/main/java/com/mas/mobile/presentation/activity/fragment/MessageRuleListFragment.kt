@@ -13,13 +13,12 @@ import com.mas.mobile.databinding.MessageRuleListFragmentBinding
 import com.mas.mobile.presentation.adapter.MessageRuleAdapter
 import com.mas.mobile.presentation.viewmodel.MessageRuleListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.MessageRule
 
-open class MessageRuleListFragment : BaseListFragment() {
+open class MessageRuleListFragment : ListFragment() {
     private val args: SpendingListFragmentArgs by navArgs()
     private lateinit var binding: MessageRuleListFragmentBinding
 
-    private val messageRuleListViewModel: MessageRuleListViewModel by lazyViewModel {
+    val listViewModel: MessageRuleListViewModel by lazyViewModel {
         this.requireContext().appComponent.messageRuleListViewModel().create("test")
     }
 
@@ -36,7 +35,7 @@ open class MessageRuleListFragment : BaseListFragment() {
         binding.messageRuleList.adapter = adapter
         binding.messageRuleList.layoutManager = LinearLayoutManager(this.requireContext())
 
-        messageRuleListViewModel.messageRules.observe(viewLifecycleOwner) {
+        listViewModel.messageRules.observe(viewLifecycleOwner) {
             adapter.setItems(it)
         }
 
@@ -55,12 +54,6 @@ open class MessageRuleListFragment : BaseListFragment() {
     override fun onDestroy() {
         showBottomMenu()
         super.onDestroy()
-    }
-
-    fun deleteItem(item: MessageRule) {
-        showConfirmationDialog {
-            messageRuleListViewModel.remove(item)
-        }
     }
 }
 

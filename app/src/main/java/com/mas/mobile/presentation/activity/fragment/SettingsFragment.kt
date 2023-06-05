@@ -16,8 +16,8 @@ import androidx.navigation.fragment.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.SettingsFragmentBinding
+import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.presentation.viewmodel.SettingsViewModel
-import com.mas.mobile.service.BudgetService.Companion.TEMPLATE_BUDGET_ID
 import com.mas.mobile.service.NotificationListener
 
 
@@ -89,7 +89,7 @@ class SettingsFragment : CommonFragment() {
         showInfoDialog(getResourceService().messageSettingsFirstLaunch()) {}
         closeAction = {
             menuVisibility(true)
-            go(SettingsFragmentDirections.actionToTemplateExpenditures(TEMPLATE_BUDGET_ID))
+            go(SettingsFragmentDirections.actionToTemplateExpenditures(BudgetService.TEMPLATE_BUDGET_ID))
             true
         }
     }

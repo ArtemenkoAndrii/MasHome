@@ -4,19 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.ExpenditureFragmentBinding
-import com.mas.mobile.presentation.adapter.AutoCompleteAdapter
 import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
-class ExpenditureFragment : BaseFragment<ExpenditureViewModel>() {
+class ExpenditureFragment : ItemFragment<ExpenditureViewModel>() {
     private lateinit var binding: ExpenditureFragmentBinding
     private val args: ExpenditureFragmentArgs by navArgs()
 
-    private val expenditureViewModel: ExpenditureViewModel by lazyViewModel {
+    override val viewModel: ExpenditureViewModel by lazyViewModel {
         this.requireContext().appComponent.expenditureViewModel().create(
             args.expenditureId,
             args.budgetId,
@@ -35,24 +35,28 @@ class ExpenditureFragment : BaseFragment<ExpenditureViewModel>() {
         action = Action.valueOf(args.action)
 
         binding = ExpenditureFragmentBinding.bind(layout)
-        binding.expenditure = expenditureViewModel
+        binding.expenditure = viewModel
         binding.lifecycleOwner = this
 
         binding.expenditureSaveButton.setOnClickListener {
-            saveAndClose(expenditureViewModel)
+            saveAndClose(viewModel)
         }
 
-        expenditureViewModel.availableExpenditures.observe(viewLifecycleOwner) {
-            val adapter = AutoCompleteAdapter(this.requireContext(), it.map { e -> e.data })
-            binding.expenditureName.setAdapter(adapter)
+        ArrayAdapter(this.requireContext(),
+            R.layout.autocomplete_item,
+            viewModel.availableExpenditures.toList()).also {
+            binding.expenditureName.setAdapter(it)
         }
+
+//        viewModel.availableExpenditures.observe(viewLifecycleOwner) {
+//            val adapter = AutoCompleteAdapter(this.requireContext(), it.map { e -> e.data })
+//            binding.expenditureName.setAdapter(adapter)
+//        }
 
         return layout
     }
 
     override fun onEdit() {
-        expenditureViewModel.enableEditing()
+        viewModel.enableEditing()
     }
-
-    override fun getViewModel() = expenditureViewModel
 }

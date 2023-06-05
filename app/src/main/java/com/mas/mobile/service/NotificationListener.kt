@@ -8,6 +8,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.mas.mobile.appComponent
+import com.mas.mobile.domain.message.MessageService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
@@ -15,19 +16,13 @@ import javax.inject.Inject
 
 class NotificationListener: NotificationListenerService() {
     @Inject
-    lateinit var messageService: SpendingMessageService
+    lateinit var messageService: MessageService
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         this.appComponent.injectNotificationListener(this)
 
-        ifMessage(sbn) {
-            messageService.processMessage(it)
-        }
-    }
-
-    private fun ifMessage(sbn: StatusBarNotification?, process: (message: Message) -> Unit) {
         if (sbn != null) {
-            val postDate = toLocalDateTime(sbn.postTime)
+            val date = toLocalDateTime(sbn.postTime)
             val sender = extractSender(sbn).toString()
             val title = sbn.notification.extras[EXTRA_TITLE]?.toString()
             val text = sbn.notification.extras[EXTRA_TEXT]?.toString()
@@ -38,9 +33,10 @@ class NotificationListener: NotificationListenerService() {
                 "$title\n$text"
             }
 
-            process(Message(sender, postDate, message))
+            messageService.handleMessage(sender, message, date)
         }
     }
+
 
     private fun grabCustomContentView(notification: Notification) =
         try {

@@ -1,27 +1,26 @@
 package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.mas.mobile.BuildConfig
-import com.mas.mobile.model.DayOfMonth
-import com.mas.mobile.model.Period
-import com.mas.mobile.model.Period.*
-import com.mas.mobile.repository.SettingsRepository
+import com.mas.mobile.domain.settings.DayOfMonth
+import com.mas.mobile.domain.settings.Period
+import com.mas.mobile.domain.settings.Settings
+import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.CoroutineService
 import com.mas.mobile.service.PermissionService
-import com.mas.mobile.service.SettingsService
+import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.util.DateTool
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.DayOfWeek
 
 class SettingsViewModel @AssistedInject constructor(
-    private val settingsRepository: SettingsRepository,
-    private val coroutineService: CoroutineService,
+    settingsRepository: SettingsRepository,
+    coroutineService: CoroutineService,
     private val settingsService: SettingsService,
     private val permissionService: PermissionService
-) : ViewModel() {
-    private var item = settingsRepository.get()
+) : ItemViewModel<Settings>(coroutineService, settingsRepository) {
+    override var model = settingsRepository.get()
 
     var period = MutableLiveData<Period>()
     var startDayOfMonth = MutableLiveData<Int>()
@@ -48,38 +47,32 @@ class SettingsViewModel @AssistedInject constructor(
     val availableDaysOfWeek = dayOfWeekMap.map { it.second }.toList()
 
     init {
-        afterLoad()
+        initProperties()
     }
 
-    fun isThisFirstLaunch() = settingsService.isThisFirstLaunch()
+    fun isThisFirstLaunch() = settingsService.isFirstLaunch()
 
-    fun save() {
-        coroutineService.backgroundTask {
-            settingsRepository.update(item)
-        }
-    }
-
-    private fun afterLoad() {
-        period.value = item.period
+    private fun initProperties() {
+        period.value = model.period
         period.observeForever {
-            item.period = it
+            model.period = it
             switchDateFields(it)
         }
 
-        startDayOfMonth.value = availableDaysOfMonth.indexOf(item.startDayOfMonth.value)
+        startDayOfMonth.value = availableDaysOfMonth.indexOf(model.startDayOfMonth.value)
         startDayOfMonth.observeForever {
-            item.startDayOfMonth = DayOfMonth(availableDaysOfMonth[it])
+            model.startDayOfMonth = DayOfMonth(availableDaysOfMonth[it])
         }
 
-        startDayOfWeek.value = dayOfWeekMap.withIndex().filter { it.value.first == item.startDayOfWeek }.map { it.index }.first()
+        startDayOfWeek.value = dayOfWeekMap.withIndex().filter { it.value.first == model.startDayOfWeek }.map { it.index }.first()
         startDayOfWeek.observeForever {
-            item.startDayOfWeek = dayOfWeekMap[it].first
+            model.startDayOfWeek = dayOfWeekMap[it].first
         }
 
-        captureSms.value = item.captureSms
+        captureSms.value = model.captureSms
         captureSms.observeForever {
-            if (item.captureSms != it) {
-                item.captureSms = it
+            if (model.captureSms != it) {
+                model.captureSms = it
 
                 if (it && !permissionService.isSMSAllowed()) {
                     onRequestSMSPermissions()
@@ -87,10 +80,10 @@ class SettingsViewModel @AssistedInject constructor(
             }
         }
 
-        captureNotifications.value = item.captureNotifications
+        captureNotifications.value = model.captureNotifications
         captureNotifications.observeForever {
-            if (item.captureNotifications != it) {
-                item.captureNotifications = it
+            if (model.captureNotifications != it) {
+                model.captureNotifications = it
 
                 if (it && !permissionService.isNotificationsAllowed()) {
                     onRequestNotificationPermissions()
@@ -100,23 +93,23 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     fun setMonthPeriod() {
-        period.value = MONTH
+        period.value = Period.MONTH
     }
 
     fun setWeekPeriod() {
-        period.value = WEEK
+        period.value = Period.WEEK
     }
 
     fun set2Week2Period() {
-        period.value = TWO_WEEKS
+        period.value = Period.TWO_WEEKS
     }
 
     fun setQuarterPeriod() {
-        period.value = QUARTER
+        period.value = Period.QUARTER
     }
 
     fun setYearPeriod() {
-        period.value = YEAR
+        period.value = Period.YEAR
     }
 
     fun onRequestSMSPermissions(handler: () -> Unit) {
@@ -132,8 +125,8 @@ class SettingsViewModel @AssistedInject constructor(
         startDayOfWeekVisible.value = false
 
         when (period) {
-            MONTH -> startDayOfMonthVisible.value = true
-            WEEK, TWO_WEEKS -> startDayOfWeekVisible.value = true
+            Period.MONTH -> startDayOfMonthVisible.value = true
+            Period.WEEK, Period.TWO_WEEKS -> startDayOfWeekVisible.value = true
             else -> {}
         }
     }

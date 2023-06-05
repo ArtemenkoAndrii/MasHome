@@ -1,7 +1,6 @@
 package com.mas.mobile.service
 
-import com.mas.mobile.repository.MessageRuleRepository
-import com.mas.mobile.repository.db.entity.MessageRule
+import com.mas.mobile.domain.message.*
 import com.mas.mobile.util.DateTool
 import io.mockk.every
 import io.mockk.mockk

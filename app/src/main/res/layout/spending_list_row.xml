@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
 
         <variable name="spending"
-            type="com.mas.mobile.repository.db.entity.Spending"/>
+            type="com.mas.mobile.domain.budget.Spending"/>
         <variable name="callback"
             type="android.view.View.OnClickListener"/>
     </data>

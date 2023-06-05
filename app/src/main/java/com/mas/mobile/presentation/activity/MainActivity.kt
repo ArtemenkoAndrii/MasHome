@@ -15,9 +15,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
-import com.mas.mobile.repository.SpendingMessageRepository
+import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.service.DateListener
-import com.mas.mobile.service.SettingsService
+import com.mas.mobile.domain.settings.SettingsService
+import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration : AppBarConfiguration
 
     @Inject
-    lateinit var messageRepository: SpendingMessageRepository
+    lateinit var messageRepository: MessageRepository
     @Inject
     lateinit var settingsService: SettingsService
 
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_view) as NavHostFragment).navController
         val graph = navController.navInflater.inflate(R.navigation.nav_graph).also {
-            val isThisFirstRun = settingsService.isThisFirstLaunch()
+            val isThisFirstRun = settingsService.isFirstLaunch()
             val dest = if (isThisFirstRun) { R.id.nav_settings } else { R.id.nav_expenditure_list }
             it.setStartDestination(dest)
         }
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            messageRepository.countUnreadLive().observeForever {
+            messageRepository.countUnreadLive(LocalDate.now().minusDays(30)).observeForever {
                 val badge = bottomNav.getOrCreateBadge(R.id.nav_message_list_fragment)
                 if (it > 0) {
                     badge.number = it

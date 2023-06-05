@@ -1,33 +1,23 @@
 package com.mas.mobile.presentation.viewmodel
 
-import com.mas.mobile.repository.BudgetRepository
-import com.mas.mobile.repository.db.entity.Budget
-import com.mas.mobile.service.BudgetService
+import com.mas.mobile.domain.budget.Budget
+import com.mas.mobile.domain.budget.BudgetRepository
+import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.service.CoroutineService
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import java.time.LocalDate
 
 class BudgetListViewModel @AssistedInject constructor(
-    private val budgetRepository: BudgetRepository,
+    budgetRepository: BudgetRepository,
+    coroutineService: CoroutineService,
     private val budgetService: BudgetService,
-    private val coroutineService: CoroutineService,
-): BaseListViewModel<Budget>(coroutineService) {
-    val budgets = budgetRepository.live.getAll()
-
-    override fun getRepository() = budgetRepository
+): ListViewModel<Budget>(coroutineService, budgetRepository) {
+    val budgets = budgetRepository.live.getBudgets()
 
     fun createBudget() = budgetService.createNext()
 
     fun isChangeable(item: Budget) =
-        budgetRepository.getLastCompletedOn(LocalDate.MAX)?.let {
-            it.id == item.id
-        } ?: true
-
-    override suspend fun afterRemove(item: Budget) {
-        // Just for case if the only budget will be removed
-        budgetService.reloadBudget()
-    }
+        budgetService.isPeriodChangeable(item)
 
     @AssistedFactory
     interface Factory {

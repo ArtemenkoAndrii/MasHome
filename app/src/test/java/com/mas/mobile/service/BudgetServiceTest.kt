@@ -4,9 +4,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.mas.mobile.model.DayOfMonth
 import com.mas.mobile.model.Period
 import com.mas.mobile.model.Settings
-import com.mas.mobile.repository.BudgetRepository
-import com.mas.mobile.repository.ExpenditureRepository
-import com.mas.mobile.repository.SettingsRepository
 import com.mas.mobile.repository.db.entity.Budget
 import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.repository.db.entity.ExpenditureData

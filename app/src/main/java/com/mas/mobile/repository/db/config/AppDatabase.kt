@@ -1,28 +1,25 @@
 package com.mas.mobile.repository.db.config
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.dao.*
 import com.mas.mobile.repository.db.entity.*
 
 @Database(
-    version = 1,
+    version = 2,
+    exportSchema = true,
     entities = [
         Budget::class,
         SpendingData::class,
         ExpenditureData::class,
         SpendingMessage::class,
         MessageRule::class,
-        Settings::class
-        ],
-//    autoMigrations = [
-//        AutoMigration (from = 1, to = 2, spec = AutoMigration::class)
-//    ]
+        Settings::class,
+        IdGenerator::class
+        ]
 )
 @TypeConverters(SQLiteTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -37,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
+                            db.execSQL(DML.TEMPLATE_GENERATOR)
                             db.execSQL(DML.TEMPLATE_BUDGET)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES1)
                             db.execSQL(DML.TEMPLATE_EXPENDITURES2)
@@ -46,6 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQL(DML.GREETING_MESSAGE_RULES_4)
                         }
                     })
+                    .addMigrations(MIGRATION_1_2,)
                     .build()
             }
             return INSTANCE!!
@@ -58,4 +57,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun spendingMessageDao(): SpendingMessageDAO
     abstract fun messageRuleDao(): MessageRuleDAO
     abstract fun settingsDao(): SettingsDAO
+    abstract fun idGeneratorDAO(): IdGeneratorDAO
+}
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE generator (id INTEGER NOT NULL, PRIMARY KEY(`id`))")
+        database.execSQL("INSERT INTO generator(id) VALUES(1000)")
+    }
 }

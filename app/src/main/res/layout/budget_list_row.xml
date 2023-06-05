@@ -4,7 +4,7 @@
 
     <data>
         <variable name="budget"
-            type="com.mas.mobile.repository.db.entity.Budget"/>
+            type="com.mas.mobile.domain.budget.Budget"/>
         <variable name="callback"
             type="android.view.View.OnClickListener"/>
     </data>

@@ -5,10 +5,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.MessageRuleListRowBinding
+import com.mas.mobile.domain.message.MessageRule
 import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragment
 import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragmentDirections
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.MessageRule
 
 class MessageRuleAdapter(
     private val fragment: MessageRuleListFragment
@@ -17,7 +17,7 @@ class MessageRuleAdapter(
         val rowView = binding.messageRuleRowLayout
         binding.messageRule = item
         binding.messageRuleRowLayout.setOnClickListener {
-            val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.VIEW.name, item.id)
+            val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.VIEW.name, item.id.value)
             rowView.findNavController().navigate(action)
         }
         binding.callback = View.OnClickListener{ viewMenu ->
@@ -26,22 +26,26 @@ class MessageRuleAdapter(
             menu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.standard_row_menu_view -> {
-                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.VIEW.name, item.id)
+                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.VIEW.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_edit -> {
-                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.EDIT.name, item.id)
+                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.EDIT.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_clone -> {
-                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.CLONE.name, item.id)
+                        val action = MessageRuleListFragmentDirections.actionToMessageRules(Action.CLONE.name, item.id.value)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_remove -> {
-                        fragment.deleteItem(item)
+                        with(fragment) {
+                            showConfirmationDialog(getResourceService().messageAreYouSure()) {
+                                listViewModel.remove(item)
+                            }
+                        }
                         true
                     }
                     else -> false

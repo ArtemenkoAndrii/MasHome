@@ -26,4 +26,7 @@ interface MessageRuleDAO {
 
     @Delete
     suspend fun delete(messageRule: MessageRule)
+
+    @Upsert
+    suspend fun upsert(messageRule: MessageRule): Long
 }

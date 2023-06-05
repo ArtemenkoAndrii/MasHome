@@ -1,36 +1,38 @@
 package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.mas.mobile.model.SpendingMessageEnvelop
+import com.mas.mobile.domain.Repository
+import com.mas.mobile.domain.budget.*
+import com.mas.mobile.domain.message.MessageId
+import com.mas.mobile.domain.message.MessageRepository
+import com.mas.mobile.domain.budget.SpendingMessageEnvelop
 import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel.Companion.EXPENDITURE_MIN_LENGTH
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
-import com.mas.mobile.repository.SpendingMessageRepository
-import com.mas.mobile.repository.SpendingRepository
-import com.mas.mobile.repository.db.entity.Spending
-import com.mas.mobile.service.BudgetService
 import com.mas.mobile.service.CoroutineService
-import com.mas.mobile.service.ExpenditureService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.LocalDateTime
 
 class SpendingViewModel @AssistedInject constructor(
+    budgetService: BudgetService,
+    coroutineService: CoroutineService,
     private val spendingRepository: SpendingRepository,
-    private val expenditureService: ExpenditureService,
-    private val budgetService: BudgetService,
-    private val spendingMessageRepository: SpendingMessageRepository,
+    private val expenditureRepository: ExpenditureRepository,
+    private val messageRepository: MessageRepository,
     private val fieldValidator: FieldValidator,
-    private val coroutineService: CoroutineService,
     @Assisted private val action: Action,
-    @Assisted("spendingId") pSpendingId: Int,
-    @Assisted("expenditureId") pExpenditureId: Int,
-    @Assisted("budgetId") pBudgetId: Int,
+    @Assisted("spendingId") private val pSpendingId: Int,
+    @Assisted("expenditureId") private val pExpenditureId: Int,
+    @Assisted("budgetId") private val pBudgetId: Int,
     @Assisted("envelop") private val envelop: String,
-) : BaseViewModel<Spending>(pSpendingId, action, coroutineService) {
-    var comment = MutableLiveData<String?>()
+) : ItemViewModel<Spending>(coroutineService, SpendingRepositoryAdapter(budgetService, BudgetId(pBudgetId))) {
+    private val budget = budgetService.loadBudget(BudgetId(pBudgetId))
+    override val model: Spending = loadModel()
+
+    var comment = MutableLiveData<String>()
     var commentError = MutableLiveData(Validator.NO_ERRORS)
     var date = MutableLiveData<LocalDateTime>()
     var dateError = MutableLiveData(Validator.NO_ERRORS)
@@ -40,21 +42,38 @@ class SpendingViewModel @AssistedInject constructor(
     var expenditureNameError = MutableLiveData(Validator.NO_ERRORS)
     private var expenditureNameValue = ""
 
-    private val budgetId = if (pBudgetId == ACTIVE_BUDGET) {
-                                budgetService.getActiveOrCreate().id
-                            } else {
-                                pBudgetId
-                            }
-    val availableExpenditures = expenditureService.expenditureRepository.live.getByBudgetId(budgetId)
+    val availableExpenditures = expenditureRepository
+        .getExpenditureNames(true, 20)
+        .map { it.value }
+        .toList()
 
     init {
-        load()
-        initDefaultExpenditure(pExpenditureId)
+        initProperties(model)
+        initDefaultExpenditure(ExpenditureId(pExpenditureId))
     }
 
-    override fun getRepository() = spendingRepository
+    private fun loadModel(): Spending =
+        when(action) {
+            Action.ADD -> spendingRepository.create().also { enableEditing() }
+            Action.VIEW -> budget.getSpending(SpendingId(pSpendingId))
+            Action.EDIT -> budget.getSpending(SpendingId(pSpendingId)).also { enableEditing() }
+            Action.CLONE -> {
+                enableEditing()
+                spendingRepository.create().also {
+                    val origin = budget.getSpending(SpendingId(pSpendingId))
+                    if (origin != null) {
+                        it.amount = origin.amount
+                        it.date = LocalDateTime.now()
+                        it.comment = origin.comment
+                        it.expenditure = origin.expenditure
+                    }
+                }
+            }
+            else -> throw ActionNotSupportedException("BudgetViewModel does not support $action action")
+        } ?: throw ItemNotFoundException("Item not found id=$pBudgetId")
 
-    override fun afterLoad(item: Spending) {
+
+    private fun initProperties(item: Spending) {
         comment.value = item.comment
         comment.observeForever {
             item.comment = it
@@ -86,32 +105,40 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    override fun beforeSave(item: Spending) {
+    override suspend fun doSave() {
         if (action == Action.ADD || action == Action.EDIT) {
-            item.expenditureId = expenditureService.findOrCreate(expenditureNameValue, budgetId).id
+            model.expenditure = findOrCreate()
         }
+
+        super.doSave()
+
+        markMessageAssigned(model)
     }
 
-    override suspend fun afterSave(item: Spending) {
-        budgetService.calculateBudget(budgetId)
+    private fun findOrCreate(): Expenditure {
+        return budget.findExpenditure(expenditureNameValue)
+            ?: createExpenditure(expenditureNameValue.trim())
+    }
 
+    private fun createExpenditure(name: String): Expenditure =
+        expenditureRepository.create().also {
+            it.name = name
+        }
+
+    suspend fun markMessageAssigned(item: Spending) {
         getDependantSpendingMessage()?.let {
-            val message = spendingMessageRepository.getById(it.id)
+            val message = messageRepository.getById(MessageId(it.id))
             if (message != null) {
                 message.spendingId = item.id
                 message.suggestedExpenditureName = item.expenditure.name
-                spendingMessageRepository.update(message)
+                messageRepository.save(message)
             }
         }
     }
 
-    override suspend fun afterRemove(item: Spending) {
-        budgetService.calculateBudget(item.expenditure.budget_id)
-    }
-
-    private fun initDefaultExpenditure(expenditureId: Int) {
-        if (action == Action.ADD && expenditureId > 0) {
-            expenditureName.value = expenditureService.expenditureRepository.getById(expenditureId)?.name ?: ""
+    private fun initDefaultExpenditure(expenditureId: ExpenditureId) {
+        if (action == Action.ADD && expenditureId.value > 0) {
+            expenditureName.value = budget.getExpenditure(expenditureId)?.name ?: ""
         }
     }
 
@@ -125,8 +152,25 @@ class SpendingViewModel @AssistedInject constructor(
                    @Assisted("envelop") envelop: String,
                    action: Action): SpendingViewModel
     }
+}
 
-    companion object {
-        const val ACTIVE_BUDGET = -1
+class SpendingRepositoryAdapter(val service: BudgetService, budgetId: BudgetId) : Repository<Spending> {
+    private val budget: Budget = service.loadBudget(budgetId)
+
+    override suspend fun save(item: Spending) {
+        if (!hasExpenditure(item.expenditure) ){
+            budget.addExpenditure(item.expenditure)
+        }
+
+        budget.addSpending(item)
+        service.budgetRepository.save(budget)
     }
+
+    override suspend fun remove(item: Spending) {
+        budget.removeSpending(item)
+        service.budgetRepository.save(budget)
+    }
+
+    private fun hasExpenditure(expenditure: Expenditure) =
+        budget.budgetDetails.expenditure.any { it.id == expenditure.id }
 }

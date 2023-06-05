@@ -8,6 +8,11 @@ class DML {
     companion object {
         private val nowAsLong = SQLiteTypeConverter().fromLocalDate(LocalDate.now())
 
+        val TEMPLATE_GENERATOR = """
+            INSERT INTO generator(id)
+            VALUES(100)
+        """.trimIndent()
+
         val TEMPLATE_BUDGET = """
             INSERT INTO budgets(id, name, startsOn, lastDayAt, plan, fact, isActive, comment)
             VALUES(1, "TEMPLATE", $nowAsLong, $nowAsLong, 0.00, 0.00, 0, "Automatically generated");

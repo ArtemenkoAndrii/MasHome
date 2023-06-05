@@ -1,47 +1,51 @@
 package com.mas.mobile.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.mas.mobile.R
-import com.mas.mobile.repository.ExpenditureRepository
-import com.mas.mobile.repository.db.entity.Budget
-import com.mas.mobile.repository.db.entity.Expenditure
-import com.mas.mobile.service.BudgetService
+import com.mas.mobile.domain.Repository
+import com.mas.mobile.domain.budget.Budget
+import com.mas.mobile.domain.budget.BudgetId
+import com.mas.mobile.domain.budget.BudgetService
+import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.service.CoroutineService
-import com.mas.mobile.service.SettingsService
+import com.mas.mobile.domain.settings.SettingsService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class ExpenditureListViewModel @AssistedInject constructor(
-    private val expenditureRepository: ExpenditureRepository,
+    private val coroutineService: CoroutineService,
     private val settingsService: SettingsService,
     private val budgetService: BudgetService,
-    coroutineService: CoroutineService,
-    @Assisted budgetId: Int
-) : BaseListViewModel<Expenditure>(coroutineService) {
-    private val isFirstLaunchSession = settingsService.isThisFirstLaunch().also {
-        if (it) { settingsService.commitFirstRun() }
-    }
-    private var isFirstLaunchInfo = isFirstLaunchSession
+    @Assisted val budgetId: Int
+) : ListViewModel<Expenditure>(coroutineService, RepositoryStub) {
+    private lateinit var currentBudget: Budget
 
-    val budget = budgetService.getBudgetLive(budgetId)
-    val expenditures: LiveData<List<Expenditure>> = Transformations.map(budget) {
-            expenditureRepository.getByBudgetId(it.id)
-        }
+    val budget = budgetService.loadLiveBudget(BudgetId(budgetId))
+    val expenditures = Transformations.map(budget) {
+        //it.budgetDetails.expenditure
+        budgetService.expenditureRepository.getExpenditures(it.id)
+    }
     val color = Transformations.map(budget) { calcColor(it) }
 
-    fun recreateActiveBudget() {
-        budgetService.recreateActiveBudget()
+    init {
+        budget.observeForever {
+            currentBudget = it
+        }
     }
 
-    fun isFirstLaunchSession() = isFirstLaunchSession
-    fun isFirstLaunchInfo() = isFirstLaunchInfo.also { isFirstLaunchInfo = false }
+    fun isFirstLaunch() = settingsService.isFirstLaunch()
 
-    override fun getRepository() = expenditureRepository
+    fun completeFirstLaunch() {
+        budgetService.recreateActiveBudget()
+        settingsService.completeFirstLaunch()
+    }
 
-    override suspend fun afterRemove(item: Expenditure) {
-        budgetService.calculateBudget(item.budget.id)
+    override fun remove(item: Expenditure) {
+        coroutineService.backgroundTask {
+            currentBudget.removeExpenditure(item)
+            budgetService.budgetRepository.save(currentBudget)
+        }
     }
 
     private fun calcColor(budget: Budget) =
@@ -55,4 +59,9 @@ class ExpenditureListViewModel @AssistedInject constructor(
     interface Factory {
         fun create(budgetId: Int): ExpenditureListViewModel
     }
+}
+
+private object RepositoryStub : Repository<Expenditure> {
+    override suspend fun save(item: Expenditure) { }
+    override suspend fun remove(item: Expenditure) { }
 }

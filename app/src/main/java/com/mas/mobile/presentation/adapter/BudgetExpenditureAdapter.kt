@@ -5,12 +5,12 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.ExpenditureListRowBinding
-import com.mas.mobile.presentation.activity.fragment.BudgetExpenditureListFragment
+import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.presentation.activity.fragment.BudgetExpenditureListFragmentDirections
+import com.mas.mobile.presentation.activity.fragment.ExpenditureListFragment
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Expenditure
 
-class BudgetExpenditureAdapter(private val fragment: BudgetExpenditureListFragment): ExpenditureAdapter() {
+class BudgetExpenditureAdapter(private val fragment: ExpenditureListFragment): ExpenditureAdapter() {
     override fun bind(binding: ExpenditureListRowBinding, item: Expenditure, prior: Expenditure?) {
         binding.expenditure = item
 
@@ -23,33 +23,40 @@ class BudgetExpenditureAdapter(private val fragment: BudgetExpenditureListFragme
                     R.id.standard_row_menu_edit ->
                         BudgetExpenditureListFragmentDirections.actionToBudgetExpenditure(
                             Action.EDIT.name,
-                            item.id,
-                            item.budget.id
+                            item.id.value,
+                            fragment.listViewModel.budgetId
                         ).also { controller.navigate(it) }
                     R.id.standard_row_menu_clone ->
                         BudgetExpenditureListFragmentDirections.actionToBudgetExpenditure(
                             Action.CLONE.name,
-                            item.id,
-                            item.budget.id
+                            item.id.value,
+                            fragment.listViewModel.budgetId
                         ).also { controller.navigate(it) }
-                    R.id.standard_row_menu_remove ->
-                        fragment.removeItem(item)
-                    else -> view(item).also { controller.navigate(it) }
+                    R.id.standard_row_menu_remove -> {
+                        with(fragment) {
+                            showConfirmationDialog(getResourceService().messageAreYouSure()) {
+                                listViewModel.remove(item)
+                            }
+                        }
+                    }
+                    else ->
+                        BudgetExpenditureListFragmentDirections.actionToBudgetExpenditure(
+                            Action.VIEW.name,
+                            item.id.value,
+                            fragment.listViewModel.budgetId
+                        ).also { controller.navigate(it) }
                 }
                 true
             }
             menu.show()
         }
 
-        binding.expenditureRowLayout.setOnClickListener {
-            binding.expenditureRowLayout.findNavController().navigate(view(item))
+        binding.expenditureRowLayout.setOnClickListener { _ ->
+            BudgetExpenditureListFragmentDirections.actionToBudgetExpenditure(
+                Action.VIEW.name,
+                item.id.value,
+                fragment.listViewModel.budgetId
+            ).also { binding.expenditureRowLayout.findNavController().navigate(it) }
         }
     }
-
-    private fun view(item: Expenditure) =
-        BudgetExpenditureListFragmentDirections.actionToBudgetExpenditure(
-            Action.VIEW.name,
-            item.id,
-            item.budget.id
-        )
 }

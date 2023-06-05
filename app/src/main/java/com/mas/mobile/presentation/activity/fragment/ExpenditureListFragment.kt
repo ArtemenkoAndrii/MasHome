@@ -17,13 +17,12 @@ import com.mas.mobile.presentation.adapter.ExpenditureAdapter
 import com.mas.mobile.presentation.viewmodel.ExpenditureListViewModel
 import com.mas.mobile.presentation.viewmodel.NEW_ITEM
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.Expenditure
 
-open class ExpenditureListFragment : BaseListFragment() {
+open class ExpenditureListFragment : ListFragment() {
     private val args: ExpenditureListFragmentArgs by navArgs()
     protected lateinit var binding: ExpenditureListFragmentBinding
 
-    protected val expenditureViewModel: ExpenditureListViewModel by lazyViewModel {
+    val listViewModel: ExpenditureListViewModel by lazyViewModel {
         this.requireContext().appComponent.expenditureListViewModel().create(args.budgetId)
     }
 
@@ -39,11 +38,11 @@ open class ExpenditureListFragment : BaseListFragment() {
         binding = ExpenditureListFragmentBinding.bind(layout)
         binding.expenditureList.adapter = adapter
         binding.expenditureList.layoutManager = LinearLayoutManager(this.requireContext())
-        binding.model = expenditureViewModel
+        binding.model = listViewModel
         binding.lifecycleOwner = this
 
-        expenditureViewModel.expenditures.observe(viewLifecycleOwner) { expenditure ->
-            adapter.setItems(expenditure)
+        listViewModel.expenditures.observe(viewLifecycleOwner) {
+            adapter.setItems(it)
         }
 
         binding.expenditureAddSpending.setOnClickListener {
@@ -72,6 +71,7 @@ open class ExpenditureListFragment : BaseListFragment() {
 
 class BudgetExpenditureListFragment: ExpenditureListFragment() {
     private val args: BudgetExpenditureListFragmentArgs by navArgs()
+    private var infoDialogShown = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,14 +79,15 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         hideBottomMenu()
-        expenditureViewModel.budget.observe(viewLifecycleOwner) { budget ->
+        listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }
         val layout = super.onCreateView(inflater, container, savedInstanceState)
 
-        if (expenditureViewModel.isFirstLaunchSession()) {
+        if (listViewModel.isFirstLaunch()) {
             handleFirstLaunch()
         }
+
         return layout
     }
 
@@ -106,18 +107,14 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         binding.expenditureListProgress.visibility = View.GONE
         binding.expenditureListFinish.visibility = View.VISIBLE
         binding.expenditureListFinish.setOnClickListener {
-            expenditureViewModel.recreateActiveBudget()
+            listViewModel.completeFirstLaunch()
             showBottomMenu()
             this.findNavController().navigate(R.id.nav_expenditure_list)
         }
-        if (expenditureViewModel.isFirstLaunchInfo()) {
-            showInfoDialog(getResourceService().messageExpenditureFirstLaunch()) {}
-        }
-    }
 
-    fun removeItem(item: Expenditure) {
-        showConfirmationDialog {
-            expenditureViewModel.remove(item)
+        if (!infoDialogShown) {
+            showInfoDialog(getResourceService().messageExpenditureFirstLaunch()) {}
+            infoDialogShown = true
         }
     }
 }
