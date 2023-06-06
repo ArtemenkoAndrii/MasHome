@@ -26,6 +26,11 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
             )
         )
 
+    override fun getSpending(id: SpendingId): Spending? =
+         db.spendingDao().getById(id.value)?.let {
+            it.data.toModel(it.expenditure.toModel())
+        }
+
     override fun getLiveSpendings(from: LocalDate): LiveData<List<Spending>> =
         Transformations.map(db.spendingDao().getLiveSpendings(from.atStartOfDay())) { list ->
             list.map { it.data.toModel(it.expenditure.toModel()) }.toList()

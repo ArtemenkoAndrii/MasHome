@@ -14,7 +14,7 @@ interface SpendingDAO {
 
     @Transaction
     @Query("SELECT * FROM spendings WHERE id = :spendingId")
-    fun getById(spendingId: Int): Spending
+    fun getById(spendingId: Int): Spending?
 
     @Transaction
     @Query("SELECT * FROM spendings WHERE id = :spendingId")

@@ -182,6 +182,10 @@
                 android:defaultValue="-1"
                 app:argType="integer"/>
             <argument
+                android:name="budget_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
                 android:name="expenditure_id"
                 android:defaultValue="-1"
                 app:argType="integer"/>

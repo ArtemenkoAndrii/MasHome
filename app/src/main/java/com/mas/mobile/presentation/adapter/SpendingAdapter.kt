@@ -30,19 +30,21 @@ class SpendingAdapter(
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)
             menu.setOnMenuItemClickListener {
+                val spendingId = item.id.value
+                val budgetId = item.expenditure.budgetId.value
                 when (it.itemId) {
                     R.id.standard_row_menu_view -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id.value)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, spendingId, budgetId)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_edit -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.EDIT.name, item.id.value)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.EDIT.name, spendingId, budgetId)
                         rowView.findNavController().navigate(action)
                         true
                     }
                     R.id.standard_row_menu_clone -> {
-                        val action = SpendingListFragmentDirections.actionToSpending(Action.CLONE.name, item.id.value)
+                        val action = SpendingListFragmentDirections.actionToSpending(Action.CLONE.name, spendingId, budgetId)
                         rowView.findNavController().navigate(action)
                         true
                     }

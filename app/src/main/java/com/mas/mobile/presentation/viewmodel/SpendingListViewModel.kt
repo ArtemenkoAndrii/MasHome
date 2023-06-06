@@ -48,7 +48,7 @@ private class SpendingListRepositoryAdapter(val service: BudgetService) : Reposi
     }
 
     private suspend fun with(item: Spending, perform: (budget: Budget) -> Unit) {
-        val budget = service.loadBudget(item.expenditure.budgetId)
+        val budget = service.loadBudgetOrGetActive(item.expenditure.budgetId)
         perform(budget)
         service.budgetRepository.save(budget)
     }

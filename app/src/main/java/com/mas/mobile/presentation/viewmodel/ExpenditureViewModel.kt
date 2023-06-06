@@ -98,7 +98,7 @@ class ExpenditureViewModel @AssistedInject constructor(
 
     private fun ifExpenditureExists(name: String?): Boolean {
         return if (name != originalName || action == Action.ADD || action == Action.CLONE) {
-            budgetService.loadBudget(BudgetId(budgetId)).findExpenditure(name ?: "") != null
+            budgetService.loadBudgetOrGetActive(BudgetId(budgetId)).findExpenditure(name ?: "") != null
         } else {
             false
         }
@@ -117,7 +117,7 @@ class ExpenditureViewModel @AssistedInject constructor(
 }
 
 class ExpenditureRepositoryAdapter(val service: BudgetService, val budgetId: Int) : Repository<Expenditure> {
-    private val budget = service.loadBudget(BudgetId(budgetId))
+    private val budget = service.loadBudgetOrGetActive(BudgetId(budgetId))
 
     override suspend fun save(item: Expenditure) {
         budget.addExpenditure(item)

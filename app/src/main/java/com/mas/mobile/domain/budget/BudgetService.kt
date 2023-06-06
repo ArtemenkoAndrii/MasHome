@@ -40,7 +40,7 @@ class BudgetService @Inject constructor(
         }
     }
 
-    fun loadBudget(budgetId: BudgetId): Budget =
+    fun loadBudgetOrGetActive(budgetId: BudgetId): Budget =
         if (budgetId.value > 0) {
             budgetRepository.getBudget(budgetId.value)
         } else {
