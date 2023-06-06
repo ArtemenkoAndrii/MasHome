@@ -83,6 +83,14 @@
                 android:defaultValue="-1"
                 app:argType="integer"/>
         </action>
+        <action
+            android:id="@+id/action_to_expenditure_spending_list"
+            app:destination="@id/nav_expenditure_spending_list" >
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
     </fragment>
 
     <fragment
@@ -112,6 +120,38 @@
             android:defaultValue=""
             app:argType="string"/>
     </fragment>
+    <fragment
+        android:id = "@+id/nav_expenditure_spending_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.ExpenditureSpendingListFragment"
+        android:label="@string/title_expenditure_list"
+        tools:layout = "@layout/spending_list_fragment">
+
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+        <argument
+            android:name="budget_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+
+        <action
+            android:id="@+id/action_to_spending"
+            app:destination="@id/nav_spending" >
+            <argument
+                android:name="action"
+                android:defaultValue="VIEW"
+                app:argType="string"/>
+            <argument
+                android:name="spending_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+    </fragment>
 
 
     <!-- Spending flow-->
@@ -121,6 +161,10 @@
         android:label="@string/title_spending_list"
         tools:layout = "@layout/spending_list_fragment">
 
+        <argument
+            android:name="expenditure_id"
+            android:defaultValue="-1"
+            app:argType="integer"/>
         <argument
             android:name="budget_id"
             android:defaultValue="-1"

@@ -21,7 +21,7 @@ open class SpendingListFragment : ListFragment() {
     private lateinit var binding: SpendingListFragmentBinding
 
     val listViewModel: SpendingListViewModel by lazyViewModel {
-        this.requireContext().appComponent.spendingListViewModel().create(args.budgetId)
+        this.requireContext().appComponent.spendingListViewModel().create(args.budgetId, args.expenditureId)
     }
 
     override fun onCreateView(
@@ -74,6 +74,30 @@ class BudgetSpendingListFragment: SpendingListFragment() {
         listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onDestroy() {
+        showBottomMenu()
+        super.onDestroy()
+    }
+}
+
+
+class ExpenditureSpendingListFragment: SpendingListFragment() {
+    private val args: BudgetSpendingListFragmentArgs by navArgs()
+
+    override fun resolveAddButtonDestination(): NavDirections {
+        return BudgetSpendingListFragmentDirections.actionToSpending(Action.ADD.name, NEW_ITEM, -1, args.budgetId)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        hideBottomMenu()
+        setTitle { listViewModel.expenditure?.name ?: "" }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

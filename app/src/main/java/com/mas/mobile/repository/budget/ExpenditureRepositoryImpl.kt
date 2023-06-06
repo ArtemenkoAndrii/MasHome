@@ -30,4 +30,7 @@ class ExpenditureRepositoryImpl(
 
     override fun getExpenditures(budgetId: BudgetId): List<Expenditure> =
         db.expenditureDao().getByBudgetId(budgetId.value).map { it.data.toModel() }.toList()
+
+    override fun getExpenditure(expenditureId: ExpenditureId): Expenditure? =
+        db.expenditureDao().getById(expenditureId.value)?.data?.toModel()
 }

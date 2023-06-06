@@ -32,7 +32,12 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
         }
 
     override fun getLiveSpendings(budgetId: BudgetId): LiveData<List<Spending>> =
-        Transformations.map(db.spendingDao().getByBudgetIdLive(budgetId.value)) { list ->
+        Transformations.map(db.spendingDao().getLiveByBudgetId(budgetId.value)) { list ->
+            list.map { it.data.toModel(it.expenditure.toModel()) }.toList()
+        }
+
+    override fun getLiveSpendings(expenditureId: ExpenditureId): LiveData<List<Spending>> =
+        Transformations.map(db.spendingDao().getLiveByExpenditureId(expenditureId.value)) { list ->
             list.map { it.data.toModel(it.expenditure.toModel()) }.toList()
         }
 }

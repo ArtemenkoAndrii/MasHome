@@ -10,21 +10,27 @@ import java.time.LocalDate
 
 class SpendingListViewModel @AssistedInject constructor(
     spendingRepository: SpendingRepository,
+    expenditureRepository: ExpenditureRepository,
     budgetService: BudgetService,
     coroutineService: CoroutineService,
-    @Assisted private val budgetId: Int
+    @Assisted("budgetId") private val budgetId: Int = -1,
+    @Assisted("expenditureId") private val expenditureId: Int = -1,
 ): ListViewModel<Spending>(coroutineService, SpendingListRepositoryAdapter(budgetService)) {
     val budget = budgetService.loadLiveBudget(BudgetId(budgetId))
+    val expenditure = expenditureRepository.getExpenditure(ExpenditureId(expenditureId))
     val spendings =
-        if (budgetId > 0) {
-            spendingRepository.getLiveSpendings(BudgetId(budgetId))
-        } else {
-            spendingRepository.getLiveSpendings(LocalDate.now().minusDays(30))
+        when {
+            expenditureId > 0 -> spendingRepository.getLiveSpendings(ExpenditureId(expenditureId))
+            budgetId > 0 -> spendingRepository.getLiveSpendings(BudgetId(budgetId))
+            else -> spendingRepository.getLiveSpendings(LocalDate.now().minusDays(30))
         }
 
     @AssistedFactory
     interface Factory {
-        fun create(budgetId: Int): SpendingListViewModel
+        fun create(
+            @Assisted("budgetId") budgetId: Int,
+            @Assisted("expenditureId")expenditureId: Int
+        ): SpendingListViewModel
     }
 }
 

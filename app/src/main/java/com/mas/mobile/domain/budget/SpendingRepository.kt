@@ -8,5 +8,5 @@ interface SpendingRepository {
 
     fun getLiveSpendings(from: LocalDate): LiveData<List<Spending>>
     fun getLiveSpendings(budgetId: BudgetId): LiveData<List<Spending>>
-//    fun getSpendings(expenditureId: ExpenditureId): LiveData<List<Spending>>
+    fun getLiveSpendings(expenditureId: ExpenditureId): LiveData<List<Spending>>
 }

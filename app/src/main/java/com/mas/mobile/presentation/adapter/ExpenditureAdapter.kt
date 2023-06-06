@@ -24,6 +24,15 @@ open class ExpenditureAdapter: BaseAdapter<Expenditure, ExpenditureListRowBindin
                 binding.expenditureRowLayout.findNavController().navigate(it)
             }
         }
+
+        binding.expenditureRowLayout.setOnLongClickListener {
+            ExpenditureListFragmentDirections.actionToExpenditureSpendingList(
+                expenditureId = item.id.value
+            ).also {
+                binding.expenditureRowLayout.findNavController().navigate(it)
+            }
+            true
+        }
     }
 
     override fun getBinding(view: View) = ExpenditureListRowBinding.bind(view)
