@@ -25,12 +25,31 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_comment"
+            android:enabled="false"
+            android:visibility="@{model.messageDrivenMode ? View.VISIBLE : View.GONE}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="250"
+                android:singleLine="false"
+                android:text='@{model.message != null ? model.message.text : ""}' />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:hint="@string/hint_spending_amount"
             android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.amountError}"
             app:errorEnabled='@{!(model.amountError == "")}'>
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/spendingAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
@@ -48,6 +67,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_date"
             android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.dateError}"
             app:errorEnabled='@{!(model.dateError == "")}'>
 
@@ -69,6 +89,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_comment"
             android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.commentError}"
             app:errorEnabled='@{!(model.commentError == "")}'>
 
@@ -81,6 +102,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/expenditureLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,6 +110,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_expenditure"
             android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.expenditureNameError}"
             app:errorEnabled='@{!(model.expenditureNameError == "")}'>
 
@@ -102,12 +125,39 @@
 
         <Button
             android:id="@+id/spendingSaveButton"
+            android:focusable="true"
             style="@style/Widget.MaterialComponents.Button.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.isEditable() ? View.VISIBLE : View.GONE}"
+            android:visibility="@{model.isEditable() &amp;&amp; !model.messageDrivenMode ? View.VISIBLE : View.GONE}"
             android:text="@string/btn_save" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:visibility="@{model.messageDrivenMode ? View.VISIBLE : View.GONE}">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/messageParsingButton"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:enabled="@{model.isEditable()}"
+                    android:text="@string/btn_spending_parse_message" />
+            </FrameLayout>
+            <ProgressBar
+                android:id="@+id/messageParsingProgressBar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
     </LinearLayout>
 </layout>

@@ -35,4 +35,7 @@ data class SpendingMessage(
 
     @ColumnInfo(name = "is_new")
     var isNew: Boolean = true,
+
+    @ColumnInfo(name = "status")
+    var status: String = "",
 ): Searchable(id, name)

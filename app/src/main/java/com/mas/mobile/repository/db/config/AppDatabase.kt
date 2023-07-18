@@ -9,7 +9,7 @@ import com.mas.mobile.repository.db.dao.*
 import com.mas.mobile.repository.db.entity.*
 
 @Database(
-    version = 2,
+    version = 3,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -44,7 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQL(DML.GREETING_MESSAGE_RULES_4)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3,)
                     .build()
             }
             return INSTANCE!!
@@ -64,5 +64,11 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE generator (id INTEGER NOT NULL, PRIMARY KEY(`id`))")
         database.execSQL("INSERT INTO generator(id) VALUES(1000)")
+    }
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE spending_messages ADD COLUMN status TEXT NOT NULL DEFAULT 'MATCHED'")
     }
 }

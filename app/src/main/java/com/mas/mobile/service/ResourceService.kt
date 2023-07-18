@@ -16,8 +16,13 @@ class ResourceService @Inject constructor(
         return String.format(mask, DateTool.dateToString(date))
     }
 
+    fun btnSpendingParseMessage() = context.getString(R.string.btn_spending_parse_message)
+
     fun budgetChangeDateMessage() = context.getString(R.string.message_budget_date)
     fun budgetRemoveMessage() = context.getString(R.string.message_budget_removing)
+
+    fun messageRuleSave() = context.getString(R.string.message_rule_save)
+    fun messageSpendingNotFound() = context.getString(R.string.message_spending_not_found)
 
     fun messageSettingsFirstLaunch() = context.getString(R.string.message_settings_first_launch)
     fun messageExpenditureFirstLaunch() = context.getString(R.string.message_expenditures_first_launch)

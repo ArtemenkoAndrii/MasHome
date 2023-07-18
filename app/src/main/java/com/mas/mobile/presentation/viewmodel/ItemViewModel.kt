@@ -66,5 +66,5 @@ abstract class ItemViewModel<T>(
         }
     }
 
-    private fun isValid() = validators.values.any { !it() }.not()
+    fun isValid() = validators.values.any { !it() }.not()
 }

@@ -19,6 +19,12 @@ class PermissionService @Inject constructor(
             else -> false
         }
 
+    fun isInternetAllowed(): Boolean =
+        when(ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET)) {
+            PackageManager.PERMISSION_GRANTED -> true
+            else -> false
+        }
+
     fun isNotificationsAllowed(): Boolean {
         val component = ComponentName(context, NotificationListener::class.java)
         return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {

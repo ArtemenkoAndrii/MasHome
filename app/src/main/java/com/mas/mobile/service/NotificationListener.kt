@@ -3,7 +3,9 @@ package com.mas.mobile.service
 import android.app.Notification
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.MATCH_UNINSTALLED_PACKAGES
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -21,7 +23,7 @@ class NotificationListener: NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         this.appComponent.injectNotificationListener(this)
 
-        if (sbn != null) {
+        if (sbn != null && !isSystem(sbn)) {
             val date = toLocalDateTime(sbn.postTime)
             val sender = extractSender(sbn).toString()
             val title = sbn.notification.extras[EXTRA_TITLE]?.toString()
@@ -36,6 +38,9 @@ class NotificationListener: NotificationListenerService() {
             messageService.handleMessage(sender, message, date)
         }
     }
+
+    private fun isSystem(sbn: StatusBarNotification) =
+        sbn.packageName.startsWith("com.android.")
 
 
     private fun grabCustomContentView(notification: Notification) =

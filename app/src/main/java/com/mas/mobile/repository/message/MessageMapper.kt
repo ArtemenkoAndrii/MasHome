@@ -17,7 +17,8 @@ object MessageMapper {
             spendingId = dto.spendingId?.let { SpendingId(it) },
             suggestedExpenditureName = dto.suggestedExpenditureName,
             suggestedAmount = dto.suggestedAmount,
-            isNew = dto.isNew
+            isNew = dto.isNew,
+            status = Message.Status.valueOf(dto.status)
         )
 
     fun toDTO(model: Message) =
@@ -26,10 +27,11 @@ object MessageMapper {
             name = model.sender,
             message = model.text,
             receivedAt = model.receivedAt,
-            ruleId = model.ruleId.value,
+            ruleId = model.ruleId?.value ?: -1,
             spendingId = model.spendingId?.value,
             suggestedExpenditureName = model.suggestedExpenditureName,
             suggestedAmount = model.suggestedAmount,
-            isNew = model.isNew
+            isNew = model.isNew,
+            status = model.status.name
         )
 }

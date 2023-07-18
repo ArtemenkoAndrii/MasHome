@@ -18,7 +18,7 @@ class MessageRepositoryImpl(val db: AppDatabase) : MessageRepository {
     override fun create(): Message =
         Message(id = MessageId(db.idGeneratorDAO().generateId().toInt()))
 
-    override fun getLiveMessages(from: LocalDate): LiveData<List<Message>> =
+    override fun getLiveMessages(from: LocalDate, status: Message.Status): LiveData<List<Message>> =
         Transformations.map(db.spendingMessageDao().getLiveMessages(from.atStartOfDay())) { list ->
             list.map { it.toModel() }.toList()
         }

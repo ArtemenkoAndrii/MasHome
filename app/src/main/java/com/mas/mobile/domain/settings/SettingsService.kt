@@ -39,6 +39,6 @@ class SettingsService @Inject constructor(
 
     companion object {
         private const val FIRST_RUN_KEY = "firstRun"
-        const val POLICY_VERSION = "privacy_policy_v2"
+        const val POLICY_VERSION = "privacy_policy_v3"
     }
 }

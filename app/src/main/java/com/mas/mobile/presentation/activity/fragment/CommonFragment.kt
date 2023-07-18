@@ -35,13 +35,22 @@ abstract class CommonFragment : Fragment() {
 
     fun showConfirmationDialog(
         message: String = getResourceService().messageAreYouSure(),
-        confirm: ()-> Unit) {
+        confirm: () -> Unit
+    ) {
+        showConfirmationDialog(message, confirm) {}
+    }
+
+    fun showConfirmationDialog(
+        message: String = getResourceService().messageAreYouSure(),
+        confirm: () -> Unit,
+        reject: () -> Unit,
+    ) {
 
         AlertDialog.Builder(this.requireContext()).also {
             it.setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(R.string.dialog_confirmation_yes) { _, _ -> confirm() }
-                .setNegativeButton(R.string.dialog_confirmation_no) { _, _ -> }
+                .setNegativeButton(R.string.dialog_confirmation_no) { _, _ -> reject() }
         }.create().show()
     }
 

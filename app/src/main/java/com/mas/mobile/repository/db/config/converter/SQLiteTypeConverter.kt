@@ -3,6 +3,7 @@ package com.mas.mobile.repository.db.config.converter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.mas.mobile.domain.message.Message
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
 import java.time.LocalDateTime

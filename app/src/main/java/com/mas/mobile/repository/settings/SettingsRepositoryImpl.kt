@@ -7,7 +7,7 @@ import javax.inject.Singleton
 import com.mas.mobile.repository.db.entity.Settings as SettingsData
 
 @Singleton
-class SettingsRepositoryImpl(val db: AppDatabase) :SettingsRepository {
+class SettingsRepositoryImpl(val db: AppDatabase) : SettingsRepository {
     override fun get(): Settings =
         db.settingsDao().getAll().toModel()
 

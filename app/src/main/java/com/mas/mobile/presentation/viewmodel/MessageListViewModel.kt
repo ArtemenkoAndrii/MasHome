@@ -13,7 +13,10 @@ class MessageListViewModel @AssistedInject constructor(
     private val coroutineService: CoroutineService,
     @Assisted param: String
 ): ListViewModel<Message>(coroutineService, messageRepository) {
-    val messages = messageRepository.getLiveMessages(LocalDate.now().minusDays(30))
+    val messages = messageRepository.getLiveMessages(
+        LocalDate.now().minusDays(30),
+        Message.Status.MATCHED
+    )
 
     fun markAsRead(item: Message) {
         coroutineService.backgroundTask {

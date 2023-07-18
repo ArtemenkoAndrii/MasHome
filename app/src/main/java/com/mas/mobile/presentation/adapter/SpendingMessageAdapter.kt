@@ -5,8 +5,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.MessageListRowBinding
-import com.mas.mobile.domain.message.Message
 import com.mas.mobile.domain.budget.SpendingMessageEnvelop
+import com.mas.mobile.domain.message.Message
+import com.mas.mobile.domain.message.Message.Status.MATCHED
+import com.mas.mobile.domain.message.Message.Status.RECOMMENDED
 import com.mas.mobile.presentation.activity.fragment.MessageListFragment
 import com.mas.mobile.presentation.activity.fragment.MessageListFragmentDirections
 import com.mas.mobile.presentation.viewmodel.validator.Action
@@ -16,14 +18,10 @@ class SpendingMessageAdapter(
     private val fragment: MessageListFragment
 ): BaseAdapter<Message, MessageListRowBinding>(R.layout.message_list_row) {
 
-    override fun bind(binding:MessageListRowBinding, item: Message, prior: Message?) {
+    override fun bind(binding: MessageListRowBinding, item: Message, prior: Message?) {
         binding.message = item
 
-        binding.messageListRowSuggestedExpenditure.setChipBackgroundColorResource(R.color.colorGray)
-        val expenditureName = prepareExpenditureName(item) {
-            binding.messageListRowSuggestedExpenditure.setChipBackgroundColorResource(R.color.colorAccent)
-        }
-        binding.messageListRowSuggestedExpenditure.setText(expenditureName)
+        mapChipButton(item, binding)
 
         binding.expenditureCallback = View.OnClickListener { goToSpending(item) }
         binding.messageListRowLayout.setOnClickListener { goToSpending(item) }
@@ -63,12 +61,22 @@ class SpendingMessageAdapter(
         }
     }
 
-    private fun prepareExpenditureName(item: Message, styleProcessor: () -> Unit): String {
-        return if (item.suggestedExpenditureName.isNullOrEmpty()) {
-            styleProcessor()
-            fragment.getResourceService().spendingMessageClickToAdd()
-        } else {
-            item.suggestedExpenditureName!!
+    private fun mapChipButton(item: Message, binding:MessageListRowBinding) {
+        with(binding.messageListRowSuggestedExpenditure) {
+            when {
+                item.spendingId != null -> {
+                    this.setChipBackgroundColorResource(R.color.colorGray)
+                    this.setText(item.suggestedExpenditureName)
+                }
+                item.status == MATCHED -> {
+                    this.setChipBackgroundColorResource(R.color.colorAccent)
+                    this.setText(fragment.getResourceService().spendingMessageClickToAdd())
+                }
+                item.status == RECOMMENDED -> {
+                    this.setChipBackgroundColorResource(R.color.colorYellow)
+                    this.setText(fragment.getResourceService().spendingMessageClickToAdd())
+                }
+            }
         }
     }
 

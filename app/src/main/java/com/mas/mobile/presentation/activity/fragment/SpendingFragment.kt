@@ -40,13 +40,35 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
         binding.lifecycleOwner = this
 
         binding.spendingSaveButton.setOnClickListener {
-            saveAndClose(viewModel)
+            if (viewModel.isValid() && viewModel.newRule()) {
+                showConfirmationDialog(
+                    this.getResourceService().messageRuleSave(),
+                    {
+                        viewModel.saveRule()
+                        saveAndClose(viewModel)
+                    },
+                    {
+                        saveAndClose(viewModel)
+                    }
+                )
+            } else {
+                saveAndClose(viewModel)
+            }
+        }
+
+        binding.messageParsingButton.setOnClickListener {
+            inProgress(true)
+            viewModel.processMessage { success ->
+                inProgress(false)
+                if (!success) {
+                    showInfoDialog(this.getResourceService().messageSpendingNotFound()) {}
+                }
+            }
         }
 
         binding.spendingDate.setOnClickListener {
             showDateTimeDialog(binding.spendingDate)
         }
-
 
         ArrayAdapter(this.requireContext(),
             R.layout.autocomplete_item,
@@ -54,11 +76,23 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             binding.spendingExpenditure.setAdapter(it)
         }
 
-//        viewModel.availableExpenditures.observe(viewLifecycleOwner) {
-//            val adapter = AutoCompleteAdapter(this.requireContext(), it.map { e -> e.data })
-//            binding.spendingExpenditure.setAdapter(adapter)
-//        }
+        viewModel.messageDrivenMode.observeForever {
+            binding.spendingSaveButton.requestFocus()
+        }
 
         return layout
     }
+
+    private fun inProgress(enabled: Boolean) {
+        if (enabled) {
+            binding.messageParsingProgressBar.visibility = View.VISIBLE
+            binding.messageParsingButton.text = ""
+            binding.messageParsingButton.isClickable = false
+        } else {
+            binding.messageParsingProgressBar.visibility = View.GONE
+            binding.messageParsingButton.text = getResourceService().btnSpendingParseMessage()
+            binding.messageParsingButton.isClickable = true
+        }
+    }
+
 }

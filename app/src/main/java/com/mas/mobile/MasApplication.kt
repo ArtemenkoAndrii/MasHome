@@ -5,6 +5,7 @@ import android.content.Context
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.budget.SpendingRepository
+import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.domain.message.MessageRuleRepository
 import com.mas.mobile.domain.settings.SettingsRepository
@@ -21,7 +22,11 @@ import com.mas.mobile.repository.message.MessageRuleRepositoryImpl
 import com.mas.mobile.repository.settings.SettingsRepositoryImpl
 import com.mas.mobile.service.DateListener
 import com.mas.mobile.service.NotificationListener
+import com.mas.mobile.service.PermissionService
 import com.mas.mobile.service.SmsListener
+import com.mas.mobile.service.ai.GPTMessageAnalyzer
+import com.mas.mobile.service.ai.GptChatApiClient
+import com.mas.mobile.service.ai.GptChatService
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -122,4 +127,14 @@ class AppModule {
     fun resolveSettingsRepository(db: AppDatabase): SettingsRepository {
         return SettingsRepositoryImpl(db)
     }
+
+    @Provides
+    @Singleton
+    fun resolveGptChatService(): GptChatService =
+        GptChatApiClient().gptChatService
+
+    @Provides
+    @Singleton
+    fun resolveMessageProcessor(gptChatService: GptChatService): MessageAnalyzer =
+        GPTMessageAnalyzer(gptChatService)
 }
