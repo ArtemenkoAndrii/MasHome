@@ -78,13 +78,11 @@ data class Budget(
     }
 
     private fun validate(expenditure: Expenditure) {
-        val nameDuplicate = budgetDetails.expenditure
-            .filter { it.id != expenditure.id }
-            .any {
-                budgetDetails.expenditure.any { it.name.equals(expenditure.name, ignoreCase = true) }
-            }
+        val duplicate = budgetDetails.expenditure.any {
+            it.name.equals(expenditure.name, ignoreCase = true) && it.id != expenditure.id
+        }
 
-        require(!nameDuplicate) { "Expenditure name ${expenditure.name} isn't unique" }
+        require(!duplicate) { "Expenditure name ${expenditure.name} isn't unique" }
     }
 }
 

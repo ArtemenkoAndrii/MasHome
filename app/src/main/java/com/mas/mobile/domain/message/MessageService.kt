@@ -119,15 +119,29 @@ class MessageService @Inject constructor(
             false
         }
 
-    private fun isRecommended(text: String) =
+    private fun isRecommended(text: String): Boolean {
+        val lowerText = text.lowercase()
+        return containsAmount(lowerText) && containsCurrency(lowerText) && containsSpendingKeyword(lowerText)
+    }
+
+    private fun containsAmount(text: String) = matchAmount(AMOUNT_PLACEHOLDER, text)
+
+    private fun containsCurrency(text: String) =
         CURRENCIES.entries.any {
-            text.uppercase().contains(it.key) || text.contains(it.value)
-        } && matchAmount(AMOUNT_PLACEHOLDER, text)
+            text.contains(it.key.lowercase()) || text.contains(it.value)
+        }
+
+    private fun containsSpendingKeyword(text: String) =
+        text.split(WORDS_REGEX).any {
+            SPENDING_KEYWORDS.contains(it)
+        }
 
     companion object {
         const val AMOUNT_PLACEHOLDER = "{amount}"
         const val AMOUNT_WITH_DOT_MASK = "\\d+.?\\d+"
         const val AMOUNT_WITH_COMMA_MASK = "\\d+,?\\d+"
+
+        val WORDS_REGEX = "\\s+|\\p{Punct}".toRegex()
 
         val CURRENCIES = mutableMapOf(
             "UAH" to "₴",
@@ -146,6 +160,151 @@ class MessageService @Inject constructor(
                 it[instance.currencyCode.uppercase()] = instance.symbol
             }
         }
+
+        val SPENDING_KEYWORDS = listOf(
+            "payment",
+            "paid",
+            "debit",
+            "debited",
+            "deducted",
+            "expense",
+            "bill",
+            "invoice",
+            "charged",
+            "deduction",
+            "transfer",
+            "withdrawal",
+            "purchase",
+            "buy",
+            "spent",
+            "poc",
+            "e-commerce",
+            "merchant",
+            "atm",
+            "transaction",
+            "card",
+            "fee",
+            "cardholder",
+            "statement",
+            "vendor",
+
+            //Spanish
+            "pago",
+            "pagado",
+            "débito",
+            "debitado",
+            "deducido",
+            "gasto",
+            "factura",
+            "cobrado",
+            "deducción",
+            "transferencia",
+            "retiro",
+            "compra",
+            "comprar",
+            "gastado",
+            "poc",
+            "comercio electrónico",
+            "comerciante",
+            "cajero automático",
+            "transacción",
+            "tarjeta",
+            "tarifa",
+            "titular de la tarjeta",
+            "estado de cuenta",
+            "vendedor",
+
+            //French
+            "paiement",
+            "payé",
+            "débit",
+            "débité",
+            "déduit",
+            "dépense",
+            "facture",
+            "facturé",
+            "déduction",
+            "transfert",
+            "retrait",
+            "achat",
+            "acheter",
+            "dépensé",
+            "poc",
+            "commerce électronique",
+            "commerçant",
+            "distributeur automatique de billets",
+            "transaction",
+            "carte",
+            "frais",
+            "titulaire de la carte",
+            "relevé de compte",
+            "vendeur",
+
+            //German
+            "zahlung",
+            "bezahlt",
+            "lastschrift",
+            "belastet",
+            "abgezogen",
+            "ausgabe",
+            "rechnung",
+            "berechnet",
+            "abzug",
+            "überweisung",
+            "abhebung",
+            "kauf",
+            "kaufen",
+            "ausgegeben",
+            "poc",
+            "e-commerce",
+            "commerçant",
+            "geldautomat",
+            "transaktion",
+            "karte",
+            "gebühr",
+            "karteninhaber",
+            "kontoauszug",
+            "verkäufer",
+
+            //Hindi
+            "भुगतान",
+            "भुगतान किया गया",
+            "डेबिट",
+            "डेबिट किया गया",
+            "कटौती",
+            "व्यय",
+            "बिल",
+            "चालान",
+            "चार्ज",
+            "छूट",
+            "ट्रांसफर",
+            "निकास",
+            "खरीद",
+            "खरीद",
+            "खर्च",
+            "पॉक",
+            "ई-कॉमर्स",
+            "व्यापारी",
+            "एटीएम",
+            "लेन-देन",
+            "कार्ड",
+            "शुल्क",
+            "कार्डधारक",
+            "विवरण",
+            "विक्रेता",
+
+            //UKR
+            "Покупка",
+            "Оплата",
+            "Рахунок",
+            "Списання",
+
+            //RUS
+            "Покупка",
+            "Оплата",
+            "Счет",
+            "Списание"
+        )
     }
 
     sealed interface MessageClass
