@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/DefaultActionBar"
-            app:popupTheme="@style/DefaultActionBarPopup" />
+            app:popupTheme="@style/DefaultActionBarPopup"/>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_view"

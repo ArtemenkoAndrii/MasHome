@@ -2,6 +2,7 @@ package com.mas.mobile.repository.message
 
 import com.mas.mobile.domain.message.MessageRule
 import com.mas.mobile.domain.message.MessageRuleId
+import com.mas.mobile.domain.message.Pattern
 import com.mas.mobile.repository.db.entity.MessageRule as MessageRuleData
 
 object MessageRuleMapper {
@@ -9,7 +10,7 @@ object MessageRuleMapper {
         MessageRule(
             id = MessageRuleId(dto.id),
             name = dto.name,
-            amountMatcher = dto.amountMatcher,
+            pattern = Pattern(dto.amountMatcher),
             expenditureMatcher = dto.expenditureMatcher,
             expenditureName = dto.expenditureName
         )
@@ -18,7 +19,7 @@ object MessageRuleMapper {
         MessageRuleData(
             id = model.id.value,
             name = model.name,
-            amountMatcher = model.amountMatcher,
+            amountMatcher = model.pattern.value,
             expenditureMatcher = model.expenditureMatcher,
             expenditureName = model.expenditureName,
         )

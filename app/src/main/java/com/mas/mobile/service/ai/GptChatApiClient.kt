@@ -23,7 +23,7 @@ class GptChatApiClient {
             .build()
     }
 
-    val gptChatService: GptChatService by lazy {
-        retrofit.create(GptChatService::class.java)
+    val gptChatConnector: GptChatConnector by lazy {
+        retrofit.create(GptChatConnector::class.java)
     }
 }

@@ -13,25 +13,32 @@ object MessageMapper {
             sender = dto.name,
             text = dto.message,
             receivedAt = dto.receivedAt,
-            ruleId = MessageRuleId(dto.ruleId),
             spendingId = dto.spendingId?.let { SpendingId(it) },
-            suggestedExpenditureName = dto.suggestedExpenditureName,
-            suggestedAmount = dto.suggestedAmount,
-            isNew = dto.isNew,
-            status = Message.Status.valueOf(dto.status)
+            status = if (dto.status == SpendingMessage.MATCHED) {
+                        Message.Matched(
+                            ruleId = MessageRuleId(dto.ruleId),
+                            suggestedAmount = dto.suggestedAmount,
+                            suggestedExpenditureName = dto.suggestedExpenditureName
+                        )
+                     } else {
+                        Message.Recommended
+                     },
+            isNew = dto.isNew
         )
 
     fun toDTO(model: Message) =
-        SpendingMessage(
-            id = model.id.value,
-            name = model.sender,
-            message = model.text,
-            receivedAt = model.receivedAt,
-            ruleId = model.ruleId?.value ?: -1,
-            spendingId = model.spendingId?.value,
-            suggestedExpenditureName = model.suggestedExpenditureName,
-            suggestedAmount = model.suggestedAmount,
-            isNew = model.isNew,
-            status = model.status.name
-        )
+        with (model.status as? Message.Matched) {
+            SpendingMessage(
+                id = model.id.value,
+                name = model.sender,
+                message = model.text,
+                receivedAt = model.receivedAt,
+                status = if (this != null) SpendingMessage.MATCHED else SpendingMessage.RECOMMENDED,
+                ruleId = this?.ruleId?.value ?: -1,
+                suggestedExpenditureName = this?.suggestedExpenditureName,
+                suggestedAmount = this?.suggestedAmount ?: 0.0,
+                spendingId = model.spendingId?.value,
+                isNew = model.isNew,
+            )
+        }
 }

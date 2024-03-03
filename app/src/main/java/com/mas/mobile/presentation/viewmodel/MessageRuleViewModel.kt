@@ -5,6 +5,7 @@ import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.message.MessageRule
 import com.mas.mobile.domain.message.MessageRuleId
 import com.mas.mobile.domain.message.MessageRuleRepository
+import com.mas.mobile.domain.message.Pattern
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
@@ -51,7 +52,7 @@ class MessageRuleViewModel @AssistedInject constructor(
                     create().also {
                         if (origin != null) {
                             it.name = origin.name
-                            it.amountMatcher = origin.amountMatcher
+                            it.pattern = origin.pattern
                             it.expenditureName = origin.expenditureName
                             it.expenditureMatcher = origin.expenditureMatcher
                         }
@@ -65,8 +66,8 @@ class MessageRuleViewModel @AssistedInject constructor(
         sender.value = item.name
         sender.observeForever { item.name = it }
 
-        amountMatcher.value = item.amountMatcher
-        amountMatcher.observeForever { item.amountMatcher = it }
+        amountMatcher.value = item.pattern.value
+        amountMatcher.observeForever { item.pattern = Pattern(it) }
 
         expenditureMatcher.value = item.expenditureMatcher
         expenditureMatcher.observeForever { item.expenditureMatcher = it }

@@ -15,6 +15,7 @@ object SettingsMapper {
         getValue(CAPTURE_SMS, dto)?.let { settings.captureSms = it.toBoolean() }
         getValue(CAPTURE_NOTIFICATIONS, dto)?.let { settings.captureNotifications = it.toBoolean() }
         getValue(POLICY_VERSION, dto)?.let { settings.policyVersion = it }
+        getValue(DISCOVERY_MODE, dto)?.let { settings.discoveryMode = it.toBoolean() }
         return settings
     }
 
@@ -26,6 +27,7 @@ object SettingsMapper {
             it.setValue(CAPTURE_SMS, model.captureSms.toString())
             it.setValue(CAPTURE_NOTIFICATIONS, model.captureNotifications.toString())
             it.setValue(POLICY_VERSION, model.policyVersion)
+            it.setValue(DISCOVERY_MODE, model.discoveryMode.toString())
         }
 
     private fun MutableList<SettingsData>.setValue(key: String, value: String?) {
@@ -41,4 +43,5 @@ object SettingsMapper {
     private const val CAPTURE_SMS = "budget.captureSMS"
     private const val CAPTURE_NOTIFICATIONS = "budget.captureNotifications"
     private const val POLICY_VERSION = "policy.version"
+    private const val DISCOVERY_MODE = "message.discoveryMode"
 }

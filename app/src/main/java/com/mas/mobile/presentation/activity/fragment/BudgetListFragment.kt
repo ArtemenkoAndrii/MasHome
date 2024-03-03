@@ -11,7 +11,7 @@ import com.mas.mobile.presentation.adapter.BudgetAdapter
 import com.mas.mobile.presentation.viewmodel.BudgetListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
-class BudgetListFragment: ListFragment(), ListMenu<Budget> {
+class  BudgetListFragment: ListFragment(), ListMenu<Budget> {
     private val listViewModel: BudgetListViewModel by lazyViewModel {
         this.requireContext().appComponent.budgetListViewModel().create()
     }
@@ -49,9 +49,8 @@ class BudgetListFragment: ListFragment(), ListMenu<Budget> {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.budget_list_menu_add -> go(resolveAddButtonDestination()).let { true }
-            R.id.budget_list_menu_template -> go(BudgetListFragmentDirections.actionToBudgetTemplate()).let { true }
-            R.id.budget_list_menu_settings -> go(BudgetListFragmentDirections.actionToBudgetSettings()).let { true }
+            R.id.budget_list_menu_add -> go(resolveAddButtonDestination())
+            R.id.budget_list_menu_settings -> go(BudgetListFragmentDirections.actionToBudgetSettings())
             else -> super.onOptionsItemSelected(item)
         }
     }

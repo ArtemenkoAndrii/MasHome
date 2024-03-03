@@ -28,16 +28,17 @@
     <!-- BUTTONS -->
     <string name="btn_add">Add</string>
     <string name="btn_save">Save</string>
+    <string name="btn_next">Next</string>
     <string name="btn_settings_month">month</string>
     <string name="btn_settings_two_weeks">two weeks</string>
     <string name="btn_settings_week">one week</string>
     <string name="btn_settings_quarter">quarter</string>
     <string name="btn_settings_year">year</string>
-    <string name="btn_settings_capture_sms">Capture SMS</string>
-    <string name="btn_settings_capture_notifications">Capture notifications</string>
-    <string name="btn_spending_parse_message">Parse</string>
+    <string name="btn_spending_parse_message">Discover</string>
     <string name="btn_policy_agree">Agree</string>
     <string name="btn_policy_decline">Decline</string>
+    <string name="btn_spending_message_bind">Click to bind</string>
+    <string name="btn_spending_message_discover">Discover</string>
 
     <!-- MENU -->
     <string name="menu_view">View</string>
@@ -45,11 +46,11 @@
     <string name="menu_edit">Edit</string>
     <string name="menu_clone">Clone</string>
     <string name="menu_remove">Remove</string>
+    <string name="menu_settings">Settings</string>
     <string name="menu_budget_expenditures">See expenditures</string>
     <string name="menu_budget_spendings">See spendings</string>
     <string name="menu_budget_activate">Activate</string>
     <string name="menu_budget_template">Template</string>
-    <string name="menu_budget_settings">Settings</string>
     <string name="expenditure_list_row_spend_menu">Spend</string>
     <string name="expenditure_list_row_report_menu">Report</string>
     <string name="expenditure_list_row_more_menu">More</string>
@@ -59,22 +60,35 @@
     <string name="menu_messages">Messages</string>
     <string name="menu_expenditures">Expenditures</string>
     <string name="menu_budgets">Budgets</string>
+    <string name="menu_rules">Rules</string>
+    <string name="menu_settings_period">Period</string>
+    <string name="menu_settings_start">Start Day</string>
+    <string name="menu_settings_notifications">Capture Notifications</string>
+    <string name="menu_settings_sms">Capture SMS</string>
+    <string name="menu_settings_discovery_mode">Auto-Detect Spendings</string>
+    <string name="menu_settings_discovery_settings">Detector Settings</string>
+    <string name="menu_settings_rules">Expense Rules</string>
+    <string name="menu_settings_about">About</string>
+    <string name="menu_settings_version">Version</string>
+    <string name="menu_settings_what_is">What is the MasHome?</string>
 
     <!-- DIALOG -->
     <string name="dialog_confirmation_yes">Yes</string>
     <string name="dialog_confirmation_no">No</string>
     <string name="dialog_confirmation_gotit">Got it</string>
     <string name="dialog_confirmation_remove">Are you sure?</string>
+    <string name="dialog_confirmation_ok">Ok</string>
+    <string name="dialog_confirmation_cancel">Cancel</string>
 
     <!-- MESSAGES -->
-    <string name="message_settings_first_launch">Before you start please select the desired period of your budget.</string>
-    <string name="message_expenditures_first_launch">Create your usual expenditures. You can do this later if you wish.</string>
     <string name="message_budget_removing">Budgets can only be removed from the end.</string>
     <string name="message_budget_date">You can change end date only for the last budget.</string>
-    <string name="message_allow_sms">Please allow SMS permission for this application</string>
     <string name="message_allow_notifications">Please allow notification access for this application.</string>
     <string name="message_rule_save">Save as a rule?</string>
     <string name="message_spending_not_found">Unable to extract spending from message</string>
+    <string name="message_settings_start_day">Choose start day</string>
+    <string name="message_settings_period">Choose period</string>
+    <string name="message_capturing_disabled">Message capturing is not enabled. Would you like to enable it?</string>
 
     <!-- FORMATTER -->
     <string name="formatter_money">%.2f</string>
@@ -98,20 +112,32 @@
     <string name="title_message_rule">Message rule</string>
     <string name="title_message_rule_list">Message rule list</string>
     <string name="title_settings">Settings</string>
+    <string name="title_qualifier_list">Qualifier</string>
 
     <!-- FRAGMENT LABELS -->
     <string name="label_settings_period">Budget type</string>
     <string name="label_settings_start">Start day</string>
     <string name="label_app_version">Version: </string>
-    <string name="label_spending_message_click">Click to bind</string>
+    <string name="label_settings_budget">BUDGET</string>
+    <string name="label_settings_messages">MESSAGES</string>
+    <string name="label_settings_about">ABOUT</string>
 
     <!-- Constants -->
     <string name="constant_budget_truncated">The start date was automatically truncated. Original value is %s</string>
     <string name="constant_yesterday">Yesterday</string>
     <string name="constant_today">Today</string>
+    <string name="constant_period_week">One week</string>
+    <string name="constant_period_two_weeks">Two weeks</string>
+    <string name="constant_period_month">Month</string>
+    <string name="constant_period_quarter">Quarter</string>
+    <string name="constant_period_year">Year</string>
 
     <!-- ERRORS -->
     <string name="error_unexpected">Ups, something went wrong</string>
+
+    <!-- TABS -->
+    <string name="tab_qualifier_catch">Catch words</string>
+    <string name="tab_qualifier_skip">Skip words</string>
 
     <!-- TOASTS -->
     <string name="unexpected_error">Ups, something went wrong</string>

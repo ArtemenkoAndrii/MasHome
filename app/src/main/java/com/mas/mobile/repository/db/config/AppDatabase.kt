@@ -1,15 +1,19 @@
 package com.mas.mobile.repository.db.config
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.dao.*
 import com.mas.mobile.repository.db.entity.*
+import java.time.LocalDate
 
 @Database(
-    version = 3,
+    version = 5,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -18,7 +22,8 @@ import com.mas.mobile.repository.db.entity.*
         SpendingMessage::class,
         MessageRule::class,
         Settings::class,
-        IdGenerator::class
+        IdGenerator::class,
+        Qualifier::class
         ]
 )
 @TypeConverters(SQLiteTypeConverter::class)
@@ -36,15 +41,12 @@ abstract class AppDatabase : RoomDatabase() {
                             super.onCreate(db)
                             db.execSQL(DML.TEMPLATE_GENERATOR)
                             db.execSQL(DML.TEMPLATE_BUDGET)
-                            db.execSQL(DML.TEMPLATE_EXPENDITURES1)
-                            db.execSQL(DML.TEMPLATE_EXPENDITURES2)
-                            db.execSQL(DML.GREETING_MESSAGE_RULES_1)
-                            db.execSQL(DML.GREETING_MESSAGE_RULES_2)
-                            db.execSQL(DML.GREETING_MESSAGE_RULES_3)
-                            db.execSQL(DML.GREETING_MESSAGE_RULES_4)
+                            db.execSQLs(DML.TEMPLATE_EXPENDITURES)
+                            db.execSQLs(DML.GREETING_MESSAGE_RULES)
+                            db.execSQLs(DML.DEFAULT_QUALIFIERS)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,)
                     .build()
             }
             return INSTANCE!!
@@ -58,7 +60,14 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun messageRuleDao(): MessageRuleDAO
     abstract fun settingsDao(): SettingsDAO
     abstract fun idGeneratorDAO(): IdGeneratorDAO
+    abstract fun qualifierDAO(): QualifierDAO
 }
+
+internal fun SupportSQLiteDatabase.execSQLs(sqlBlock: String): Unit =
+    sqlBlock
+        .split(";")
+        .filter { it.isNotBlank() }
+        .forEach { this.execSQL(it.trim()) }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
@@ -70,5 +79,22 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE spending_messages ADD COLUMN status TEXT NOT NULL DEFAULT 'MATCHED'")
+    }
+}
+
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    private val maxDate = SQLiteTypeConverter().fromLocalDate(LocalDate.MAX)
+
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("UPDATE budgets SET startsOn=$maxDate WHERE id=1")
+    }
+}
+
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        with(database) {
+            execSQL("CREATE TABLE qualifiers (name TEXT NOT NULL PRIMARY KEY, type INTEGER NOT NULL)")
+            execSQLs(DML.DEFAULT_QUALIFIERS)
+        }
     }
 }

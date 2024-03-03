@@ -8,6 +8,7 @@ import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.domain.message.MessageRuleRepository
+import com.mas.mobile.domain.message.QualifierRepository
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.activity.PolicyActivity
@@ -19,14 +20,12 @@ import com.mas.mobile.repository.budget.SpendingRepositoryImpl
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.message.MessageRepositoryImpl
 import com.mas.mobile.repository.message.MessageRuleRepositoryImpl
+import com.mas.mobile.repository.message.QualifierRepositoryImpl
 import com.mas.mobile.repository.settings.SettingsRepositoryImpl
-import com.mas.mobile.service.DateListener
-import com.mas.mobile.service.NotificationListener
-import com.mas.mobile.service.PermissionService
-import com.mas.mobile.service.SmsListener
+import com.mas.mobile.service.*
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
 import com.mas.mobile.service.ai.GptChatApiClient
-import com.mas.mobile.service.ai.GptChatService
+import com.mas.mobile.service.ai.GptChatConnector
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -42,6 +41,10 @@ class MasApplication: Application() {
             .builder()
             .context(this)
             .build()
+    }
+
+    companion object {
+        const val HOME_PAGE = "https://github.com/ArtemenkoAndrii/MasHome/wiki/What-Mas-Money-is%3F"
     }
 }
 
@@ -67,6 +70,8 @@ interface AppComponent {
 
     fun spendingViewModel(): SpendingViewModel.Factory
     fun spendingListViewModel(): SpendingListViewModel.Factory
+
+    fun qualifierListViewModel(): QualifierListViewModel.Factory
 
     fun settingsModel(): SettingsViewModel.Factory
 
@@ -130,11 +135,23 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun resolveGptChatService(): GptChatService =
-        GptChatApiClient().gptChatService
+    fun resolveQualifierRepository(db: AppDatabase): QualifierRepository {
+        return QualifierRepositoryImpl(db)
+    }
 
     @Provides
     @Singleton
-    fun resolveMessageProcessor(gptChatService: GptChatService): MessageAnalyzer =
-        GPTMessageAnalyzer(gptChatService)
+    fun resolveGptChatService(): GptChatConnector =
+        GptChatApiClient().gptChatConnector
+
+    @Provides
+    @Singleton
+    fun resolveMessageProcessor(gptChatConnector: GptChatConnector): MessageAnalyzer =
+        GPTMessageAnalyzer(gptChatConnector)
+
+    @Provides
+    @Singleton
+    fun resolveTaskService(coroutineService: CoroutineService): TaskService {
+        return coroutineService
+    }
 }

@@ -24,14 +24,27 @@ class ResourceService @Inject constructor(
     fun messageRuleSave() = context.getString(R.string.message_rule_save)
     fun messageSpendingNotFound() = context.getString(R.string.message_spending_not_found)
 
-    fun messageSettingsFirstLaunch() = context.getString(R.string.message_settings_first_launch)
-    fun messageExpenditureFirstLaunch() = context.getString(R.string.message_expenditures_first_launch)
     fun messageAreYouSure() = context.getString(R.string.dialog_confirmation_remove)
-    fun messageAllowSms() = context.getString(R.string.message_allow_sms)
     fun messageAllowNotifications() = context.getString(R.string.message_allow_notifications)
+    fun messageSettingsStartDay() = context.getString(R.string.message_settings_start_day)
+    fun messageSettingsPeriod() = context.getString(R.string.message_settings_period)
+    fun messageCapturingDisabled() = context.getString(R.string.message_capturing_disabled)
 
-    fun spendingMessageClickToAdd() = context.getString(R.string.label_spending_message_click)
+    fun spendingMessageClickToBind() = context.getString(R.string.btn_spending_message_bind)
+    fun spendingMessageClickToDiscover() = context.getString(R.string.btn_spending_message_discover)
 
     fun constantToday() = context.getString(R.string.constant_today)
     fun constantYesterday() = context.getString(R.string.constant_yesterday)
+
+    fun constantPeriodWeek() = context.getString(R.string.constant_period_week)
+    fun constantPeriodTwoWeeks() = context.getString(R.string.constant_period_two_weeks)
+    fun constantPeriodMonths() = context.getString(R.string.constant_period_month)
+    fun constantPeriodQuarter() = context.getString(R.string.constant_period_quarter)
+    fun constantPeriodYear() = context.getString(R.string.constant_period_year)
+
+    fun dialogConfirmationOk() = context.getString(R.string.dialog_confirmation_ok)
+    fun dialogConfirmationCancel() = context.getString(R.string.dialog_confirmation_cancel)
+
+    fun tabQualifierCatch() = context.getString(R.string.tab_qualifier_catch)
+    fun tabQualifierSkip() = context.getString(R.string.tab_qualifier_skip)
 }

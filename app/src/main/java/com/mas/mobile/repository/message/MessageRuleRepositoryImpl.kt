@@ -5,6 +5,7 @@ import androidx.lifecycle.Transformations
 import com.mas.mobile.domain.message.MessageRule
 import com.mas.mobile.domain.message.MessageRuleId
 import com.mas.mobile.domain.message.MessageRuleRepository
+import com.mas.mobile.domain.message.Pattern
 import com.mas.mobile.repository.db.entity.MessageRule as MessageRuleData
 import com.mas.mobile.repository.db.config.AppDatabase
 import javax.inject.Singleton
@@ -23,7 +24,13 @@ class MessageRuleRepositoryImpl(val db: AppDatabase) : MessageRuleRepository {
         }
 
     override fun create(): MessageRule =
-        MessageRule(id = MessageRuleId(db.idGeneratorDAO().generateId().toInt()))
+        MessageRule(
+            id = MessageRuleId(db.idGeneratorDAO().generateId().toInt()),
+            name= "",
+            pattern = Pattern(),
+            expenditureMatcher = "",
+            expenditureName = ""
+        )
 
     override suspend fun save(item: MessageRule) {
         db.messageRuleDao().upsert(item.toDto())

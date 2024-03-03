@@ -71,7 +71,6 @@ open class ExpenditureListFragment : ListFragment() {
 
 class BudgetExpenditureListFragment: ExpenditureListFragment() {
     private val args: BudgetExpenditureListFragmentArgs by navArgs()
-    private var infoDialogShown = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,13 +81,7 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }
-        val layout = super.onCreateView(inflater, container, savedInstanceState)
-
-        if (listViewModel.isFirstLaunch()) {
-            handleFirstLaunch()
-        }
-
-        return layout
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -102,19 +95,4 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
     }
 
     override fun getAdapter() = BudgetExpenditureAdapter(this)
-
-    private fun handleFirstLaunch() {
-        binding.expenditureListProgress.visibility = View.GONE
-        binding.expenditureListFinish.visibility = View.VISIBLE
-        binding.expenditureListFinish.setOnClickListener {
-            listViewModel.completeFirstLaunch()
-            showBottomMenu()
-            this.findNavController().navigate(R.id.nav_expenditure_list)
-        }
-
-        if (!infoDialogShown) {
-            showInfoDialog(getResourceService().messageExpenditureFirstLaunch()) {}
-            infoDialogShown = true
-        }
-    }
 }

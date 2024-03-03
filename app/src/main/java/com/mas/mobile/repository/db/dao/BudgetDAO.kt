@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 @Dao
 interface BudgetDAO {
-    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} ORDER BY startsOn DESC")
+    @Query("SELECT * FROM budgets ORDER BY startsOn DESC")
     fun getAllLive(): LiveData<List<Budget>>
 
     @Query("SELECT * FROM budgets WHERE id = :budgetId")

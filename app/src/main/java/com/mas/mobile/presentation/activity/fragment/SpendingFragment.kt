@@ -21,7 +21,7 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             args.spendingId,
             args.expenditureId,
             args.budgetId,
-            args.envelop,
+            args.messageId,
             action)
     }
 
@@ -40,14 +40,14 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
         binding.lifecycleOwner = this
 
         binding.spendingSaveButton.setOnClickListener {
-            if (viewModel.isValid() && viewModel.newRule()) {
+            if (viewModel.hasChangedRule()) {
                 showConfirmationDialog(
                     this.getResourceService().messageRuleSave(),
                     {
-                        viewModel.saveRule()
                         saveAndClose(viewModel)
                     },
                     {
+                        viewModel.resetRuleChanges()
                         saveAndClose(viewModel)
                     }
                 )
@@ -58,7 +58,7 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
 
         binding.messageParsingButton.setOnClickListener {
             inProgress(true)
-            viewModel.processMessage { success ->
+            viewModel.discover { success ->
                 inProgress(false)
                 if (!success) {
                     showInfoDialog(this.getResourceService().messageSpendingNotFound()) {}
@@ -76,7 +76,7 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             binding.spendingExpenditure.setAdapter(it)
         }
 
-        viewModel.messageDrivenMode.observeForever {
+        viewModel.discoverMode.observeForever {
             binding.spendingSaveButton.requestFocus()
         }
 

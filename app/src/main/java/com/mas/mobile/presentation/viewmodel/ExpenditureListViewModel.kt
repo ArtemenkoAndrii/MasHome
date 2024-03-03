@@ -8,14 +8,12 @@ import com.mas.mobile.domain.budget.BudgetId
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.service.CoroutineService
-import com.mas.mobile.domain.settings.SettingsService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class ExpenditureListViewModel @AssistedInject constructor(
     private val coroutineService: CoroutineService,
-    private val settingsService: SettingsService,
     private val budgetService: BudgetService,
     @Assisted val budgetId: Int
 ) : ListViewModel<Expenditure>(coroutineService, RepositoryStub) {
@@ -32,13 +30,6 @@ class ExpenditureListViewModel @AssistedInject constructor(
         budget.observeForever {
             currentBudget = it
         }
-    }
-
-    fun isFirstLaunch() = settingsService.isFirstLaunch()
-
-    fun completeFirstLaunch() {
-        budgetService.recreateActiveBudget()
-        settingsService.completeFirstLaunch()
     }
 
     override fun remove(item: Expenditure) {

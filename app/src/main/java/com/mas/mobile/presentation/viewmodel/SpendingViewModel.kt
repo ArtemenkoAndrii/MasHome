@@ -14,7 +14,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class SpendingViewModel @AssistedInject constructor(
@@ -29,14 +28,15 @@ class SpendingViewModel @AssistedInject constructor(
     @Assisted("spendingId") private val pSpendingId: Int,
     @Assisted("expenditureId") private val pExpenditureId: Int,
     @Assisted("budgetId") private val pBudgetId: Int,
-    @Assisted("envelop") private val envelop: String,
+    @Assisted("messageId") private val pMessageId: Int,
 ) : ItemViewModel<Spending>(coroutineService, SpendingRepositoryAdapter(budgetService, BudgetId(pBudgetId))) {
-    private var newRule: MessageRule? = null
     private val budget: Budget = loadBudget()
+    private var changedRule: MessageRule? = null
+
     override val model: Spending = loadModel()
 
-    val messageDrivenMode = MutableLiveData<Boolean>()
-    var message: Message? = null
+    val discoverMode = MutableLiveData<Boolean>()
+    var message: Message? = loadMessage()
 
     var comment = MutableLiveData<String>()
     var commentError = MutableLiveData(Validator.NO_ERRORS)
@@ -53,25 +53,26 @@ class SpendingViewModel @AssistedInject constructor(
         .map { it.value }
         .toList()
 
-    fun processMessage(onDone: (success: Boolean) -> Unit) {
-        this.message?.let {
+    fun discover(handleResult: (success: Boolean) -> Unit) {
+        message?.let {
             viewModelScope.launch {
-                onDone(doProcess(it))
+                handleResult(doDiscover(it))
             }
         }
     }
 
-    fun newRule(): Boolean = newRule?.let { rule ->
-        !messageRuleService.ruleRepository.getAll()
-            .filter { it.name.lowercase() == rule.name.lowercase() }
-            .any { it.expenditureName.lowercase() == expenditureNameValue.lowercase() }
-    } ?: false
-
-    fun saveRule() = runBlocking {
-        newRule?.let {
-            it.expenditureName = expenditureNameValue
-            messageRuleService.ruleRepository.save(it)
+    fun hasChangedRule(): Boolean {
+        val candidate = changedRule ?: (message?.status as? Message.Matched)?.ruleId?.let { ruleId ->
+            messageRuleService.ruleRepository.getById(ruleId)
         }
+
+        changedRule = messageRuleService.evaluateRuleChanges(message, candidate, expenditureNameValue)
+
+        return changedRule != null
+    }
+
+    fun resetRuleChanges() {
+        changedRule = null
     }
 
     init {
@@ -80,14 +81,7 @@ class SpendingViewModel @AssistedInject constructor(
         initDefaultExpenditure(ExpenditureId(pExpenditureId))
     }
 
-    private fun loadBudget(): Budget {
-        if (action == Action.ADD || action == Action.CLONE) {
-            pBudgetId
-        } else {
-            spendingRepository.getSpending(SpendingId(pSpendingId))?.expenditure?.budgetId
-        }
-        return budgetService.loadBudgetOrGetActive(BudgetId(pBudgetId))
-    }
+    private fun loadBudget() = budgetService.loadBudgetOrGetActive(BudgetId(pBudgetId))
 
     private fun loadModel(): Spending =
         when(action) {
@@ -106,6 +100,13 @@ class SpendingViewModel @AssistedInject constructor(
             }
             else -> throw ActionNotSupportedException("BudgetViewModel does not support $action action")
         } ?: throw ItemNotFoundException("Item not found id=$pBudgetId")
+
+    private fun loadMessage(): Message? =
+        if (pMessageId > 0) {
+            messageService.messageRepository.getById(MessageId(pMessageId))
+        } else {
+            messageService.messageRepository.getBySpendingId(SpendingId(pSpendingId))
+        }
 
     private fun initProperties(item: Spending) {
         comment.value = item.comment
@@ -131,57 +132,51 @@ class SpendingViewModel @AssistedInject constructor(
             }
         }
 
-        if (this.action == Action.ADD) {
-            getDependantSpendingMessage()?.let {
-                amount.value = it.amount
-                comment.value = it.text
-
-                message = messageService.messageRepository.getById(MessageId(it.id))
-                messageDrivenMode.value = message?.status == Message.Status.RECOMMENDED
+        message?.let {
+            if (this.action == Action.ADD) {
+                if (it.status is Message.Matched) {
+                    amount.value = (it.status as Message.Matched).suggestedAmount
+                    comment.value = it.text
+                } else {
+                    discoverMode.value = true
+                }
             }
         }
     }
 
-    private suspend fun doProcess(message: Message) =
-        messageRuleService.buildRule(message.sender, message.text)?.let {
-            when(val result = messageService.classify(message.sender, message.text, listOf(it))) {
-                is MessageService.Captured -> {
-                    this.newRule = it
-                    messageDrivenMode.value = false
-                    comment.value = message.text
-                    date.value = message.receivedAt
-                    amount.value = result.amount
-                    expenditureName.value = result.expenditureName ?: ""
-                    true
-                }
-                else -> false
+    private suspend fun doDiscover(message: Message): Boolean {
+        val rule = messageRuleService.generateRuleFromMessage(message)
+
+        return when (val result = rule?.evaluate(message.sender, message.text)) {
+            is MessageRule.Match -> {
+                this.discoverMode.value = false
+                this.changedRule = rule
+                this.message = message.toMatched(rule.id, result.amount, "")
+
+                comment.value = message.text
+                date.value = message.receivedAt
+                amount.value = result.amount
+                expenditureName.value = ""
+
+                true
             }
-        } ?: false
+            else -> {
+                this.changedRule = null
+                false
+            }
+        }
+    }
 
     override suspend fun doSave() {
-        if (action == Action.ADD || action == Action.EDIT) {
-            model.expenditure = findOrCreateExpenditure(expenditureNameValue)
-        }
+        model.expenditure = findOrCreateExpenditure(expenditureNameValue)
 
         super.doSave()
 
-        markMessageAssigned(model)
+        saveDependencies()
     }
 
     private fun findOrCreateExpenditure(name: String) =
         budget.findExpenditure(name) ?: expenditureRepository.create().also { it.name = name }
-
-    private suspend fun markMessageAssigned(item: Spending) {
-        getDependantSpendingMessage()?.let {
-            val message = messageService.messageRepository.getById(MessageId(it.id))
-            if (message != null) {
-                message.spendingId = item.id
-                message.status = Message.Status.MATCHED
-                message.suggestedExpenditureName = item.expenditure.name
-                messageService.messageRepository.save(message)
-            }
-        }
-    }
 
     private fun initDefaultExpenditure(expenditureId: ExpenditureId) {
         if (action == Action.ADD && expenditureId.value > 0) {
@@ -189,14 +184,23 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun getDependantSpendingMessage() = SpendingMessageEnvelop.fromString(this.envelop)
+    private suspend fun saveDependencies() {
+        changedRule?.let {
+            messageRuleService.ruleRepository.save(it)
+        }
+
+        message?.let {
+            it.spendingId = model.id
+            messageService.messageRepository.save(it)
+        }
+    }
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted("spendingId") messageRuleId: Int,
+        fun create(@Assisted("spendingId") spendingId: Int,
                    @Assisted("expenditureId") expenditureId: Int,
                    @Assisted("budgetId") budgetId: Int,
-                   @Assisted("envelop") envelop: String,
+                   @Assisted("messageId") messageId: Int,
                    action: Action): SpendingViewModel
     }
 }

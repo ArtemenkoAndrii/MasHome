@@ -1,16 +1,21 @@
 package com.mas.mobile.presentation.activity.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mas.mobile.NavGraphDirections
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.MessageListFragmentBinding
 import com.mas.mobile.presentation.adapter.SpendingMessageAdapter
 import com.mas.mobile.presentation.viewmodel.MessageListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
-import com.mas.mobile.repository.db.entity.SpendingMessage
 
 class MessageListFragment: ListFragment() {
     private lateinit var binding: MessageListFragmentBinding
@@ -40,19 +45,30 @@ class MessageListFragment: ListFragment() {
         return layout
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.spending_message_list_menu, menu)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        showDialog()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.spending_message_list_menu_rules -> {
-                val action = resolveAddButtonDestination()
-                this.findNavController().navigate(action)
-                true
-            }
+            R.id.message_list_rules -> go(MessageListFragmentDirections.actionToMessageRules())
+            R.id.message_list_discovery -> go(MessageListFragmentDirections.actionToQualifiers())
+            R.id.message_list_settings -> go(MessageListFragmentDirections.actionToSettings())
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.message_list_menu, menu)
+    }
+
+    private fun showDialog() {
+        if (listViewModel.suggestEnableCapturing()) {
+            showConfirmationDialog(getResourceService().messageCapturingDisabled()) {
+                this.findNavController().navigate(NavGraphDirections.actionToSettings(true))
+            }
         }
     }
 

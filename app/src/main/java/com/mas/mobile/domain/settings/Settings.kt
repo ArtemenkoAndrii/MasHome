@@ -9,7 +9,8 @@ data class Settings(
     var startDayOfWeek: DayOfWeek = LocalDate.now().startDayOfWeek(),
     var captureSms: Boolean = false,
     var captureNotifications: Boolean = false,
-    var policyVersion: String = ""
+    var policyVersion: String = "",
+    var discoveryMode: Boolean = true
 )
 
 fun LocalDate.startDayOfWeek(): DayOfWeek = this.dayOfWeek

@@ -62,8 +62,9 @@ abstract class CommonFragment : Fragment() {
         }.create().show()
     }
 
-    protected fun go(direction: NavDirections) {
+    protected fun go(direction: NavDirections): Boolean {
         this.findNavController().navigate(direction)
+        return true
     }
 
     protected fun menuVisibility(isEnabled: Boolean) {

@@ -1,35 +1,56 @@
 package com.mas.mobile.domain.message
 
 import android.util.Log
-import com.mas.mobile.domain.budget.ExpenditureRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MessageRuleService @Inject constructor(
     private val messageAnalyzer: MessageAnalyzer,
-    private val expenditureRepository: ExpenditureRepository,
     val ruleRepository: MessageRuleRepository
 ) {
-    suspend fun buildRule(sender: String, text: String): MessageRule? {
-        val availableExpenditures = expenditureRepository.getExpenditureNames(true, LIMIT)
-        return when (val result = messageAnalyzer.analyze(text, availableExpenditures)) {
-            is MessageAnalyzer.Rule -> {
-                ruleRepository.create().also {
-                    it.name = sender
-                    it.amountMatcher = result.amountMatcher
-                    it.expenditureMatcher = result.expenditureMatcher
-                    it.expenditureName = result.expenditureName?.value ?: ""
-                }
+    suspend fun generateRuleFromMessage(message: Message): MessageRule? {
+        val pattern = messageAnalyzer.buildPattern(message.text)
+
+        return when (val result = pattern?.parse(message.text)) {
+            is Pattern.Data -> ruleRepository.create().also {
+                it.name = message.sender
+                it.pattern = pattern
+                it.expenditureMatcher = result.merchant ?: ""
+                it.expenditureName = ""
             }
             else -> {
-                Log.i(this::class.simpleName, "Can't generate rule for message $text")
+                Log.d(this::class.simpleName, "Can't generate rule for message $message")
                 null
             }
         }
     }
 
-    companion object {
-        const val LIMIT: Short = 20
+    fun evaluateRuleChanges(message: Message?, rule: MessageRule?, expName: String): MessageRule? {
+        if (message == null || rule == null) {
+            return null
+        }
+
+        val merchant = (rule.evaluate(message.sender, message.text) as? MessageRule.Match)
+            ?.merchant ?: return null
+
+        return when {
+            merchant == rule.expenditureMatcher && expName != rule.expenditureName -> {
+                // Update rule with new expenditure name
+                rule.also {
+                    it.expenditureName = expName
+                }
+            }
+            merchant.isNotBlank() && expName != rule.expenditureName -> {
+                // Create new rule based on a new merchant
+                ruleRepository.create().also {
+                    it.name = rule.name
+                    it.pattern = rule.pattern
+                    it.expenditureMatcher = merchant
+                    it.expenditureName = expName
+                }
+            }
+            else -> null
+        }
     }
 }

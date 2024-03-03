@@ -14,6 +14,9 @@ interface SpendingMessageDAO {
     @Query("SELECT * FROM spending_messages WHERE id = :id")
     fun getById(id: Int): SpendingMessage?
 
+    @Query("SELECT * FROM spending_messages WHERE spending_id = :id")
+    fun getBySpendingId(id: Int): SpendingMessage?
+
     @Query("SELECT count(1) FROM spending_messages WHERE is_new == 1")
     fun countUnreadLive(): LiveData<Int>
 

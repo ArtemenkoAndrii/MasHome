@@ -7,14 +7,14 @@ import javax.inject.Singleton
 @Singleton
 class CoroutineService @Inject constructor(
     private val errorHandler: ErrorHandler
-) {
-    fun backgroundTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
+) : TaskService {
+    override fun backgroundTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch(coroutineErrorHandler) {
             wrapper(this)
         }
     }
 
-    fun blockingTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
+    override fun blockingTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
         runBlocking {
             wrapper(this)
         }

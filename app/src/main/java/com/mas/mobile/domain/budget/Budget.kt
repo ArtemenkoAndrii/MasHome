@@ -84,6 +84,10 @@ data class Budget(
 
         require(!duplicate) { "Expenditure name ${expenditure.name} isn't unique" }
     }
+
+    companion object {
+        const val TEMPLATE_ID = 1
+    }
 }
 
 open class BudgetDetails(

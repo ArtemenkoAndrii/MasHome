@@ -5,19 +5,28 @@ import java.time.LocalDateTime
 
 data class Message(
     val id: MessageId,
-    var sender: String = "",
-    var text: String = "",
+    var sender: String,
+    var text: String,
     var receivedAt: LocalDateTime = LocalDateTime.now(),
-    var ruleId: MessageRuleId? = null,
     var spendingId: SpendingId? = null,
-    var suggestedExpenditureName: String? = null,
-    var suggestedAmount: Double = 0.0,
-    var isNew: Boolean = true,
-    var status: Status = Status.MATCHED
+    var status: Status,
+    var isNew: Boolean = true
 ) {
-    enum class Status {
-        MATCHED, RECOMMENDED
-    }
+    fun hasSpending() = spendingId != null
+
+    fun toMatched(ruleId: MessageRuleId, suggestedAmount: Double, suggestedExpenditureName: String?) =
+        this.copy(
+            status = Matched(ruleId, suggestedAmount, suggestedExpenditureName)
+        )
+
+    sealed class Status
+    object Recommended: Status()
+    object Rejected: Status()
+    data class Matched(
+        val ruleId: MessageRuleId,
+        val suggestedAmount: Double,
+        val suggestedExpenditureName: String?
+    ): Status()
 }
 
 @JvmInline

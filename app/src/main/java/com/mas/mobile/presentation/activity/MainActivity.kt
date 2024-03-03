@@ -42,9 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_view) as NavHostFragment).navController
         val graph = navController.navInflater.inflate(R.navigation.nav_graph).also {
-            val isThisFirstRun = settingsService.isFirstLaunch()
-            val dest = if (isThisFirstRun) { R.id.nav_settings } else { R.id.nav_expenditure_list }
-            it.setStartDestination(dest)
+            it.setStartDestination(R.id.nav_expenditure_list)
         }
         navController.graph = graph
 
@@ -110,12 +108,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val retValue = super.onCreateOptionsMenu(menu)
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
+        //menuInflater.inflate(R.menu.actions_menu, menu)
+
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
         if (navigationView == null) {
             menuInflater.inflate(R.menu.bottom_menu, menu)
             return true
         }
+
         return retValue
     }
 

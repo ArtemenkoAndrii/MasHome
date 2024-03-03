@@ -6,14 +6,14 @@ import retrofit2.http.POST
 import javax.inject.Singleton
 
 @Singleton
-interface GptChatService {
+interface GptChatConnector {
     @POST("/v1/chat/completions")
     suspend fun sendMessage(@Body request: ChatGPTRequest): Response<ChatGPTResponse>
 }
 
 data class ChatGPTRequest(
     val messages: List<Message>,
-    val model: String = "gpt-3.5-turbo",
+    val model: String = "ft:gpt-3.5-turbo-1106:personal::8lKCjRhI",
     val temperature: Double = 0.2
 ) {
     data class Message(

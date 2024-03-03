@@ -4,11 +4,10 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.mas.mobile.presentation.activity.converter.PatternConverter"/>
 
-        <variable name="messageRule"
-            type="com.mas.mobile.domain.message.MessageRule"/>
-        <variable name="callback"
-            type="android.view.View.OnClickListener"/>
+        <variable name="messageRule" type="com.mas.mobile.domain.message.MessageRule"/>
+        <variable name="callback" type="android.view.View.OnClickListener"/>
     </data>
 
     <LinearLayout
@@ -101,7 +100,7 @@
                 android:id="@+id/message_rule_amount_matcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{messageRule.amountMatcher}"
+                android:text="@{messageRule.pattern.value}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/message_rule_list_menu_fake2"
                 app:layout_constraintStart_toStartOf="parent"

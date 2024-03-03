@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mas.mobile.R
 import com.mas.mobile.presentation.activity.MainActivity
+import com.mas.mobile.presentation.viewmodel.validator.Action
 
 abstract class ListFragment: CommonFragment() {
 
@@ -21,6 +22,10 @@ abstract class ListFragment: CommonFragment() {
             R.id.standartd_list_menu_add -> {
                 val action = resolveAddButtonDestination()
                 this.findNavController().navigate(action)
+                true
+            }
+            R.id.standartd_list_menu_settings -> {
+                this.findNavController().navigate(R.id.action_to_settings)
                 true
             }
             else -> super.onOptionsItemSelected(item)

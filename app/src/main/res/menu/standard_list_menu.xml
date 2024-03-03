@@ -5,4 +5,9 @@
         android:title = "@string/menu_add"
         android:orderInCategory = "1"
         />
+    <item
+        android:id = "@+id/standartd_list_menu_settings"
+        android:title = "@string/menu_settings"
+        android:orderInCategory = "2"
+        />
 </menu>

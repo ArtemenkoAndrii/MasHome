@@ -38,4 +38,9 @@ data class SpendingMessage(
 
     @ColumnInfo(name = "status")
     var status: String = "",
-): Searchable(id, name)
+): Searchable(id, name) {
+    companion object {
+        const val MATCHED = "MATCHED"
+        const val RECOMMENDED = "RECOMMENDED"
+    }
+}

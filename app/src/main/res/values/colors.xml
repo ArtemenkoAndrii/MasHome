@@ -7,5 +7,6 @@
     <color name="colorYellow">#FFEE58</color>
     <color name="colorRed">#FF3D00</color>
     <color name="colorGray">#EEEEEE</color>
+    <color name="colorDeepGray">#808080</color>
     <color name="colorSurface">#FFFFFF</color>
 </resources>

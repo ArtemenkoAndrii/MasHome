@@ -27,7 +27,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_comment"
             android:enabled="false"
-            android:visibility="@{model.messageDrivenMode ? View.VISIBLE : View.GONE}">
+            android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_amount"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
+            android:visibility="@{model.discoverMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.amountError}"
             app:errorEnabled='@{!(model.amountError == "")}'>
 
@@ -67,7 +67,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_date"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
+            android:visibility="@{model.discoverMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.dateError}"
             app:errorEnabled='@{!(model.dateError == "")}'>
 
@@ -89,7 +89,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_comment"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
+            android:visibility="@{model.discoverMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.commentError}"
             app:errorEnabled='@{!(model.commentError == "")}'>
 
@@ -110,7 +110,7 @@
             android:paddingBottom="10dp"
             android:hint="@string/hint_spending_expenditure"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.messageDrivenMode ? View.GONE : View.VISIBLE}"
+            android:visibility="@{model.discoverMode ? View.GONE : View.VISIBLE}"
             app:error="@{model.expenditureNameError}"
             app:errorEnabled='@{!(model.expenditureNameError == "")}'>
 
@@ -131,13 +131,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:enabled="@{model.isEditable()}"
-            android:visibility="@{model.isEditable() &amp;&amp; !model.messageDrivenMode ? View.VISIBLE : View.GONE}"
+            android:visibility="@{model.isEditable() &amp;&amp; !model.discoverMode ? View.VISIBLE : View.GONE}"
             android:text="@string/btn_save" />
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:visibility="@{model.messageDrivenMode ? View.VISIBLE : View.GONE}">
+            android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}">
 
             <FrameLayout
                 android:layout_width="wrap_content"

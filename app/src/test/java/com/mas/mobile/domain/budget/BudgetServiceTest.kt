@@ -1,23 +1,16 @@
-package com.mas.mobile.service
+package com.mas.mobile.domain.budget
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.repository.db.entity.Budget
 import com.mas.mobile.repository.db.entity.Expenditure
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import io.mockk.*
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class BudgetServiceTest {
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
-
     /*
     private val mockBudgetRepository = mockk<BudgetRepository>(relaxed = true)
     private val mockExpenditureRepository = mockk<ExpenditureRepository>(relaxed = true)

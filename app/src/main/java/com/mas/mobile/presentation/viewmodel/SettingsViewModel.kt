@@ -8,7 +8,7 @@ import com.mas.mobile.domain.settings.Settings
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.CoroutineService
 import com.mas.mobile.service.PermissionService
-import com.mas.mobile.domain.settings.SettingsService
+import com.mas.mobile.service.ResourceService
 import com.mas.mobile.util.DateTool
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -17,23 +17,24 @@ import java.time.DayOfWeek
 class SettingsViewModel @AssistedInject constructor(
     settingsRepository: SettingsRepository,
     coroutineService: CoroutineService,
-    private val settingsService: SettingsService,
+    resourceService: ResourceService,
     private val permissionService: PermissionService
 ) : ItemViewModel<Settings>(coroutineService, settingsRepository) {
     override var model = settingsRepository.get()
 
-    var period = MutableLiveData<Period>()
-    var startDayOfMonth = MutableLiveData<Int>()
+    var period = MutableLiveData<String>()
+    var startDayOfMonth = MutableLiveData<String>()
     var startDayOfMonthVisible = MutableLiveData<Boolean>()
-    var startDayOfWeek = MutableLiveData<Int>()
+    var startDayOfWeek = MutableLiveData<String>()
     var startDayOfWeekVisible = MutableLiveData<Boolean>()
     var captureSms = MutableLiveData<Boolean>()
     var captureNotifications = MutableLiveData<Boolean>()
+    var discoveryMode = MutableLiveData<Boolean>()
     val appVersion = BuildConfig.VERSION_NAME
 
     private var onRequestSMSPermissions: () -> Unit = {  }
     private var onRequestNotificationPermissions: () -> Unit = {  }
-    private val dayOfWeekMap = listOf(
+    private val dayOfWeekMap = mapOf(
         DayOfWeek.MONDAY to DateTool.formatToDayOfWeek(DayOfWeek.MONDAY),
         DayOfWeek.TUESDAY to DateTool.formatToDayOfWeek(DayOfWeek.TUESDAY),
         DayOfWeek.WEDNESDAY to DateTool.formatToDayOfWeek(DayOfWeek.WEDNESDAY),
@@ -42,74 +43,64 @@ class SettingsViewModel @AssistedInject constructor(
         DayOfWeek.SATURDAY to DateTool.formatToDayOfWeek(DayOfWeek.SATURDAY),
         DayOfWeek.SUNDAY to DateTool.formatToDayOfWeek(DayOfWeek.SUNDAY)
     )
+    val periodMap = mapOf(
+        Period.WEEK to resourceService.constantPeriodWeek(),
+        Period.TWO_WEEKS to resourceService.constantPeriodTwoWeeks(),
+        Period.MONTH to resourceService.constantPeriodMonths(),
+        Period.QUARTER to resourceService.constantPeriodQuarter(),
+        Period.YEAR to resourceService.constantPeriodYear()
+    )
 
-    val availableDaysOfMonth = (1..28).toList()
-    val availableDaysOfWeek = dayOfWeekMap.map { it.second }.toList()
+    val availableDaysOfMonth = (1..28).map { it.toString() }.toList()
+    val availableDaysOfWeek = dayOfWeekMap.entries.map { it.value }
 
     init {
         initProperties()
     }
 
-    fun isThisFirstLaunch() = settingsService.isFirstLaunch()
-
     private fun initProperties() {
-        period.value = model.period
-        period.observeForever {
-            model.period = it
-            switchDateFields(it)
+        period.value = periodMap[model.period]
+        period.observeForever { p ->
+            model.period = periodMap.entries.first { it.value == p }.key
+            switchDateFields(model.period)
+            save()
         }
 
-        startDayOfMonth.value = availableDaysOfMonth.indexOf(model.startDayOfMonth.value)
+        startDayOfMonth.value = model.startDayOfMonth.value.toString()
         startDayOfMonth.observeForever {
-            model.startDayOfMonth = DayOfMonth(availableDaysOfMonth[it])
+            model.startDayOfMonth = DayOfMonth(it.toInt())
+            save()
         }
 
-        startDayOfWeek.value = dayOfWeekMap.withIndex().filter { it.value.first == model.startDayOfWeek }.map { it.index }.first()
-        startDayOfWeek.observeForever {
-            model.startDayOfWeek = dayOfWeekMap[it].first
+        startDayOfWeek.value = dayOfWeekMap[model.startDayOfWeek]
+        startDayOfWeek.observeForever { d ->
+            model.startDayOfWeek = dayOfWeekMap.entries.first { it.value == d }.key
+            save()
         }
 
         captureSms.value = model.captureSms
         captureSms.observeForever {
-            if (model.captureSms != it) {
-                model.captureSms = it
-
-                if (it && !permissionService.isSMSAllowed()) {
-                    onRequestSMSPermissions()
-                }
+            model.captureSms = permissionService.isSMSAllowed()
+            if (it && !model.captureSms) {
+                onRequestSMSPermissions()
             }
+            save()
         }
 
         captureNotifications.value = model.captureNotifications
         captureNotifications.observeForever {
-            if (model.captureNotifications != it) {
-                model.captureNotifications = it
-
-                if (it && !permissionService.isNotificationsAllowed()) {
-                    onRequestNotificationPermissions()
-                }
+            model.captureNotifications = permissionService.isNotificationsAllowed()
+            if (it && !model.captureNotifications) {
+                onRequestNotificationPermissions()
             }
+            save()
         }
-    }
 
-    fun setMonthPeriod() {
-        period.value = Period.MONTH
-    }
-
-    fun setWeekPeriod() {
-        period.value = Period.WEEK
-    }
-
-    fun set2Week2Period() {
-        period.value = Period.TWO_WEEKS
-    }
-
-    fun setQuarterPeriod() {
-        period.value = Period.QUARTER
-    }
-
-    fun setYearPeriod() {
-        period.value = Period.YEAR
+        discoveryMode.value = model.discoveryMode
+        discoveryMode.observeForever {
+            model.discoveryMode = it
+            save()
+        }
     }
 
     fun onRequestSMSPermissions(handler: () -> Unit) {

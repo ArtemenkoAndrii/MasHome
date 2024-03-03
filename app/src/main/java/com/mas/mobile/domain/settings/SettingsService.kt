@@ -26,6 +26,11 @@ class SettingsService @Inject constructor(
         }
     }
 
+    fun isMessageCapturingEnabled() =
+        with(settingsRepository.get()) {
+            captureSms || captureNotifications
+        }
+
     fun needToShowPolicy() =
         settingsRepository.get().policyVersion != POLICY_VERSION
 
