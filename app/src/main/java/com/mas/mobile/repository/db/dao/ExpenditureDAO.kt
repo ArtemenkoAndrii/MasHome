@@ -30,9 +30,6 @@ interface ExpenditureDAO {
     @Query("SELECT * FROM expenditures WHERE id = :expenditureId")
     fun getById(expenditureId: Int): Expenditure?
 
-    @Query("SELECT * FROM expenditures WHERE name = :name AND budget_id = :budgetId")
-    fun getByName(name: String, budgetId: Int): Expenditure?
-
     @Transaction
     @Query("SELECT * FROM expenditures WHERE budget_id = :budgetId")
     fun getByBudgetId(budgetId: Int): List<Expenditure>

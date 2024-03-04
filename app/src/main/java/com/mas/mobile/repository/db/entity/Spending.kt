@@ -43,7 +43,9 @@ data class Spending (
                 parentColumns = ["id"],
                 childColumns = ["expenditure_id"],
                 onDelete = ForeignKey.CASCADE
-            )])
+            )],
+        indices = [Index(value = ["expenditure_id"])]
+)
 data class SpendingData (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

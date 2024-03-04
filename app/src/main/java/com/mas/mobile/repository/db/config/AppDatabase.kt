@@ -13,7 +13,7 @@ import com.mas.mobile.repository.db.entity.*
 import java.time.LocalDate
 
 @Database(
-    version = 5,
+    version = 6,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -46,7 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,)
                     .build()
             }
             return INSTANCE!!
@@ -96,5 +96,12 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
             execSQL("CREATE TABLE qualifiers (name TEXT NOT NULL PRIMARY KEY, type INTEGER NOT NULL)")
             execSQLs(DML.DEFAULT_QUALIFIERS)
         }
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE INDEX IF NOT EXISTS index_expenditures_on_budget_id ON expenditures(budget_id)")
+        database.execSQL("CREATE INDEX IF NOT EXISTS index_spendings_on_expenditure_id ON spendings(expenditure_id)")
     }
 }

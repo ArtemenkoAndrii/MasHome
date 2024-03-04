@@ -46,7 +46,7 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
         when (result.groupValues.size) {
             2 -> Data(result.groupValues[1].asDouble(), null)
             3 -> {
-                val (zero, first, second) = result.groupValues
+                val (_, first, second) = result.groupValues
                 val amount = if (amountFirst) first.asDouble() else second.asDouble()
                 val merchant = if (amountFirst) second else first
                 Data(amount, merchant)

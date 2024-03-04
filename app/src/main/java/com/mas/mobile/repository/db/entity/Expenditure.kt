@@ -42,7 +42,9 @@ data class Expenditure(
             ForeignKey(entity = Budget::class,
             parentColumns = ["id"],
             childColumns = ["budget_id"],
-            onDelete = CASCADE)])
+            onDelete = CASCADE)],
+        indices = [Index(value = ["budget_id"])]
+)
 data class ExpenditureData(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

@@ -35,6 +35,7 @@ class AutoCompleteAdapter<T: Searchable>(
         return this.filter
     }
 
+    @Suppress("UNCHECKED_CAST")
     inner class PersistableFilter : Filter() {
         override fun convertResultToString(resultValue: Any): CharSequence {
             return StringBuilder().append((resultValue as T).name)
@@ -43,9 +44,9 @@ class AutoCompleteAdapter<T: Searchable>(
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             val result = FilterResults()
 
-            val term = constraint?.toString()?.toLowerCase(Locale.ROOT)
+            val term = constraint?.toString()?.lowercase(Locale.ROOT)
             val suggestions = if (term != null) {
-                allSuggestions.filter { c -> c.name.toLowerCase(Locale.ROOT).contains(term) }
+                allSuggestions.filter { c -> c.name.lowercase(Locale.ROOT).contains(term) }
             } else {
                 allSuggestions.toMutableList()
             }
@@ -57,7 +58,7 @@ class AutoCompleteAdapter<T: Searchable>(
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            if (results?.count ?: 0 > 0) {
+            if ((results?.count ?: 0) > 0) {
                 clear()
                 addAll(results?.values as List<T>)
                 notifyDataSetChanged()

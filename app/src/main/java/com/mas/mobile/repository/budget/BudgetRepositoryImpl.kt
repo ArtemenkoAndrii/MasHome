@@ -33,12 +33,6 @@ class BudgetRepositoryImpl(
 
     override fun getBudgetByName(name: String): Budget? = dao.getByName(name)?.toModel()
 
-    override fun getBudgetByExpenditureId(id: ExpenditureId): Budget? =
-        dao.getBudgetByExpenditureId(id.value)?.toModel()
-
-    override fun getBudgetBySpendingId(id: SpendingId): Budget? =
-        dao.getBudgetBySpendingId(id.value)?.toModel()
-
     override fun getOnDate(date: LocalDate): Budget? = dao.getActiveOn(date)?.toModel()
 
     override fun getLast(): Budget? = dao.getLatestEndedOn(LocalDate.MAX)?.toModel()
