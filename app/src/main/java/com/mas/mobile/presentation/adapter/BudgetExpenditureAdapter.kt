@@ -58,5 +58,14 @@ class BudgetExpenditureAdapter(private val fragment: ExpenditureListFragment): E
                 fragment.listViewModel.budgetId
             ).also { binding.expenditureRowLayout.findNavController().navigate(it) }
         }
+
+        binding.expenditureRowLayout.setOnLongClickListener {
+            binding.expenditureRowLayout.findNavController().navigate(
+                BudgetExpenditureListFragmentDirections.actionToExpenditureSpendingList(
+                    expenditureId = item.id.value
+                )
+            )
+            true
+        }
     }
 }

@@ -333,6 +333,14 @@
                 android:defaultValue="-1"
                 app:argType="integer"/>
         </action>
+        <action
+            android:id="@+id/action_to_expenditure_spending_list"
+            app:destination="@id/nav_expenditure_spending_list" >
+            <argument
+                android:name="expenditure_id"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
     </fragment>
 
     <fragment

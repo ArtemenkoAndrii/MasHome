@@ -41,6 +41,13 @@ class BudgetAdapter(private val listMenu: ListMenu<Budget>): BaseAdapter<Budget,
                 .actionToBudget(Action.VIEW.name, item.id.value)
             rowView.findNavController().navigate(action)
         }
+
+        binding.budgetRowLayout.setOnLongClickListener {
+            rowView.findNavController().navigate(
+                BudgetListFragmentDirections.actionToBudgetExpenditureList(item.id.value)
+            )
+            true
+        }
     }
 
     override fun getBinding(view: View) = BudgetListRowBinding.bind(view)
