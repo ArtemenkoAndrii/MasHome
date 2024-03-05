@@ -57,13 +57,15 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:hint="@string/hint_message_rule_amount_matcher"
-            android:enabled="@{model.isEditable()}">
+            android:enabled="@{model.isEditable()}"
+            app:error="@{model.amountMatcherError}"
+            app:errorEnabled='@{!(model.amountMatcherError == "")}'>
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:maxLength="30"
+                android:maxLength="100"
                 android:singleLine="true"
                 android:text="@={model.amountMatcher}" />
         </com.google.android.material.textfield.TextInputLayout>

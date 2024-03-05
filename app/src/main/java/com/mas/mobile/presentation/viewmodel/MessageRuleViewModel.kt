@@ -27,6 +27,7 @@ class MessageRuleViewModel @AssistedInject constructor(
     var sender = MutableLiveData<String>()
     var expenditureMatcher = MutableLiveData<String>()
     var amountMatcher = MutableLiveData<String>()
+    var amountMatcherError = MutableLiveData(Validator.NO_ERRORS)
     var expenditureId: Int = NEW_ITEM
     var expenditureName = MutableLiveData<String>()
     var expenditureNameError = MutableLiveData(Validator.NO_ERRORS)
@@ -67,7 +68,16 @@ class MessageRuleViewModel @AssistedInject constructor(
         sender.observeForever { item.name = it }
 
         amountMatcher.value = item.pattern.value
-        amountMatcher.observeForever { item.pattern = Pattern(it) }
+        amountMatcher.observeForever {
+            validateOnChange(amountMatcherError) {
+                try {
+                    item.pattern = Pattern(it)
+                    Validator.NO_ERRORS
+                } catch (e: IllegalArgumentException) {
+                    e.message ?: e.toString()
+                }
+            }
+        }
 
         expenditureMatcher.value = item.expenditureMatcher
         expenditureMatcher.observeForever { item.expenditureMatcher = it }

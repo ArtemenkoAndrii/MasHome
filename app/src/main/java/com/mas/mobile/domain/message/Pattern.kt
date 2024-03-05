@@ -6,6 +6,7 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
     init {
         val hasAmount = value.contains(AMOUNT_PLACEHOLDER, ignoreCase = true)
         require(hasAmount) { "The pattern must have $AMOUNT_PLACEHOLDER placeholder" }
+        require(value.length <= MAX_LENGTH) { "The value exceeds the maximum length of $MAX_LENGTH" }
     }
 
     fun parse(message: String): Result {
@@ -58,6 +59,7 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
     private fun String?.asDouble() = this?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
 
     private companion object {
+        const val MAX_LENGTH = 100
         const val AMOUNT_PLACEHOLDER = "{amount}"
         const val MERCHANT_PLACEHOLDER = "{merchant}"
         const val ANY_STRING_REGEX = ".*"
