@@ -217,7 +217,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:textAppearance="?attr/textAppearanceSubtitle1"
-                            android:text="@string/menu_settings_discovery_settings" />
+                            android:text="@string/menu_settings_discovery_mode" />
 
                         <View
                             android:layout_width="0dp"

@@ -65,8 +65,8 @@
     <string name="menu_settings_start">Start Day</string>
     <string name="menu_settings_notifications">Capture Notifications</string>
     <string name="menu_settings_sms">Capture SMS</string>
-    <string name="menu_settings_discovery_mode">Auto-Detect Spendings</string>
-    <string name="menu_settings_discovery_settings">Detector Settings</string>
+    <string name="menu_settings_discovery_mode">Discovery mode</string>
+    <string name="menu_settings_discovery_settings">Discovery Settings</string>
     <string name="menu_settings_rules">Expense Rules</string>
     <string name="menu_settings_about">About</string>
     <string name="menu_settings_version">Version</string>
