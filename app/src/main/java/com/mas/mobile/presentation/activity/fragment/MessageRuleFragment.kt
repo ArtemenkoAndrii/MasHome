@@ -11,6 +11,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.MessageRuleFragmentBinding
+import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.MessageRuleViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.repository.db.entity.Searchable
@@ -42,7 +43,6 @@ class MessageRuleFragment : ItemFragment<MessageRuleViewModel>() {
             saveAndClose(viewModel)
         }
 
-
         ArrayAdapter(this.requireContext(),
             R.layout.autocomplete_item,
             viewModel.availableExpenditures.toList()).also {
@@ -61,6 +61,23 @@ class MessageRuleFragment : ItemFragment<MessageRuleViewModel>() {
             this.setOnDismissListener {
                 handleImpliedExpenditureChoice(this)
             }
+        }
+
+        with(binding.messageRuleCurrencyLayout) {
+            isEndIconVisible = true
+            viewModel.currency.observeForever {
+                endIconDrawable = TextDrawable(requireContext(), it.symbol)
+            }
+
+            val onClick = View.OnClickListener {
+                showCurrencyPicker { currency ->
+                    viewModel.currency.value = currency
+                    clearFocus()
+                }
+            }
+
+            editText?.setOnClickListener(onClick)
+            setEndIconOnClickListener(onClick)
         }
 
         return layout

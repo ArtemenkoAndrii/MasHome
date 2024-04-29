@@ -10,7 +10,7 @@ class GptChatApiClient {
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .header("Authorization", "Bearer ${BuildConfig.API_KEY}")
+                    .header("Authorization", "Bearer ${BuildConfig.GPT_API_KEY}")
                     .build()
                 chain.proceed(request)
             }

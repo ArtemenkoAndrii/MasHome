@@ -18,4 +18,8 @@ class ErrorHandler @Inject constructor(
         Log.e(MainActivity::class.java.name, message, error)
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    fun toast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 }

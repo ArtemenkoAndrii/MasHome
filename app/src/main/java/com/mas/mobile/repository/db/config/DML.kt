@@ -3,13 +3,14 @@ package com.mas.mobile.repository.db.config
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.entity.Qualifier
 import java.time.LocalDate
-import java.util.*
+import java.util.Currency
+import java.util.Locale
 
 class DML {
     companion object {
         private val maxDate = SQLiteTypeConverter().fromLocalDate(LocalDate.MAX)
 
-        fun String.plusIf(condition: Boolean, value: () -> String) = this.plus(
+        private fun String.plusIf(condition: Boolean, value: () -> String) = this.plus(
             if (condition) {
                 value()
             } else {
@@ -17,14 +18,18 @@ class DML {
             }
         )
 
+        private fun getCurrency() = Currency.getInstance(Locale.getDefault())
+
+        private fun getLanguage() = Locale.getDefault().language.uppercase()
+
         val TEMPLATE_GENERATOR = """
             INSERT INTO generator(id)
             VALUES(100)
         """.trimIndent()
 
         val TEMPLATE_BUDGET = """
-            INSERT INTO budgets(id, name, startsOn, lastDayAt, plan, fact, isActive, comment)
-            VALUES(1, "TEMPLATE", $maxDate, $maxDate, 0.00, 0.00, 0, "Automatically generated");
+            INSERT INTO budgets(id, name, startsOn, lastDayAt, plan, fact, isActive, comment, currency)
+            VALUES(1, "TEMPLATE", $maxDate, $maxDate, 0.00, 0.00, 0, "Automatically generated", "${getCurrency()}");
         """.trimIndent()
 
         val TEMPLATE_EXPENDITURES = """
@@ -51,17 +56,17 @@ class DML {
         """.trimIndent()
 
         val GREETING_MESSAGE_RULES = """
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
-            VALUES(1, "BANK OF AMERICA", "Food", "walmart", "{amount}");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
-            VALUES(2, "BBVA", "Purchases", "amazon", "Purchase of {amount} EUR");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
-            VALUES(3, "BANK OF SCOT", "Food", "burgerkg", "You spent £{amount} at");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher)
-            VALUES(4, "Revolut", "Food", "McDonalds", "Paid €{amount} at");
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
+            VALUES(1, "BANK OF AMERICA", "Food", "walmart", "{amount}", "${getCurrency()}");
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
+            VALUES(2, "BBVA", "Purchases", "amazon", "Purchase of {amount} EUR", "${getCurrency()}");
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
+            VALUES(3, "BANK OF SCOT", "Food", "burgerkg", "You spent £{amount} at", "${getCurrency()}");
+            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
+            VALUES(4, "Revolut", "Food", "McDonalds", "Paid €{amount} at", "${getCurrency()}");
         """.trimIndent()
 
-        val language = Locale.getDefault().language.uppercase()
+        private val language = getLanguage()
         val DEFAULT_QUALIFIERS =
         """
             INSERT INTO qualifiers(name, type) VALUES("payment", ${Qualifier.CATCH});

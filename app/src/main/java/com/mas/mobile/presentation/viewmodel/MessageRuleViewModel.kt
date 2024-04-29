@@ -13,6 +13,7 @@ import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.util.Currency
 
 class MessageRuleViewModel @AssistedInject constructor(
     expenditureRepository: ExpenditureRepository,
@@ -31,6 +32,7 @@ class MessageRuleViewModel @AssistedInject constructor(
     var expenditureId: Int = NEW_ITEM
     var expenditureName = MutableLiveData<String>()
     var expenditureNameError = MutableLiveData(Validator.NO_ERRORS)
+    val currency = MutableLiveData<Currency>()
 
     val availableExpenditures = expenditureRepository
         .getExpenditureNames(true, 20)
@@ -89,6 +91,9 @@ class MessageRuleViewModel @AssistedInject constructor(
                 fieldValidator.minLength(name.trim(), EXPENDITURE_MIN_LENGTH)
             }
         }
+
+        currency.value = item.currency
+        currency.observeForever { item.currency = it }
     }
 
     @AssistedFactory

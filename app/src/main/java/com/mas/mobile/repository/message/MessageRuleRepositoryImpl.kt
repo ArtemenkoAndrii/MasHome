@@ -8,6 +8,7 @@ import com.mas.mobile.domain.message.MessageRuleRepository
 import com.mas.mobile.domain.message.Pattern
 import com.mas.mobile.repository.db.entity.MessageRule as MessageRuleData
 import com.mas.mobile.repository.db.config.AppDatabase
+import java.util.Currency
 import javax.inject.Singleton
 
 @Singleton
@@ -29,7 +30,8 @@ class MessageRuleRepositoryImpl(val db: AppDatabase) : MessageRuleRepository {
             name= "",
             pattern = Pattern(),
             expenditureMatcher = "",
-            expenditureName = ""
+            expenditureName = "",
+            currency = Currency.getInstance("EUR")
         )
 
     override suspend fun save(item: MessageRule) {

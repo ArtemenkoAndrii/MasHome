@@ -1,11 +1,14 @@
 package com.mas.mobile.domain.message
 
+import java.util.Currency
+
 data class MessageRule(
     var id: MessageRuleId,
     var name: String,
     var pattern: Pattern,
     var expenditureMatcher: String,
-    var expenditureName: String
+    var expenditureName: String,
+    var currency: Currency
 ) {
     fun evaluate(sender:String, message: String): Result {
         if (!sender.contains(name, ignoreCase = true)) {

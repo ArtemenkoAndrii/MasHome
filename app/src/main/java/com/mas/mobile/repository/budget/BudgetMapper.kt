@@ -3,6 +3,7 @@ package com.mas.mobile.repository.budget
 import com.mas.mobile.domain.budget.Budget
 import com.mas.mobile.domain.budget.BudgetDetails
 import com.mas.mobile.domain.budget.BudgetId
+import com.mas.mobile.toCurrency
 import com.mas.mobile.repository.db.entity.Budget as BudgetData
 
 object BudgetMapper {
@@ -15,6 +16,7 @@ object BudgetMapper {
             startsOn = dto.startsOn,
             lastDayAt = dto.lastDayAt,
             comment = dto.comment,
+            currency = dto.currency.toCurrency(),
             lazyLoader = lazyLoader
         )
 
@@ -27,5 +29,6 @@ object BudgetMapper {
             startsOn = model.startsOn,
             lastDayAt = model.lastDayAt,
             comment = model.comment,
+            currency = model.currency.currencyCode
         )
 }

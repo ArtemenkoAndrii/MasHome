@@ -31,4 +31,7 @@ interface SpendingMessageDAO {
 
     @Upsert
     suspend fun upsert(spendingMessage: SpendingMessage): Long
+
+    @Query("UPDATE spending_messages SET spending_id = NULL  WHERE spending_id = :spendingId")
+    suspend fun removeBindSpendingById(spendingId: Int)
 }

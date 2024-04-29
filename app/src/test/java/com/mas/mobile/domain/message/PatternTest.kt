@@ -3,6 +3,7 @@ package com.mas.mobile.domain.message
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 
 class PatternTest {
@@ -59,6 +60,14 @@ class PatternTest {
     }
 
     @Test
+    fun `should not parse if wrong template2`() {
+        val result = Pattern("Er is {amount} EUR afgeschreven van rekening *007. {merchant}")
+            .parse("ING Bankieren Er is 2,56 EUR afgeschreven van rekening *007. ALBERT HEIJN 1493")
+
+        assertTrue(result is Pattern.Empty)
+    }
+
+    @Test
     fun `should not parse empty message`() {
         val result = Pattern("of {amount} EUR in {merchant} with")
             .parse("  ")
@@ -68,9 +77,11 @@ class PatternTest {
 
     @Test
     fun `should not parse empty pattern`() {
-        val result = Pattern("")
-            .parse("Paid €3.77 at AliExpress Spent today: €100.00.")
-
-        assertTrue(result is Pattern.Empty)
+        try {
+            Pattern("").parse("Paid €3.77 at AliExpress Spent today: €100.00.")
+            fail<String>()
+        } catch (e: Exception) {
+            assertEquals("The pattern must have {amount} placeholder", e.message)
+        }
     }
 }

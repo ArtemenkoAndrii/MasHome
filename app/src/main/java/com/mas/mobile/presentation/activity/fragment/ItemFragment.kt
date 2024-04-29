@@ -12,6 +12,7 @@ import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.viewmodel.ItemViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.util.DateTool
+import com.mynameismidori.currencypicker.CurrencyPicker
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -52,6 +53,15 @@ abstract class ItemFragment<T: ItemViewModel<*>>: CommonFragment() {
             }, startHour, startMinute, true).show()
         }, startYear, startMonth, startDay).show()
     }
+
+    protected fun showCurrencyPicker(handler: (Currency) -> Unit) =
+        with(CurrencyPicker.newInstance(getResourceService().dialogCurrencyTitle())) {
+            setListener { _, code, _, _ ->
+                handler(Currency.getInstance(code))
+                dismiss()
+            }
+            show(this@ItemFragment.requireActivity().supportFragmentManager, "CURRENCY_PICKER")
+        }
 
     private fun getBudgetName(budgetId: Int): String {
         return "FIX ME"

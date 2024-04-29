@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Currency
 
 class MessageRuleTest {
     private val mockPattern = mockk<Pattern>()
@@ -23,7 +24,8 @@ class MessageRuleTest {
             name = "BBVA",
             pattern = mockPattern,
             expenditureMatcher = "aliexpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "BBVA",
             "Payment accepted 👍💳 Payment of 1,00 EUR in aliexpress with your card ending in 8850 accepted."
@@ -45,7 +47,8 @@ class MessageRuleTest {
             name = "BBVA",
             pattern = mockPattern,
             expenditureMatcher = "aliexpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "BBVA",
             "Payment accepted 👍💳 Payment of 2,00 EUR in +800910000 info"
@@ -65,7 +68,8 @@ class MessageRuleTest {
             name = "bbva",
             pattern = mockPattern,
             expenditureMatcher = "AliExpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "BBVA",
             "Payment accepted 👍💳 Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted."
@@ -85,7 +89,8 @@ class MessageRuleTest {
             name = "Privat",
             pattern = mockPattern,
             expenditureMatcher = "AliExpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "BBVA",
             "Payment accepted 👍💳 Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted."
@@ -103,7 +108,8 @@ class MessageRuleTest {
             name = "BBVA",
             pattern = mockPattern,
             expenditureMatcher = "AliExpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "BBVA",
             "Payment accepted 👍💳 Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted."
@@ -121,7 +127,8 @@ class MessageRuleTest {
             name = "Openbank",
             pattern = mockPattern,
             expenditureMatcher = "AliExpress",
-            expenditureName = "Other"
+            expenditureName = "Other",
+            currency = CURRENCY
         ).evaluate(
             "Openbank",
             "¡Aún estás a tiempo! Publi: Sorteamos 5 reembolsos de hasta 1.000 € para las compras y pagos aplazados (mín. 30 €) que realices entre el 19/12/23 al 19/12/24 (ambos incl.)"
@@ -134,5 +141,6 @@ class MessageRuleTest {
         val EMPTY = Pattern.Empty
         val AMOUNT_AND_MERCHANT = Pattern.Data(1.00, "merchant")
         val ONLY_AMOUNT = Pattern.Data(2.00, null)
+        val CURRENCY = Currency.getInstance("EUR")
     }
 }

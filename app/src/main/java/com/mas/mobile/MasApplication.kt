@@ -3,6 +3,7 @@ package com.mas.mobile
 import android.app.Application
 import android.content.Context
 import com.mas.mobile.domain.budget.BudgetRepository
+import com.mas.mobile.domain.budget.ExchangeRepository
 import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.message.MessageAnalyzer
@@ -16,6 +17,7 @@ import com.mas.mobile.presentation.activity.fragment.CommonFragment
 import com.mas.mobile.presentation.viewmodel.*
 import com.mas.mobile.repository.BudgetRepositoryImpl
 import com.mas.mobile.repository.budget.ExpenditureRepositoryImpl
+import com.mas.mobile.repository.budget.FreeCurrencyAPIRepositoryImpl
 import com.mas.mobile.repository.budget.SpendingRepositoryImpl
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.message.MessageRepositoryImpl
@@ -137,6 +139,12 @@ class AppModule {
     @Singleton
     fun resolveQualifierRepository(db: AppDatabase): QualifierRepository {
         return QualifierRepositoryImpl(db)
+    }
+
+    @Provides
+    @Singleton
+    fun resolveExchangeRepository(): ExchangeRepository {
+        return FreeCurrencyAPIRepositoryImpl()
     }
 
     @Provides

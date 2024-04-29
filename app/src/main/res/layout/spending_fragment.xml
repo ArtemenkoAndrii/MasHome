@@ -38,6 +38,51 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spendingForeignAmountLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_foreign_amount"
+            android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.exchangeVisibility}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/spendingForeignAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="10"
+                android:selectAllOnFocus="false"
+                android:singleLine="true"
+                android:text="@={model.exchangeAmount}"
+                app:onFocusLost="@{model.exchangeAmount}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spendingExchangeRateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_exchange_rate"
+            android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.exchangeVisibility}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/spendingExchangeRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="10"
+                android:selectAllOnFocus="false"
+                android:singleLine="true"
+                android:text="@={model.exchangeRate}"
+                app:onFocusLost="@{model.exchangeRate}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spendingAmountLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"

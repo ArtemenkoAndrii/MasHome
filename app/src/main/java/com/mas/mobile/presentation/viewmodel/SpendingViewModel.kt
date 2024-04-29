@@ -1,6 +1,8 @@
 package com.mas.mobile.presentation.viewmodel
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.mas.mobile.domain.Repository
 import com.mas.mobile.domain.budget.*
@@ -15,6 +17,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.Currency
 
 class SpendingViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
@@ -30,9 +33,9 @@ class SpendingViewModel @AssistedInject constructor(
     @Assisted("budgetId") private val pBudgetId: Int,
     @Assisted("messageId") private val pMessageId: Int,
 ) : ItemViewModel<Spending>(coroutineService, SpendingRepositoryAdapter(budgetService, BudgetId(pBudgetId))) {
-    private val budget: Budget = loadBudget()
     private var changedRule: MessageRule? = null
 
+    val budget: Budget = loadBudget()
     override val model: Spending = loadModel()
 
     val discoverMode = MutableLiveData<Boolean>()
@@ -46,6 +49,18 @@ class SpendingViewModel @AssistedInject constructor(
     var amountError = MutableLiveData(Validator.NO_ERRORS)
     var expenditureName = MutableLiveData<String>()
     var expenditureNameError = MutableLiveData(Validator.NO_ERRORS)
+
+    var exchangeAmount = MutableLiveData<Double>()
+    var exchangeRate = MutableLiveData<Double>()
+    var exchangeCurrency = MutableLiveData<Currency>()
+    val exchangeVisibility = Transformations.map(exchangeCurrency) {
+        if (model.exchangeInfo != null) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
     private var expenditureNameValue = ""
 
     val availableExpenditures = expenditureRepository
@@ -77,7 +92,7 @@ class SpendingViewModel @AssistedInject constructor(
 
     init {
         if (action != Action.VIEW) enableEditing()
-        initProperties(model)
+        initProperties()
         initDefaultExpenditure(ExpenditureId(pExpenditureId))
     }
 
@@ -95,6 +110,7 @@ class SpendingViewModel @AssistedInject constructor(
                         it.date = LocalDateTime.now()
                         it.comment = origin.comment
                         it.expenditure = findOrCreateExpenditure(origin.expenditure.name)
+                        it.exchangeInfo = origin.exchangeInfo
                     }
                 }
             }
@@ -108,23 +124,23 @@ class SpendingViewModel @AssistedInject constructor(
             messageService.messageRepository.getBySpendingId(SpendingId(pSpendingId))
         }
 
-    private fun initProperties(item: Spending) {
-        comment.value = item.comment
+    private fun initProperties() {
+        comment.value = model.comment
         comment.observeForever {
-            item.comment = it
+            model.comment = it
         }
 
-        date.value = item.date
+        date.value = model.date
         date.observeForever {
-            item.date = it
+            model.date = it
         }
 
-        amount.value = item.amount
+        amount.value = model.amount
         amount.observeForever {
-            item.amount = it
+            model.amount = it
         }
 
-        expenditureName.value = item.expenditure.name
+        expenditureName.value = model.expenditure.name
         expenditureName.observeForever {
             expenditureNameValue = it.trim()
             validateOnChange(expenditureNameError) {
@@ -142,6 +158,42 @@ class SpendingViewModel @AssistedInject constructor(
                 }
             }
         }
+
+        exchangeCurrency.value = model.exchangeInfo?.currency ?: budget.currency
+        exchangeCurrency.observeForever {
+            if (it != budget.currency) {
+                if (model.exchangeInfo == null) {
+                    model.exchangeInfo = ExchangeInfo(
+                        rawAmount = model.amount,
+                        rate = budgetService.getRate(it),
+                        currency = it
+                    )
+                } else {
+                    model.exchangeInfo?.rate = budgetService.getRate(it)
+                    model.exchangeInfo?.currency = it
+                }
+                model.exchange()
+                exchangeRate.value = model.exchangeInfo?.rate ?: ZERO
+                exchangeAmount.value = model.exchangeInfo?.rawAmount ?: ZERO
+            } else {
+                amount.value = model.exchangeInfo?.rawAmount ?: model.amount
+                model.exchangeInfo = null
+            }
+        }
+
+        exchangeAmount.value = model.exchangeInfo?.rawAmount ?: ZERO
+        exchangeAmount.observeForever {
+            model.exchangeInfo?.rawAmount = it
+            model.exchange()
+            amount.value = model.amount
+        }
+
+        exchangeRate.value = model.exchangeInfo?.rate ?: ZERO
+        exchangeRate.observeForever {
+            model.exchangeInfo?.rate = it
+            model.exchange()
+            exchangeAmount.value = model.exchangeInfo?.rawAmount ?: ZERO
+        }
     }
 
     private suspend fun doDiscover(message: Message): Boolean {
@@ -155,9 +207,9 @@ class SpendingViewModel @AssistedInject constructor(
 
                 comment.value = message.text
                 date.value = message.receivedAt
-                amount.value = result.amount
                 expenditureName.value = ""
-
+                amount.value = result.amount
+                exchangeCurrency.value = rule.currency
                 true
             }
             else -> {
@@ -186,6 +238,8 @@ class SpendingViewModel @AssistedInject constructor(
 
     private suspend fun saveDependencies() {
         changedRule?.let {
+            it.expenditureName = model.expenditure.name
+            it.currency = model.exchangeInfo?.currency ?: budget.currency
             messageRuleService.ruleRepository.save(it)
         }
 
@@ -202,6 +256,10 @@ class SpendingViewModel @AssistedInject constructor(
                    @Assisted("budgetId") budgetId: Int,
                    @Assisted("messageId") messageId: Int,
                    action: Action): SpendingViewModel
+    }
+
+    companion object {
+        private const val ZERO = 0.00
     }
 }
 

@@ -1,15 +1,20 @@
 package com.mas.mobile.domain.budget
 
+import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.SettingsRepository
+import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.Currency
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,9 +22,11 @@ import javax.inject.Singleton
 class BudgetService @Inject constructor(
     private val resourceService: ResourceService,
     private val settingsRepository: SettingsRepository,
+    private val spendingRepository: SpendingRepository,
+    private val exchangeRepository: ExchangeRepository,
+    private val errorHandler: ErrorHandler,
     val budgetRepository: BudgetRepository,
     val expenditureRepository: ExpenditureRepository,
-    val spendingRepository: SpendingRepository
 ) {
     private val settings
         get() = settingsRepository.get()
@@ -70,9 +77,11 @@ class BudgetService @Inject constructor(
             maxOf(it, LocalDate.now())
         } ?: LocalDate.now()
 
+        val template = budgetRepository.getBudget(TEMPLATE_BUDGET_ID)
         val budget = createBudget(startDate).also {
+            it.currency = template?.currency ?: Currency.getInstance(Locale.getDefault())
             uniquifyName(it)
-            populateExpenditures(it)
+            populateExpenditures(it, template)
         }
 
         budgetRepository.save(budget)
@@ -80,11 +89,11 @@ class BudgetService @Inject constructor(
         return@runBlocking budget
     }
 
-    fun recreateActiveBudget() = runBlocking {
-        budgetRepository.remove(getActiveBudget())
-    }
-
-    suspend fun spend(date: LocalDateTime, amount: Double, comment: String, expenditureName: String): SpendingId {
+    suspend fun spend(date: LocalDateTime,
+                      amount: Double,
+                      comment: String,
+                      expenditureName: String,
+                      currency: Currency? = null): SpendingId {
         val budget = getActiveBudget()
         val expenditure = budget.budgetDetails.expenditure
             .firstOrNull { it.name.lowercase() == expenditureName.trimIndent().lowercase() }
@@ -99,14 +108,31 @@ class BudgetService @Inject constructor(
             it.expenditure = expenditure
         }
 
+        if (currency != null && currency != budget.currency) {
+            spending.exchangeInfo = ExchangeInfo(
+                rawAmount = amount,
+                rate = getRate(currency),
+                currency = currency
+            )
+            spending.exchange()
+        }
+
         budget.addSpending(spending)
         budgetRepository.save(budget)
 
         return spending.id
     }
 
-    private fun populateExpenditures(budget: Budget) {
-        budgetRepository.getBudget(TEMPLATE_BUDGET_ID)?.budgetDetails?.expenditure?.forEach { sample ->
+    fun getRate(currency: Currency): Double = runBlocking {
+        exchangeRepository.getRate(getActiveBudget().currency, currency).getOrElse {
+            Log.e(this::class.java.name, it.message, it)
+            errorHandler.toast("Unable to retrieve the current exchange rate. Please try again later.")
+            0.00
+        }
+    }
+
+    private fun populateExpenditures(budget: Budget, template: Budget?) {
+        template?.budgetDetails?.expenditure?.forEach { sample ->
             val expenditure = expenditureRepository.create().also {
                 it.name = sample.name
                 it.plan = sample.plan
@@ -127,7 +153,8 @@ class BudgetService @Inject constructor(
         budget.name = name
     }
 
-    private fun createBudget(startDate: LocalDate): Budget {
+    @VisibleForTesting
+    internal fun createBudget(startDate: LocalDate): Budget {
         val budget = budgetRepository.createBudget()
         when (settings.period) {
             Period.MONTH -> prepareMonthBudget(budget, startDate)

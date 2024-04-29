@@ -8,6 +8,7 @@
     <string name="hint_budget_starts_on">start date</string>
     <string name="hint_budget_last_day_at">end date</string>
     <string name="hint_budget_comment">comment</string>
+    <string name="hint_budget_currency">currency</string>
 
     <string name="hint_expenditure_name">name</string>
     <string name="hint_expenditure_plan">plan</string>
@@ -15,6 +16,8 @@
     <string name="hint_expenditure_comment">comment</string>
 
     <string name="hint_spending_amount">amount</string>
+    <string name="hint_spending_foreign_amount">foreign amount</string>
+    <string name="hint_spending_exchange_rate">rate</string>
     <string name="hint_spending_comment">comment</string>
     <string name="hint_spending_date">date</string>
     <string name="hint_spending_expenditure">expenditure</string>
@@ -79,6 +82,7 @@
     <string name="dialog_confirmation_remove">Are you sure?</string>
     <string name="dialog_confirmation_ok">Ok</string>
     <string name="dialog_confirmation_cancel">Cancel</string>
+    <string name="dialog_currency_title">Select currency</string>
 
     <!-- MESSAGES -->
     <string name="message_budget_removing">Budgets can only be removed from the end.</string>

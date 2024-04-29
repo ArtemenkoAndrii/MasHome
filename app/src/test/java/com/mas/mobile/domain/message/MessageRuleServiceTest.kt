@@ -1,21 +1,28 @@
 package com.mas.mobile.domain.message
 
+import com.mas.mobile.domain.budget.Budget
+import com.mas.mobile.domain.budget.BudgetService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Currency
 
 class MessageRuleServiceTest {
     private val mockMessageAnalyzer = mockk<MessageAnalyzer>(relaxed = true)
     private val mockMessageRuleRepository = mockk<MessageRuleRepository>(relaxed = true)
+    private val mockBudgetService = mockk<BudgetService>(relaxed = true)
+    private val mockBudget = mockk<Budget>(relaxed = true)
 
-    private val underTest = MessageRuleService(mockMessageAnalyzer, mockMessageRuleRepository)
+    private val underTest = MessageRuleService(mockMessageAnalyzer, mockBudgetService, mockMessageRuleRepository)
 
     @BeforeEach
     fun setUp() {
         every { mockMessageRuleRepository.create() } returns NEW_RULE
+        every { mockBudgetService.getActiveBudget() } returns mockBudget
+        every { mockBudget.currency } returns CURRENCY
     }
 
     @Test
@@ -46,6 +53,8 @@ class MessageRuleServiceTest {
     }
 
     private companion object {
+        val CURRENCY: Currency = Currency.getInstance("EUR")
+
         const val SAME_EXPENDITURE = "Food"
         const val NEW_EXPENDITURE = "Restaurants"
         const val SAME_MERCHANT = "McDonalds"
@@ -56,7 +65,8 @@ class MessageRuleServiceTest {
             name = "Sender",
             pattern = Pattern("of {amount} EUR in {merchant} with"),
             expenditureMatcher = SAME_MERCHANT,
-            expenditureName = SAME_EXPENDITURE
+            expenditureName = SAME_EXPENDITURE,
+            currency = CURRENCY
         )
 
         val NEW_RULE = MessageRule (
@@ -64,7 +74,8 @@ class MessageRuleServiceTest {
             name = "",
             pattern = Pattern(),
             expenditureMatcher = "",
-            expenditureName = ""
+            expenditureName = "",
+            currency = CURRENCY
         )
 
         val MESSAGE_WITH_SAME_MERCHANT = Message(

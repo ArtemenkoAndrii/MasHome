@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 6,
-    "identityHash": "0c2dfb190579f973a0089d3457ee53b3",
+    "version": 7,
+    "identityHash": "8de1cc64ffcbe7b26f59bf7dac7add15",
     "entities": [
       {
         "tableName": "budgets",
@@ -84,7 +84,7 @@
       },
       {
         "tableName": "spendings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `comment` TEXT, `date` INTEGER NOT NULL, `amount` REAL NOT NULL, `expenditure_id` INTEGER NOT NULL, FOREIGN KEY(`expenditure_id`) REFERENCES `expenditures`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `comment` TEXT, `date` INTEGER NOT NULL, `amount` REAL NOT NULL, `expenditure_id` INTEGER NOT NULL, `currency` TEXT, `rate` REAL, `foreignAmount` REAL, FOREIGN KEY(`expenditure_id`) REFERENCES `expenditures`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -115,6 +115,24 @@
             "columnName": "expenditure_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rate",
+            "columnName": "rate",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "foreignAmount",
+            "columnName": "foreignAmount",
+            "affinity": "REAL",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -296,7 +314,7 @@
       },
       {
         "tableName": "message_rules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `amount_matcher` TEXT NOT NULL, `expenditure_matcher` TEXT NOT NULL, `expenditure_name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `amount_matcher` TEXT NOT NULL, `expenditure_matcher` TEXT NOT NULL, `expenditure_name` TEXT NOT NULL, `currency` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -325,6 +343,12 @@
           {
             "fieldPath": "expenditureName",
             "columnName": "expenditure_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -414,7 +438,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0c2dfb190579f973a0089d3457ee53b3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8de1cc64ffcbe7b26f59bf7dac7add15')"
     ]
   }
 }

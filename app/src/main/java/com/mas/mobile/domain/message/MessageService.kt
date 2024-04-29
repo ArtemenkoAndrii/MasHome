@@ -66,7 +66,8 @@ class MessageService @Inject constructor(
                     date = message.receivedAt,
                     amount = it.suggestedAmount,
                     expenditureName = it.suggestedExpenditureName,
-                    comment = message.text
+                    comment = message.text,
+                    currency = ruleRepository.getById(it.ruleId)?.currency
                 )
             }
         }

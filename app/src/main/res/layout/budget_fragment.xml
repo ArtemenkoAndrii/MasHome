@@ -41,6 +41,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:enabled="false"
+            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}"
             app:error="@{budget.startsOnError}"
             app:errorEnabled='@{!(budget.startsOnError == "")}'>
 
@@ -62,6 +63,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:enabled="@{budget.isEditable()}"
+            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}"
             app:error="@{budget.lastDayAtError}"
             app:errorEnabled='@{!(budget.startsOnError == "")}'>
 
@@ -82,7 +84,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="@{budget.isEditable()}">
+            android:enabled="@{budget.isEditable()}"
+            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -100,7 +103,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="false">
+            android:enabled="false"
+            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -111,6 +115,25 @@
                 android:singleLine="true"
                 android:text="@={budget.fact}"
                 app:onFocusLost="@{budget.fact}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/budgetCurrencyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:enabled="@{budget.isEditable()}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_budget_currency"
+                android:maxLength="3"
+                android:singleLine="true"
+                android:editable="false"
+                android:focusable="false"
+                android:text="@{budget.currency.currencyCode}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

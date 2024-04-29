@@ -1,6 +1,7 @@
 package com.mas.mobile.repository.db.config
 
 import android.content.Context
+import androidx.room.ColumnInfo
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,9 +12,11 @@ import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.dao.*
 import com.mas.mobile.repository.db.entity.*
 import java.time.LocalDate
+import java.util.Currency
+import java.util.Locale
 
 @Database(
-    version = 6,
+    version = 7,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -46,7 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7,)
                     .build()
             }
             return INSTANCE!!
@@ -103,5 +106,16 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE INDEX IF NOT EXISTS index_expenditures_on_budget_id ON expenditures(budget_id)")
         database.execSQL("CREATE INDEX IF NOT EXISTS index_spendings_on_expenditure_id ON spendings(expenditure_id)")
+    }
+}
+
+val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            val currency = Currency.getInstance(Locale.getDefault())
+            database.execSQL("ALTER TABLE budgets ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
+            database.execSQL("ALTER TABLE message_rules ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
+            database.execSQL("ALTER TABLE spendings ADD COLUMN currency TEXT DEFAULT NULL")
+            database.execSQL("ALTER TABLE spendings ADD COLUMN rate REAL DEFAULT NULL")
+            database.execSQL("ALTER TABLE spendings ADD COLUMN foreignAmount REAL DEFAULT NULL")
     }
 }

@@ -73,6 +73,7 @@ class BudgetRepositoryImpl(
             is TrackingList -> {
                 spendings.getDeleted().forEach {
                     db.spendingDao().deleteSpendingById(it)
+                    db.spendingMessageDao().removeBindSpendingById(it)
                 }
 
                 spendings.getChanged().forEach {

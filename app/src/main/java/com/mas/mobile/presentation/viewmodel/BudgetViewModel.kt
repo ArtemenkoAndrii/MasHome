@@ -8,10 +8,12 @@ import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.toCurrency
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.LocalDate
+import java.util.Currency
 
 class BudgetViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
@@ -34,7 +36,9 @@ class BudgetViewModel @AssistedInject constructor(
     val startsOnError = MutableLiveData(Validator.NO_ERRORS)
     val lastDayAt = MutableLiveData<LocalDate>()
     val lastDayAtError = MutableLiveData(Validator.NO_ERRORS)
+    val currency = MutableLiveData<Currency>()
     val comment = MutableLiveData<String?>()
+    val isTemplate = budgetId == Budget.TEMPLATE_ID
 
     init {
         initProperties(model)
@@ -77,6 +81,11 @@ class BudgetViewModel @AssistedInject constructor(
         lastDayAt.observeForever {
             item.lastDayAt = it
             lastDayAtValue = it
+        }
+
+        currency.value = item.currency
+        currency.observeForever {
+            item.currency = it
         }
 
         comment.value = item.comment

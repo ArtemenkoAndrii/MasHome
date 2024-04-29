@@ -9,8 +9,10 @@ import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.SpendingFragmentBinding
+import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.SpendingViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
+
 
 class SpendingFragment : ItemFragment<SpendingViewModel>() {
     private lateinit var binding: SpendingFragmentBinding
@@ -76,11 +78,40 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             binding.spendingExpenditure.setAdapter(it)
         }
 
+
         viewModel.discoverMode.observeForever {
             binding.spendingSaveButton.requestFocus()
         }
 
+        with(binding.spendingAmountLayout) {
+            isEndIconVisible = true
+            endIconDrawable = TextDrawable(requireContext(), viewModel.budget.currency.symbol)
+            setEndIconOnClickListener {
+                showCurrencyPicker { currency ->
+                    viewModel.exchangeCurrency.value = currency
+                    clearFocus()
+                }
+            }
+        }
+
+        with(binding.spendingForeignAmountLayout) {
+            isEndIconVisible = true
+            viewModel.exchangeCurrency.observeForever {
+                endIconDrawable = TextDrawable(requireContext(), it?.symbol.orEmpty())
+            }
+            setEndIconOnClickListener {
+                showCurrencyPicker { currency ->
+                    viewModel.exchangeCurrency.value = currency
+                    clearFocus()
+                }
+            }
+        }
+
         return layout
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     private fun inProgress(enabled: Boolean) {
@@ -94,5 +125,4 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             binding.messageParsingButton.isClickable = true
         }
     }
-
 }

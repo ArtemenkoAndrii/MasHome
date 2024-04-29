@@ -1,12 +1,15 @@
 package com.mas.mobile.domain.message
 
 import android.util.Log
+import com.mas.mobile.domain.budget.BudgetService
+import java.util.Currency
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MessageRuleService @Inject constructor(
     private val messageAnalyzer: MessageAnalyzer,
+    private val budgetService: BudgetService,
     val ruleRepository: MessageRuleRepository
 ) {
     suspend fun generateRuleFromMessage(message: Message): MessageRule? {
@@ -18,6 +21,7 @@ class MessageRuleService @Inject constructor(
                 it.pattern = pattern
                 it.expenditureMatcher = result.merchant ?: ""
                 it.expenditureName = ""
+                it.currency = findCurrency(message.text)
             }
             else -> {
                 Log.d(this::class.simpleName, "Can't generate rule for message $message")
@@ -51,6 +55,17 @@ class MessageRuleService @Inject constructor(
                 }
             }
             else -> null
+        }
+    }
+
+    private fun findCurrency(text: String): Currency {
+        val defaultCurrency = budgetService.getActiveBudget().currency
+        val currencies = CurrencyExpert.detectCurrencies(text)
+        return when {
+            currencies.isEmpty() -> defaultCurrency
+            currencies.size == 1 -> currencies[0]
+            currencies.contains(defaultCurrency) -> defaultCurrency
+            else -> currencies[0]
         }
     }
 }

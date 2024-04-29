@@ -7,6 +7,7 @@ import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.BudgetFragmentBinding
+import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.BudgetViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.util.DateTool
@@ -33,6 +34,22 @@ class BudgetFragment : ItemFragment<BudgetViewModel>() {
         binding = BudgetFragmentBinding.bind(layout)
         binding.budget = viewModel
         binding.lifecycleOwner = this
+
+        with(binding.budgetCurrencyLayout) {
+            isEndIconVisible = true
+            viewModel.currency.observeForever {
+                endIconDrawable = TextDrawable(requireContext(), it.symbol)
+            }
+
+            val onClick = View.OnClickListener {
+                showCurrencyPicker { currency ->
+                    viewModel.currency.value = currency
+                    clearFocus()
+                }
+            }
+            editText?.setOnClickListener(onClick)
+            setEndIconOnClickListener(onClick)
+        }
 
         binding.budgetSaveButton.setOnClickListener {
             saveAndClose(viewModel)
