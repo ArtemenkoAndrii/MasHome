@@ -11,8 +11,8 @@ android {
         applicationId "com.mas.mobile"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 18
-        versionName "1.1.beta4"
+        versionCode 19
+        versionName "1.1.beta5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
