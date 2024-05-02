@@ -24,6 +24,8 @@ class SpendingAdapter(
         binding.spending = item
         if (prior?.date?.toLocalDate() == item.date.toLocalDate()) {
             binding.spendingListRowDate.visibility = View.GONE
+        } else {
+            binding.spendingListRowDate.visibility = View.VISIBLE
         }
         binding.spendingListRowDate.setText(calcRelativeDate(item.date))
         binding.callback = View.OnClickListener { viewMenu ->
