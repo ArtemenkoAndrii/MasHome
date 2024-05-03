@@ -17,7 +17,7 @@ import com.mas.mobile.presentation.viewmodel.SpendingListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
 open class SpendingListFragment : ListFragment() {
-    private val args: SpendingListFragmentArgs by navArgs()
+    protected val args: SpendingListFragmentArgs by navArgs()
     private lateinit var binding: SpendingListFragmentBinding
 
     val listViewModel: SpendingListViewModel by lazyViewModel {
@@ -59,7 +59,6 @@ open class SpendingListFragment : ListFragment() {
 }
 
 class BudgetSpendingListFragment: SpendingListFragment() {
-    private val args: BudgetSpendingListFragmentArgs by navArgs()
 
     override fun resolveAddButtonDestination(): NavDirections {
         return BudgetSpendingListFragmentDirections.actionToSpending(Action.ADD.name, NEW_ITEM, -1, args.budgetId)
@@ -85,10 +84,9 @@ class BudgetSpendingListFragment: SpendingListFragment() {
 
 
 class ExpenditureSpendingListFragment: SpendingListFragment() {
-    private val args: BudgetSpendingListFragmentArgs by navArgs()
 
     override fun resolveAddButtonDestination(): NavDirections {
-        return BudgetSpendingListFragmentDirections.actionToSpending(Action.ADD.name, NEW_ITEM, -1, args.budgetId)
+        return BudgetSpendingListFragmentDirections.actionToSpending(Action.ADD.name, NEW_ITEM, args.expenditureId, args.budgetId)
     }
 
     override fun onCreateView(
