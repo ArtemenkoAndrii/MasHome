@@ -52,17 +52,34 @@ class PatternTest {
     }
 
     @Test
-    fun `should not parse if wrong template`() {
-        val result = Pattern("of {amount} EUR in {merchant} with")
-            .parse("Paid €3.77 at AliExpress Spent today: €100.00.")
+    fun `should parse when special characters`() {
+        val result = Pattern("is {amount} EUR afgeschreven van rekening *007. {merchant}")
+            .parse("ING Bankieren Er is 2,56 EUR afgeschreven van rekening *007. ALBERT HEIJN 1493")
 
-        assertTrue(result is Pattern.Empty)
+        with(result as Pattern.Data) {
+            assertEquals(2.56, amount, 0.001)
+            assertEquals("ALBERT HEIJN 1493", merchant)
+        }
     }
 
     @Test
-    fun `should not parse if wrong template2`() {
-        val result = Pattern("Er is {amount} EUR afgeschreven van rekening *007. {merchant}")
-            .parse("ING Bankieren Er is 2,56 EUR afgeschreven van rekening *007. ALBERT HEIJN 1493")
+    fun `should parse when different langs`() {
+        val result = Pattern("{merchant}. Малага, Малага.\n{amount} €")
+            .parse("""
+                La Mafia. Малага, Малага.
+                57.20 €
+            """.trimIndent())
+
+        with(result as Pattern.Data) {
+            assertEquals(57.20, amount, 0.001)
+            assertEquals("La Mafia", merchant)
+        }
+    }
+
+    @Test
+    fun `should not parse if wrong template`() {
+        val result = Pattern("of {amount} EUR in {merchant} with")
+            .parse("Paid €3.77 at AliExpress Spent today: €100.00.")
 
         assertTrue(result is Pattern.Empty)
     }

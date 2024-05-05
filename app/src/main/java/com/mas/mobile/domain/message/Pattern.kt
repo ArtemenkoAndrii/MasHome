@@ -23,14 +23,29 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
     }
 
     private fun String.find(text: String) = try {
-        replace(AMOUNT_PLACEHOLDER, AMOUNT_REGEX, true)
-            .replace(MERCHANT_PLACEHOLDER, MERCHANT_REGEX, true)
+        this.escapeSpecialCharacters()
+            .replacePlaceholder(AMOUNT_PLACEHOLDER, AMOUNT_REGEX)
+            .replacePlaceholder(MERCHANT_PLACEHOLDER, MERCHANT_REGEX)
             .let { Regex(ANY_STRING_REGEX + it + ANY_STRING_REGEX) }
             .find(text)
     } catch (e: Throwable) {
         Log.i(this::class.java.name, "Matcher regex failed.", e)
         null
     }
+
+    private fun String.escapeSpecialCharacters(): String {
+        val specialChars = mutableSetOf('.', '$', '^', '[', ']', '(', ')', '|', '*', '+', '?', '\\')
+        return this.map { char ->
+            if (char in specialChars) "\\$char" else char.toString()
+        }.joinToString("")
+    }
+
+    private fun String.replacePlaceholder(placeholder: String, regex: String) =
+        when {
+            this.startsWith(placeholder) -> START_STRING + this.replace(placeholder, regex, true)
+            this.endsWith(placeholder) -> this.replace(placeholder, regex, true) + END_STRING
+            else -> this.replace(placeholder, regex, true)
+        }
 
     private fun String.cutToAmount(): String {
         val amountIndex = this.indexOf(AMOUNT_PLACEHOLDER)
@@ -65,6 +80,8 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
         const val ANY_STRING_REGEX = ".*"
         const val AMOUNT_REGEX = "(\\d+(?:[.,]\\d+)?)"
         const val MERCHANT_REGEX = "($ANY_STRING_REGEX)"
+        const val START_STRING = "^"
+        const val END_STRING = "$"
     }
 
     sealed interface Result
