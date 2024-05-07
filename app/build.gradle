@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
 
 android {
     compileSdk 33
@@ -80,6 +82,11 @@ dependencies {
     def dagger_version = "2.40.1"
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics:19.0.0")
 
     // Testing Libraries
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0-RC2"

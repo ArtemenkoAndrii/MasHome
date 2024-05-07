@@ -28,6 +28,7 @@ import com.mas.mobile.service.*
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
 import com.mas.mobile.service.ai.GptChatApiClient
 import com.mas.mobile.service.ai.GptChatConnector
+import com.mas.mobile.util.Analytics
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -161,5 +162,11 @@ class AppModule {
     @Singleton
     fun resolveTaskService(coroutineService: CoroutineService): TaskService {
         return coroutineService
+    }
+
+    @Provides
+    @Singleton
+    fun resolveAnalytics(): Analytics {
+        return Analytics()
     }
 }

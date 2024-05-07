@@ -2,6 +2,7 @@ package com.mas.mobile.domain.message
 
 import android.util.Log
 import com.mas.mobile.domain.budget.BudgetService
+import com.mas.mobile.util.Analytics
 import java.util.Currency
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,10 +11,12 @@ import javax.inject.Singleton
 class MessageRuleService @Inject constructor(
     private val messageAnalyzer: MessageAnalyzer,
     private val budgetService: BudgetService,
+    private val analytics: Analytics,
     val ruleRepository: MessageRuleRepository
 ) {
     suspend fun generateRuleFromMessage(message: Message): MessageRule? {
         val pattern = messageAnalyzer.buildPattern(message.text)
+        analytics.logEvent(Analytics.Event.PATTERN_BUILT, Analytics.Param.STATUS, pattern.status())
 
         return when (val result = pattern?.parse(message.text)) {
             is Pattern.Data -> ruleRepository.create().also {
@@ -68,4 +71,11 @@ class MessageRuleService @Inject constructor(
             else -> currencies[0]
         }
     }
+
+    private fun Pattern?.status(): String =
+        if (this != null) {
+            "successful"
+        } else {
+            "unsuccessful"
+        }
 }

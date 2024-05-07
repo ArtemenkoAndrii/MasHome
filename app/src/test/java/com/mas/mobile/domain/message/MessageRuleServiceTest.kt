@@ -2,6 +2,7 @@ package com.mas.mobile.domain.message
 
 import com.mas.mobile.domain.budget.Budget
 import com.mas.mobile.domain.budget.BudgetService
+import com.mas.mobile.util.Analytics
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,8 +16,9 @@ class MessageRuleServiceTest {
     private val mockMessageRuleRepository = mockk<MessageRuleRepository>(relaxed = true)
     private val mockBudgetService = mockk<BudgetService>(relaxed = true)
     private val mockBudget = mockk<Budget>(relaxed = true)
+    private val mockAnalytics = mockk<Analytics>(relaxed = true)
 
-    private val underTest = MessageRuleService(mockMessageAnalyzer, mockBudgetService, mockMessageRuleRepository)
+    private val underTest = MessageRuleService(mockMessageAnalyzer, mockBudgetService, mockAnalytics, mockMessageRuleRepository)
 
     @BeforeEach
     fun setUp() {

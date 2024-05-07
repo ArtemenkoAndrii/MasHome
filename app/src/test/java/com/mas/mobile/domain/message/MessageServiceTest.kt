@@ -13,6 +13,7 @@ import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.service.TaskService
+import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -35,6 +36,7 @@ class MessageServiceTest {
     private val mockQualifierService = mockk<QualifierService>(relaxed = true)
     private val mockMessageRepository = mockk<MessageRepository>(relaxed = true)
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
+    private val mockAnalytics = mockk<Analytics>(relaxed = true)
 
     // BudgetService mockk doesn't work because of bug with mocking Int value classes
     private val budgetService = BudgetService(
@@ -58,7 +60,9 @@ class MessageServiceTest {
         mockMessageRuleRepository,
         budgetService,
         mockQualifierService,
-        mockMessageRepository)
+        mockAnalytics,
+        mockMessageRepository
+    )
 
     @BeforeEach
     fun setUp() {

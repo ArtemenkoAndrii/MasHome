@@ -5,6 +5,7 @@ import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.service.CoroutineService
 import com.mas.mobile.service.TaskService
+import com.mas.mobile.util.Analytics
 import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,10 +16,13 @@ class MessageService @Inject constructor(
     private val ruleRepository: MessageRuleRepository,
     private val budgetService: BudgetService,
     private val qualifierService: QualifierService,
+    private val analytics: Analytics,
     val messageRepository: MessageRepository
 ) {
     fun handleMessage(sender: String, text: String, date: LocalDateTime) {
         val status = evaluateStatus(sender.trim(), text.trim())
+        analytics.logEvent(Analytics.Event.MESSAGE_EVALUATED, Analytics.Param.STATUS, status::class.simpleName ?: "")
+
         if (status !is Message.Rejected) {
             val message = messageRepository.create().also {
                 it.sender = sender
@@ -69,6 +73,7 @@ class MessageService @Inject constructor(
                     comment = message.text,
                     currency = ruleRepository.getById(it.ruleId)?.currency
                 )
+                analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, "auto")
             }
         }
         messageRepository.save(message)

@@ -12,6 +12,7 @@ import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.util.Analytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +28,7 @@ class SpendingViewModel @AssistedInject constructor(
     private val fieldValidator: FieldValidator,
     private val messageRuleService: MessageRuleService,
     private val messageService: MessageService,
+    private val analytics: Analytics,
     @Assisted private val action: Action,
     @Assisted("spendingId") private val pSpendingId: Int,
     @Assisted("expenditureId") private val pExpenditureId: Int,
@@ -221,10 +223,9 @@ class SpendingViewModel @AssistedInject constructor(
 
     override suspend fun doSave() {
         model.expenditure = findOrCreateExpenditure(expenditureNameValue)
-
         super.doSave()
-
         saveDependencies()
+        logEvent()
     }
 
     private fun findOrCreateExpenditure(name: String) =
@@ -246,6 +247,17 @@ class SpendingViewModel @AssistedInject constructor(
         message?.let {
             it.spendingId = model.id
             messageService.messageRepository.save(it)
+        }
+    }
+
+    private fun logEvent() {
+        if (action == Action.ADD) {
+            val source = if (message != null) {
+                "message"
+            } else {
+                "form"
+            }
+            analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, source)
         }
     }
 

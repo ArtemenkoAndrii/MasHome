@@ -12,6 +12,7 @@ import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.service.ResourceService
+import com.mas.mobile.util.Analytics
 import javax.inject.Inject
 
 abstract class CommonFragment : Fragment() {
@@ -28,10 +29,17 @@ abstract class CommonFragment : Fragment() {
         lateinit var resourceService: ResourceService
         @Inject
         lateinit var budgetService: BudgetService
+        @Inject
+        lateinit var analytics: Analytics
     }
 
     fun getResourceService() = wrapper.resourceService
+
     fun getBudgetService() = wrapper.budgetService
+
+    fun logEvent(eventName: Analytics.EventName, param: Analytics.ParamName, value: String) {
+        wrapper.analytics.logEvent(eventName, param, value)
+    }
 
     fun showConfirmationDialog(
         message: String = getResourceService().messageAreYouSure(),

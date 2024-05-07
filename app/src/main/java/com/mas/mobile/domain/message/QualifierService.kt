@@ -2,7 +2,9 @@ package com.mas.mobile.domain.message
 
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class QualifierService @Inject constructor(
     private val qualifierRepository: QualifierRepository
 ) {
