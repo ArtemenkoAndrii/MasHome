@@ -1,6 +1,7 @@
 package com.mas.mobile.domain.budget
 
 import com.mas.mobile.presentation.activity.converter.MoneyConverter
+import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 import java.util.Currency
 import java.util.Locale
@@ -13,7 +14,7 @@ data class Budget(
     var startsOn: LocalDate = LocalDate.now(),
     var lastDayAt: LocalDate = LocalDate.now(),
     var comment: String? = null,
-    var currency: Currency = Currency.getInstance(Locale.getDefault()),
+    var currency: Currency = CurrencyTools.getDefaultCurrency(),
     private val lazyLoader: Lazy<BudgetDetails>
 ) {
     val budgetDetails: BudgetDetails

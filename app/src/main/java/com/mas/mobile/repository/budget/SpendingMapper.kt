@@ -5,8 +5,8 @@ import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.repository.db.entity.SpendingData
+import com.mas.mobile.util.CurrencyTools
 import java.util.Currency
-import java.util.Locale
 
 object SpendingMapper {
     fun toModel(dto: SpendingData, expenditure: Expenditure) =
@@ -20,7 +20,7 @@ object SpendingMapper {
                 ExchangeInfo(
                     rawAmount = it ,
                     rate = dto.rate ?: 0.00,
-                    currency = Currency.getInstance(dto.currency) ?: Currency.getInstance(Locale.getDefault())
+                    currency = Currency.getInstance(dto.currency) ?: CurrencyTools.getDefaultCurrency()
                 )
             }
         )

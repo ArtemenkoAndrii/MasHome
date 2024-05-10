@@ -1,7 +1,6 @@
 package com.mas.mobile.repository.db.config
 
 import android.content.Context
-import androidx.room.ColumnInfo
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -9,11 +8,24 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
-import com.mas.mobile.repository.db.dao.*
-import com.mas.mobile.repository.db.entity.*
+import com.mas.mobile.repository.db.dao.BudgetDAO
+import com.mas.mobile.repository.db.dao.ExpenditureDAO
+import com.mas.mobile.repository.db.dao.IdGeneratorDAO
+import com.mas.mobile.repository.db.dao.MessageRuleDAO
+import com.mas.mobile.repository.db.dao.QualifierDAO
+import com.mas.mobile.repository.db.dao.SettingsDAO
+import com.mas.mobile.repository.db.dao.SpendingDAO
+import com.mas.mobile.repository.db.dao.SpendingMessageDAO
+import com.mas.mobile.repository.db.entity.Budget
+import com.mas.mobile.repository.db.entity.ExpenditureData
+import com.mas.mobile.repository.db.entity.IdGenerator
+import com.mas.mobile.repository.db.entity.MessageRule
+import com.mas.mobile.repository.db.entity.Qualifier
+import com.mas.mobile.repository.db.entity.Settings
+import com.mas.mobile.repository.db.entity.SpendingData
+import com.mas.mobile.repository.db.entity.SpendingMessage
+import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
-import java.util.Currency
-import java.util.Locale
 
 @Database(
     version = 7,
@@ -111,7 +123,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            val currency = Currency.getInstance(Locale.getDefault())
+            val currency = CurrencyTools.getDefaultCurrency()
             database.execSQL("ALTER TABLE budgets ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
             database.execSQL("ALTER TABLE message_rules ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
             database.execSQL("ALTER TABLE spendings ADD COLUMN currency TEXT DEFAULT NULL")

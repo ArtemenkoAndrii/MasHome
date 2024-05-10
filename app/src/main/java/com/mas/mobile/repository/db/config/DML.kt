@@ -2,6 +2,7 @@ package com.mas.mobile.repository.db.config
 
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.entity.Qualifier
+import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 import java.util.Currency
 import java.util.Locale
@@ -18,7 +19,7 @@ class DML {
             }
         )
 
-        private fun getCurrency() = Currency.getInstance(Locale.getDefault())
+        private fun getCurrency() = CurrencyTools.getDefaultCurrency()
 
         private fun getLanguage() = Locale.getDefault().language.uppercase()
 

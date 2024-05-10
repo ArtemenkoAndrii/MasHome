@@ -9,6 +9,7 @@ import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
+import com.mas.mobile.util.CurrencyTools
 import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -79,7 +80,7 @@ class BudgetService @Inject constructor(
 
         val template = budgetRepository.getBudget(TEMPLATE_BUDGET_ID)
         val budget = createBudget(startDate).also {
-            it.currency = template?.currency ?: Currency.getInstance(Locale.getDefault())
+            it.currency = template?.currency ?: CurrencyTools.getDefaultCurrency()
             uniquifyName(it)
             populateExpenditures(it, template)
         }

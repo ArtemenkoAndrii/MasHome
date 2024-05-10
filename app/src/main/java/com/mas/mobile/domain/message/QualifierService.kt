@@ -1,6 +1,6 @@
 package com.mas.mobile.domain.message
 
-import java.util.*
+import com.mas.mobile.util.CurrencyTools
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,9 +50,8 @@ class QualifierService @Inject constructor(
             "CNY" to "¥",
             "RUB" to "₽"
         ).also {
-            val instance = Currency.getInstance(Locale.getDefault())
-            if (instance != null) {
-                it[instance.currencyCode.uppercase()] = instance.symbol
+            with(CurrencyTools.getDefaultCurrency()) {
+                it[currencyCode.uppercase()] = symbol
             }
         }
     }
