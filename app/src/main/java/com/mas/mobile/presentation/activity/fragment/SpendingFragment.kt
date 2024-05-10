@@ -110,10 +110,6 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
         return layout
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     private fun inProgress(enabled: Boolean) {
         if (enabled) {
             binding.messageParsingProgressBar.visibility = View.VISIBLE
