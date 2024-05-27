@@ -48,4 +48,9 @@ class ResourceService @Inject constructor(
 
     fun tabQualifierCatch() = context.getString(R.string.tab_qualifier_catch)
     fun tabQualifierSkip() = context.getString(R.string.tab_qualifier_skip)
+
+    fun notificationNewVersionTitle() = context.getString(R.string.notification_new_version_title)
+    fun notificationNewVersionText() = context.getString(R.string.notification_new_version_text)
+    fun notificationUpdate() = context.getString(R.string.notification_update)
+    fun notificationIgnore() = context.getString(R.string.notification_ignore)
 }

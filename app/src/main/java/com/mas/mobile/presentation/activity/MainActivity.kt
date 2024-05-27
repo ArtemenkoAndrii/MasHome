@@ -10,15 +10,25 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.*
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.domain.message.MessageRepository
-import com.mas.mobile.service.DateListener
 import com.mas.mobile.domain.settings.SettingsService
+import com.mas.mobile.service.AppUpdateCheckWorker
+import com.mas.mobile.service.DateListener
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -58,6 +68,8 @@ class MainActivity : AppCompatActivity() {
         setupNavigationMenu(navController)
         setupBottomNavMenu(navController)
         this.applicationContext.registerReceiver(dateListener, IntentFilter(Intent.ACTION_TIME_TICK))
+
+        schedulePeriodicAppUpdatesCheck()
     }
 
     override fun onDestroy() {
@@ -127,5 +139,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.nav_host_view).navigateUp(appBarConfiguration)
+    }
+
+    private fun schedulePeriodicAppUpdatesCheck() {
+        val updateCheckRequest = PeriodicWorkRequestBuilder<AppUpdateCheckWorker>(2, TimeUnit.HOURS).build()
+
+        WorkManager.getInstance(this.applicationContext).enqueueUniquePeriodicWork(
+            "periodicUpdateCheck",
+            ExistingPeriodicWorkPolicy.KEEP,
+            updateCheckRequest
+        )
     }
 }

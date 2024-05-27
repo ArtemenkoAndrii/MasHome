@@ -16,7 +16,7 @@ class Analytics {
         }
     }
 
-    private fun logEvent(eventName: EventName, params: (Bundle) -> Unit) {
+    fun logEvent(eventName: EventName, params: (Bundle) -> Unit = {}) {
         val bundle = Bundle()
         params(bundle)
         firebaseAnalytics.logEvent(eventName.value, bundle)
@@ -26,6 +26,7 @@ class Analytics {
         val SPENDING_CREATED = EventName("spending_created")
         val MESSAGE_EVALUATED = EventName("message_evaluated")
         val PATTERN_BUILT = EventName("pattern_built")
+        val APP_UPDATE_SUGGESTED = EventName("app_update_suggested")
     }
 
     object Param {

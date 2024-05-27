@@ -1,6 +1,7 @@
 package com.mas.mobile.domain.message
 
 import android.util.Log
+import com.mas.mobile.DummyTaskService
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.ExchangeRepository
@@ -150,20 +151,5 @@ class MessageServiceTest {
             text = "",
             status = Message.Rejected
         )
-    }
-}
-
-object DummyTaskService : TaskService {
-
-    override fun backgroundTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
-        runTest {
-            wrapper(this)
-        }
-    }
-
-    override fun blockingTask(wrapper: suspend (context: CoroutineScope) -> Unit) {
-        runTest {
-            wrapper(this)
-        }
     }
 }
