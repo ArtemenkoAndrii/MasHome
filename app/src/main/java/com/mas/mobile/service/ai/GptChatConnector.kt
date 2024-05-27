@@ -13,7 +13,7 @@ interface GptChatConnector {
 
 data class ChatGPTRequest(
     val messages: List<Message>,
-    val model: String = "ft:gpt-3.5-turbo-1106:personal::8lKCjRhI",
+    val model: String = "ft:gpt-3.5-turbo-1106:personal:patterns:9TUF7TfU",
     val temperature: Double = 0.2
 ) {
     data class Message(
