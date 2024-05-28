@@ -145,4 +145,10 @@
 
     <!-- TOASTS -->
     <string name="unexpected_error">Ups, something went wrong</string>
+
+    <!-- NOTIFICATION -->
+    <string name="notification_new_version_title">New Version Available</string>
+    <string name="notification_new_version_text">A new version of the app is available. Tap to update now!</string>
+    <string name="notification_update">Update</string>
+    <string name="notification_ignore">Ignore</string>
 </resources>

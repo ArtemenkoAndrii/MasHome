@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.dao.BudgetDAO
+import com.mas.mobile.repository.db.dao.DeferredActionDAO
 import com.mas.mobile.repository.db.dao.ExpenditureDAO
 import com.mas.mobile.repository.db.dao.IdGeneratorDAO
 import com.mas.mobile.repository.db.dao.MessageRuleDAO
@@ -17,6 +18,7 @@ import com.mas.mobile.repository.db.dao.SettingsDAO
 import com.mas.mobile.repository.db.dao.SpendingDAO
 import com.mas.mobile.repository.db.dao.SpendingMessageDAO
 import com.mas.mobile.repository.db.entity.Budget
+import com.mas.mobile.repository.db.entity.DeferrableAction
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import com.mas.mobile.repository.db.entity.IdGenerator
 import com.mas.mobile.repository.db.entity.MessageRule
@@ -28,7 +30,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 7,
+    version = 8,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -38,8 +40,9 @@ import java.time.LocalDate
         MessageRule::class,
         Settings::class,
         IdGenerator::class,
-        Qualifier::class
-        ]
+        Qualifier::class,
+        DeferrableAction::class
+    ]
 )
 @TypeConverters(SQLiteTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -61,7 +64,7 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,)
                     .build()
             }
             return INSTANCE!!
@@ -76,6 +79,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun settingsDao(): SettingsDAO
     abstract fun idGeneratorDAO(): IdGeneratorDAO
     abstract fun qualifierDAO(): QualifierDAO
+    abstract fun deferredActionDAO(): DeferredActionDAO
 }
 
 internal fun SupportSQLiteDatabase.execSQLs(sqlBlock: String): Unit =
@@ -122,12 +126,18 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
 }
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            val currency = CurrencyTools.getDefaultCurrency()
-            database.execSQL("ALTER TABLE budgets ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
-            database.execSQL("ALTER TABLE message_rules ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
-            database.execSQL("ALTER TABLE spendings ADD COLUMN currency TEXT DEFAULT NULL")
-            database.execSQL("ALTER TABLE spendings ADD COLUMN rate REAL DEFAULT NULL")
-            database.execSQL("ALTER TABLE spendings ADD COLUMN foreignAmount REAL DEFAULT NULL")
+    override fun migrate(database: SupportSQLiteDatabase) {
+        val currency = CurrencyTools.getDefaultCurrency()
+        database.execSQL("ALTER TABLE budgets ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
+        database.execSQL("ALTER TABLE message_rules ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
+        database.execSQL("ALTER TABLE spendings ADD COLUMN currency TEXT DEFAULT NULL")
+        database.execSQL("ALTER TABLE spendings ADD COLUMN rate REAL DEFAULT NULL")
+        database.execSQL("ALTER TABLE spendings ADD COLUMN foreignAmount REAL DEFAULT NULL")
+    }
+}
+
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE deferrable_actions (key TEXT NOT NULL PRIMARY KEY, type INTEGER NOT NULL, increment INTEGER NOT NULL, active_after INTEGER NOT NULL)")
     }
 }

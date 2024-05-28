@@ -10,6 +10,7 @@ import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.domain.message.MessageRuleRepository
 import com.mas.mobile.domain.message.QualifierRepository
+import com.mas.mobile.domain.settings.DeferrableActionRepository
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.activity.PolicyActivity
@@ -23,6 +24,7 @@ import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.message.MessageRepositoryImpl
 import com.mas.mobile.repository.message.MessageRuleRepositoryImpl
 import com.mas.mobile.repository.message.QualifierRepositoryImpl
+import com.mas.mobile.repository.settings.DeferrableActionRepositoryImpl
 import com.mas.mobile.repository.settings.SettingsRepositoryImpl
 import com.mas.mobile.service.*
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
@@ -82,6 +84,7 @@ interface AppComponent {
     fun injectDateListener(dateListener: DateListener)
     fun injectNotificationListener(notificationListener: NotificationListener)
     fun injectCommonFragment(wrapper: CommonFragment.CommonFragmentWrapper)
+    fun injectAppUpdateCheckWorker(worker: AppUpdateCheckWorker)
 
     fun injectMainActivity(mainActivity: MainActivity)
     fun injectPolicyActivity(policyActivity: PolicyActivity)
@@ -150,6 +153,12 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun resolveDeferredActionRepositoryImpl(db: AppDatabase): DeferrableActionRepository {
+        return DeferrableActionRepositoryImpl(db)
+    }
+
+    @Provides
+    @Singleton
     fun resolveGptChatService(): GptChatConnector =
         GptChatApiClient().gptChatConnector
 
@@ -168,5 +177,11 @@ class AppModule {
     @Singleton
     fun resolveAnalytics(): Analytics {
         return Analytics()
+    }
+
+    @Provides
+    @Singleton
+    fun resolveNotificationService(context: Context, resourceService: ResourceService): NotificationService {
+        return NotificationService(context, resourceService)
     }
 }
