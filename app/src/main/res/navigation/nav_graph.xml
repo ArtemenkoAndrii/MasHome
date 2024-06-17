@@ -502,6 +502,35 @@
         tools:layout = "@layout/qualifier_list_fragment">
     </fragment>
 
+    <!-- Analytics flow-->
+    <fragment
+        android:id = "@+id/nav_analytics"
+        android:name = "com.mas.mobile.presentation.activity.fragment.AnalyticsFragment"
+        android:label="@string/title_analytics"
+        tools:layout = "@layout/analytics_fragment">
+
+        <action
+            android:id="@+id/action_to_chart"
+            app:destination="@id/nav_chart">
+
+            <argument
+                android:name="type"
+                app:argType="com.mas.mobile.domain.analytics.Type"/>
+        </action>
+    </fragment>
+
+    <!-- Chart flow-->
+    <fragment
+        android:id = "@+id/nav_chart"
+        android:name = "com.mas.mobile.presentation.activity.fragment.ChartFragment"
+        android:label="@string/title_chart"
+        tools:layout = "@layout/chart_fragment">
+
+        <argument
+            android:name="type"
+            app:argType="com.mas.mobile.domain.analytics.Type"/>
+    </fragment>
+
     <!--Global-->
     <action
         android:id="@+id/action_to_settings"
@@ -510,5 +539,9 @@
             android:name="guided"
             android:defaultValue="false"
             app:argType="boolean"/>
+    </action>
+    <action
+        android:id="@+id/action_to_analytics"
+        app:destination="@id/nav_analytics">
     </action>
 </navigation>

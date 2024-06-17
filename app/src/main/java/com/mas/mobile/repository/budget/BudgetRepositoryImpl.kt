@@ -37,6 +37,15 @@ class BudgetRepositoryImpl(
 
     override fun getLast(): Budget? = dao.getLatestEndedOn(LocalDate.MAX)?.toModel()
 
+    override fun getAll(onlyCompleted: Boolean): List<Budget> {
+        val filter = if (onlyCompleted) {
+            LocalDate.now()
+        } else {
+            LocalDate.MAX
+        }
+        return dao.getAll(filter).map { it.toModel() }
+    }
+
     override fun generateId(): Long {
         return db.idGeneratorDAO().generateId()
     }

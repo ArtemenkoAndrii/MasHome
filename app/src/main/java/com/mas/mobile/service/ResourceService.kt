@@ -29,6 +29,8 @@ class ResourceService @Inject constructor(
     fun messageSettingsStartDay() = context.getString(R.string.message_settings_start_day)
     fun messageSettingsPeriod() = context.getString(R.string.message_settings_period)
     fun messageCapturingDisabled() = context.getString(R.string.message_capturing_disabled)
+    fun messageAnalyticsNoAlerts() = context.getString(R.string.message_analytics_no_alerts)
+    fun messageAnalyticsNoBudgets() = context.getString(R.string.message_analytics_no_budgets)
 
     fun spendingMessageClickToBind() = context.getString(R.string.btn_spending_message_bind)
     fun spendingMessageClickToDiscover() = context.getString(R.string.btn_spending_message_discover)
@@ -51,6 +53,7 @@ class ResourceService @Inject constructor(
 
     fun notificationNewVersionTitle() = context.getString(R.string.notification_new_version_title)
     fun notificationNewVersionText() = context.getString(R.string.notification_new_version_text)
-    fun notificationUpdate() = context.getString(R.string.notification_update)
-    fun notificationIgnore() = context.getString(R.string.notification_ignore)
+
+    fun labelAnalyticsPlan() = context.getString(R.string.label_analytics_plan)
+    fun labelAnalyticsFact() = context.getString(R.string.label_analytics_fact)
 }

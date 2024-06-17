@@ -28,6 +28,7 @@ abstract class ListFragment: CommonFragment() {
                 this.findNavController().navigate(R.id.action_to_settings)
                 true
             }
+            R.id.budget_analytics -> go(R.id.action_to_analytics)
             else -> super.onOptionsItemSelected(item)
         }
     }

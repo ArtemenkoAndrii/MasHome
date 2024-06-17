@@ -80,6 +80,8 @@ interface AppComponent {
 
     fun settingsModel(): SettingsViewModel.Factory
 
+    fun chartViewModelModel(): ChartViewModel.Factory
+
     fun injectSmsListener(smsListener: SmsListener)
     fun injectDateListener(dateListener: DateListener)
     fun injectNotificationListener(notificationListener: NotificationListener)

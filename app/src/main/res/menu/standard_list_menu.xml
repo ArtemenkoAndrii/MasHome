@@ -6,8 +6,13 @@
         android:orderInCategory = "1"
         />
     <item
+        android:id = "@+id/budget_analytics"
+        android:title = "@string/menu_budget_analytics"
+        android:orderInCategory = "2"
+        />
+    <item
         android:id = "@+id/standartd_list_menu_settings"
         android:title = "@string/menu_settings"
-        android:orderInCategory = "2"
+        android:orderInCategory = "3"
         />
 </menu>

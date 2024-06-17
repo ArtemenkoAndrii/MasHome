@@ -12,6 +12,7 @@ interface BudgetRepository : Repository<Budget> {
     fun getBudgetByName(name: String): Budget?
     fun getOnDate(date: LocalDate): Budget?
     fun getLast(): Budget?
+    fun getAll(onlyCompleted: Boolean = true): List<Budget>
 
     override suspend fun save(item: Budget)
     override suspend fun remove(item: Budget)
@@ -22,7 +23,4 @@ interface BudgetRepository : Repository<Budget> {
 interface BudgetLiveData {
     fun getBudget(budgetId: BudgetId): LiveData<Budget>
     fun getBudgets(): LiveData<List<Budget>>
-//    fun getExpenditures(budgetId: BudgetId): LiveData<List<Expenditure>>
-//    fun getSpendings(budgetId: BudgetId): LiveData<List<Spending>>
-//    fun getSpendings(expenditureId: ExpenditureId): LiveData<List<Spending>>
 }

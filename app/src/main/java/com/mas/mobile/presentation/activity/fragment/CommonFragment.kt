@@ -75,6 +75,11 @@ abstract class CommonFragment : Fragment() {
         return true
     }
 
+    protected fun go(directionId: Int): Boolean {
+        findNavController().navigate(directionId)
+        return true
+    }
+
     protected fun menuVisibility(isEnabled: Boolean) {
         this.activity?.let { activity ->
             activity.findViewById<BottomNavigationView>(R.id.nav_bottom_view)

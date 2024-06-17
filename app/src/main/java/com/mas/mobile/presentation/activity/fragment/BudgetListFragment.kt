@@ -51,6 +51,7 @@ class  BudgetListFragment: ListFragment(), ListMenu<Budget> {
         return when (item.itemId) {
             R.id.budget_list_menu_add -> go(resolveAddButtonDestination())
             R.id.budget_list_menu_settings -> go(BudgetListFragmentDirections.actionToBudgetSettings())
+            R.id.budget_analytics -> go(R.id.action_to_analytics)
             else -> super.onOptionsItemSelected(item)
         }
     }
