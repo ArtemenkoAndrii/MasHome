@@ -1,11 +1,13 @@
 package com.mas.mobile.domain.analytics
 
+import com.mas.mobile.domain.budget.Budget.Companion.TEMPLATE_ID
 import com.mas.mobile.domain.budget.BudgetId
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.ExpenditureName
 import com.mas.mobile.halfEven
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,9 +16,9 @@ class AnalyticsService @Inject constructor(
     private val budgetService: BudgetService,
 ) {
     fun getAnalyticsTrends(expenditureName: ExpenditureName? = null): List<TrendEntry> {
-        val budgets = budgetService.budgetRepository.getAll(onlyCompleted = true)
-            .takeLast(TRENDS_LIMIT)
+        val budgets = budgetService.budgetRepository.getCompleted()
             .sortedBy { it.startsOn }
+            .takeLast(TRENDS_LIMIT)
         return if (expenditureName != null) {
             budgets
                 .flatMap { it.budgetDetails.expenditure }
@@ -34,7 +36,9 @@ class AnalyticsService @Inject constructor(
     }
 
     fun getOverspendingAlerts(threshold: Percentage): List<OverspendingAlert> {
-        val budgets = budgetService.budgetRepository.getAll(onlyCompleted = true).takeLast(OVERSPENDING_LIMIT)
+        val budgets = budgetService.budgetRepository.getCompleted()
+            .sortedBy { it.startsOn }
+            .takeLast(OVERSPENDING_LIMIT)
         return budgets
             .flatMap { it.budgetDetails.expenditure }
             .groupBy { it.name }

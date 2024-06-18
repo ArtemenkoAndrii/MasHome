@@ -24,7 +24,7 @@ class AnalyticsServiceTest {
     @BeforeEach
     fun setUp() {
         every { mockBudgetService.budgetRepository } returns mockBudgetRepository
-        every { mockBudgetRepository.getAll(any()) } returns BUDGETS
+        every { mockBudgetRepository.getCompleted() } returns BUDGETS
         every { mockBudgetRepository.getBudget(any()) } returns BUDGETS[0]
     }
 

@@ -25,7 +25,7 @@ class ChartViewModel @AssistedInject constructor(
             Type.AnalyticsTrends ->
                 expenditureRepository.getExpenditureNames(true, 100).map { it.value }
             Type.ExpenditureDistribution ->
-                budgetService.budgetRepository.getAll(true).map { it.name }
+                budgetService.budgetRepository.getCompleted().map { it.name }
             else -> emptyList()
         }
 

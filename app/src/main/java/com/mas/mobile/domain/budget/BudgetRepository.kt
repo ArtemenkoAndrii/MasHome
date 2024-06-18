@@ -12,7 +12,7 @@ interface BudgetRepository : Repository<Budget> {
     fun getBudgetByName(name: String): Budget?
     fun getOnDate(date: LocalDate): Budget?
     fun getLast(): Budget?
-    fun getAll(onlyCompleted: Boolean = true): List<Budget>
+    fun getCompleted(): List<Budget>
 
     override suspend fun save(item: Budget)
     override suspend fun remove(item: Budget)

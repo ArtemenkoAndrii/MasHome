@@ -1,6 +1,5 @@
 package com.mas.mobile.repository.db.dao
 
-import android.media.audiofx.DynamicsProcessing.Limiter
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mas.mobile.repository.db.entity.Budget
@@ -10,6 +9,9 @@ import java.time.LocalDate
 interface BudgetDAO {
     @Query("SELECT * FROM budgets ORDER BY startsOn DESC")
     fun getAllLive(): LiveData<List<Budget>>
+
+    @Query("SELECT * FROM budgets WHERE lastDayAt < :date ORDER BY startsOn DESC")
+    fun getCompleted(date: LocalDate = LocalDate.now()): List<Budget>
 
     @Query("SELECT * FROM budgets WHERE id = :budgetId")
     fun getByIdLive(budgetId: Int): LiveData<Budget>
@@ -22,9 +24,6 @@ interface BudgetDAO {
 
     @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY lastDayAt DESC LIMIT 1")
     fun getLatestEndedOn(date: LocalDate): Budget?
-
-    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY lastDayAt DESC")
-    fun getAll(date: LocalDate): List<Budget>
 
     @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND :date BETWEEN startsOn AND lastDayAt")
     fun getActiveOn(date: LocalDate): Budget?
