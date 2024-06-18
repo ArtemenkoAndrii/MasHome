@@ -10,7 +10,7 @@ interface BudgetDAO {
     @Query("SELECT * FROM budgets ORDER BY startsOn DESC")
     fun getAllLive(): LiveData<List<Budget>>
 
-    @Query("SELECT * FROM budgets WHERE lastDayAt < :date ORDER BY startsOn DESC")
+    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY startsOn DESC")
     fun getCompleted(date: LocalDate = LocalDate.now()): List<Budget>
 
     @Query("SELECT * FROM budgets WHERE id = :budgetId")
