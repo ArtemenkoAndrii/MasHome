@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.navArgs
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.charts.LineChart
@@ -57,23 +58,6 @@ class ChartFragment : CommonFragment() {
         val layout = inflater.inflate(R.layout.chart_fragment, container, false)
         binding = ChartFragmentBinding.bind(layout)
 
-        when(args.type) {
-            Type.AnalyticsTrends -> {
-                binding.lineChart.visibility = View.VISIBLE
-                buildAnalyticsTrendsChart()
-            }
-            Type.OverspendingAlerts -> {
-                binding.barChart.visibility = View.VISIBLE
-                binding.filterLayout.visibility = View.GONE
-                val data = toBarData(viewModel.getOverspendingAlerts())
-                buildBarChart(binding.barChart, data)
-            }
-            Type.ExpenditureDistribution -> {
-                binding.pieChart.visibility = View.VISIBLE
-                buildExpenditureDistributionChart()
-            }
-        }
-
         with(binding) {
             val adapter = ArrayAdapter(
                 requireContext(),
@@ -82,23 +66,47 @@ class ChartFragment : CommonFragment() {
             )
             filter.setAdapter(adapter)
             filter.setOnItemClickListener { parent, _, position, _ ->
-                val value = parent.getItemAtPosition(position).toString()
-                buildAnalyticsTrendsChart(value)
-                buildExpenditureDistributionChart(value)
+                filter.clearFocus()
+                viewModel.filter.value = parent.getItemAtPosition(position).toString()
             }
+
+            when (args.type) {
+                Type.AnalyticsTrends -> {
+                    lineChart.visibility = View.VISIBLE
+                    filterLayout.isHintEnabled = false
+                    filter.hint = getResourceService().hintChartExpenditures()
+                    filter.doAfterTextChanged {
+                        if (filter.text.isNullOrEmpty()) {
+                            viewModel.filter.value = null
+                            filter.clearFocus()
+                        }
+                    }
+                }
+                Type.OverspendingAlerts -> {
+                    barChart.visibility = View.VISIBLE
+                    filterLayout.visibility = View.GONE
+                }
+                Type.ExpenditureDistribution -> {
+                    if (viewModel.availableFilterValues.isNotEmpty()) {
+                        filter.setText(viewModel.availableFilterValues[0], false)
+                    }
+                    pieChart.visibility = View.VISIBLE
+                }
+            }
+        }
+        viewModel.analyticsTrends.observe(viewLifecycleOwner) {
+            buildLineChart(binding.lineChart, toLineData(it))
+        }
+
+        viewModel.overspendingAlerts.observe(viewLifecycleOwner) {
+            buildBarChart(binding.barChart, toBarData(it))
+        }
+
+        viewModel.expenditureDistribution.observe(viewLifecycleOwner) {
+            buildPieChart(binding.pieChart, toPieData(it))
         }
 
         return layout
-    }
-
-    private fun buildAnalyticsTrendsChart(expenditure: String? = null) {
-        val data = toLineData(viewModel.getAnalyticsTrends(expenditure))
-        buildLineChart(binding.lineChart, data)
-    }
-
-    private fun buildExpenditureDistributionChart(budget: String? = null) {
-        val data = toPieData(viewModel.getExpenditureDistribution(budget))
-        buildPieChart(binding.pieChart, data)
     }
 
     private fun buildLineChart(chart: LineChart, chartData: ChartData<Entry>) {
@@ -260,7 +268,7 @@ class ChartFragment : CommonFragment() {
 
     private fun String.crop() =
         if (this.length > LABEL_MAX_LENGTH) {
-            this.substring(0, LABEL_MAX_LENGTH - 1) + LABEL_CONFORMATION
+            this.substring(0, LABEL_MAX_LENGTH - LABEL_CONFORMATION.length - 1) + LABEL_CONFORMATION
         } else {
             this
         }
@@ -316,7 +324,7 @@ class ChartFragment : CommonFragment() {
 
     companion object {
         const val LABEL_DISPLAY_THRESHOLD = 3
-        const val LABEL_MAX_LENGTH = 10
+        const val LABEL_MAX_LENGTH = 14
         const val LABEL_CONFORMATION = ".."
         const val CENTER_TEXT_MASK = "%s\n%.2f%s"
         const val LEGEND_MASK = "%s - %.1f%%"

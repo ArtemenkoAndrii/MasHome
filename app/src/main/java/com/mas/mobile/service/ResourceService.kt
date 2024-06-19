@@ -56,4 +56,6 @@ class ResourceService @Inject constructor(
 
     fun labelAnalyticsPlan() = context.getString(R.string.label_analytics_plan)
     fun labelAnalyticsFact() = context.getString(R.string.label_analytics_fact)
+
+    fun hintChartExpenditures() = context.getString(R.string.hint_chart_expenditures)
 }
