@@ -32,7 +32,9 @@ class QualifierListFragment : ListFragment() {
         TabLayoutMediator(binding.qualifierTabLayout, binding.qualifierViewPager) { tab, position ->
             tab.text = when(position) {
                 0 -> getResourceService().tabQualifierCatch()
-                else -> getResourceService().tabQualifierSkip()
+                1 -> getResourceService().tabQualifierSkip()
+                2 -> getResourceService().tabQualifierBlacklist()
+                else -> null
             }
         }.attach()
 
@@ -44,15 +46,15 @@ class QualifierListFragment : ListFragment() {
     }
 }
 
-class QualifierTabFragment(private val showSkipInsteadCatchQualifiers: Boolean) : ListFragment() {
+open class QualifierTabFragment(private val type: Qualifier.Type) : ListFragment() {
     private lateinit var binding: QualifierListTabBinding
 
     val listViewModel: QualifierListViewModel by lazyViewModel {
-        this.requireContext().appComponent.qualifierListViewModel().create(showSkipInsteadCatchQualifiers)
+        this.requireContext().appComponent.qualifierListViewModel().create(type)
     }
 
     // Because, during rotation, the fragment needs to be recreated by invoking the non-argument constructor.
-    constructor() : this(true)
+    constructor() : this(Qualifier.Type.CATCH)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,3 +89,5 @@ class QualifierTabFragment(private val showSkipInsteadCatchQualifiers: Boolean) 
         TODO("Not yet implemented")
     }
 }
+
+class BlackListFragment : QualifierTabFragment(Qualifier.Type.BLACKLIST)

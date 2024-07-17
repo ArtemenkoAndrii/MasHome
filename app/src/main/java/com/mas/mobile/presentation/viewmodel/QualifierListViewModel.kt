@@ -2,30 +2,24 @@ package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.mas.mobile.domain.message.CatchQualifier
 import com.mas.mobile.domain.message.Qualifier
 import com.mas.mobile.domain.message.QualifierRepository
-import com.mas.mobile.domain.message.SkipQualifier
 import com.mas.mobile.service.CoroutineService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class QualifierListViewModel @AssistedInject constructor(
-    private val qualifierRepository: QualifierRepository,
+    private val repository: QualifierRepository,
     private val coroutineService: CoroutineService,
-    @Assisted private val showSkipInsteadCatchQualifiers: Boolean
-): ListViewModel<Qualifier>(coroutineService, qualifierRepository){
+    @Assisted private val type: Qualifier.Type,
+): ListViewModel<Qualifier>(coroutineService, repository){
     private val newValues = MutableLiveData<List<Qualifier>>()
 
     val qualifiers = MediatorLiveData<List<Qualifier>>()
 
     init {
-        val masterSource = if (showSkipInsteadCatchQualifiers) {
-            qualifierRepository.live.getSkipQualifiers()
-        } else {
-            qualifierRepository.live.getCatchQualifiers()
-        }
+        val masterSource = repository.live.getQualifiers(type)
 
         qualifiers.addSource(masterSource) {
             qualifiers.value = it
@@ -38,20 +32,23 @@ class QualifierListViewModel @AssistedInject constructor(
 
     fun addNew() {
         newValues.value = listOf(
-            if (showSkipInsteadCatchQualifiers) {
-                SkipQualifier(NEW_QUALIFIER)
-            } else {
-                CatchQualifier(NEW_QUALIFIER)
+            repository.create().also {
+                it.type = type
             }
         )
     }
 
-    fun save(item: Qualifier) = process(item) {
-        qualifierRepository.save(item)
+    fun save(item: Qualifier) = process(item) { qualifier ->
+        val value = qualifier.value.trim()
+        with(repository) {
+            val result = getQualifiers(qualifier.type).firstOrNull { it.value.equals(value, true) } ?: qualifier
+            result.value = value
+            save(result)
+        }
     }
 
-    override fun remove(item: Qualifier) = process(item) {
-        qualifierRepository.remove(item)
+    override fun remove(item: Qualifier) = process(item) { qualifier ->
+        repository.remove(qualifier)
     }
 
     private fun process(item: Qualifier, handle: suspend (Qualifier) -> Unit) {
@@ -65,10 +62,6 @@ class QualifierListViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted showSkipInsteadCatchQualifiers: Boolean): QualifierListViewModel
-    }
-
-    companion object {
-        const val NEW_QUALIFIER = ""
+        fun create(@Assisted type: Qualifier.Type): QualifierListViewModel
     }
 }

@@ -49,11 +49,6 @@ open class SpendingListFragment : ListFragment() {
         return layout
     }
 
-    override fun onDestroy() {
-        showBottomMenu()
-        super.onDestroy()
-    }
-
     override fun resolveAddButtonDestination() =
         SpendingListFragmentDirections.actionToSpending(Action.ADD.name)
 }
@@ -69,7 +64,6 @@ class BudgetSpendingListFragment: SpendingListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        hideBottomMenu()
         listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }

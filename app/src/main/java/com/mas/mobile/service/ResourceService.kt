@@ -50,6 +50,7 @@ class ResourceService @Inject constructor(
 
     fun tabQualifierCatch() = context.getString(R.string.tab_qualifier_catch)
     fun tabQualifierSkip() = context.getString(R.string.tab_qualifier_skip)
+    fun tabQualifierBlacklist() = context.getString(R.string.tab_qualifier_blacklist)
 
     fun notificationNewVersionTitle() = context.getString(R.string.notification_new_version_title)
     fun notificationNewVersionText() = context.getString(R.string.notification_new_version_text)
@@ -58,4 +59,6 @@ class ResourceService @Inject constructor(
     fun labelAnalyticsFact() = context.getString(R.string.label_analytics_fact)
 
     fun hintChartExpenditures() = context.getString(R.string.hint_chart_expenditures)
+
+    fun validatorPatternFailed() = context.getString(R.string.validator_pattern_failed)
 }

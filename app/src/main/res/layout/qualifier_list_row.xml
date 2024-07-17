@@ -39,7 +39,6 @@
                 android:id="@+id/qualifier_name_viewer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="text"
                 android:text="@={qualifier.value}"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 app:layout_constraintBottom_toBottomOf="parent"

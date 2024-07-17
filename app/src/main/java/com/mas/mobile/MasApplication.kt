@@ -9,6 +9,7 @@ import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.domain.message.MessageRuleRepository
+import com.mas.mobile.domain.message.MessageTemplateRepository
 import com.mas.mobile.domain.message.QualifierRepository
 import com.mas.mobile.domain.settings.DeferrableActionRepository
 import com.mas.mobile.domain.settings.SettingsRepository
@@ -23,6 +24,7 @@ import com.mas.mobile.repository.budget.SpendingRepositoryImpl
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.message.MessageRepositoryImpl
 import com.mas.mobile.repository.message.MessageRuleRepositoryImpl
+import com.mas.mobile.repository.message.MessageTemplateRepositoryImpl
 import com.mas.mobile.repository.message.QualifierRepositoryImpl
 import com.mas.mobile.repository.settings.DeferrableActionRepositoryImpl
 import com.mas.mobile.repository.settings.SettingsRepositoryImpl
@@ -63,7 +65,8 @@ val Context.appComponent: AppComponent
 @Singleton
 interface AppComponent {
     fun messageListViewModel(): MessageListViewModel.Factory
-
+    fun messageTemplateListViewModel(): MessageTemplateListViewModel.Factory
+    fun messageTemplateViewModel(): MessageTemplateViewModel.Factory
     fun messageRuleViewModel(): MessageRuleViewModel.Factory
     fun messageRuleListViewModel(): MessageRuleListViewModel.Factory
 
@@ -133,6 +136,12 @@ class AppModule {
     @Singleton
     fun resolveMessageRuleRepository(db: AppDatabase): MessageRuleRepository {
         return MessageRuleRepositoryImpl(db)
+    }
+
+    @Provides
+    @Singleton
+    fun resolveMessageTemplateRepository(db: AppDatabase): MessageTemplateRepository {
+        return MessageTemplateRepositoryImpl(db)
     }
 
     @Provides

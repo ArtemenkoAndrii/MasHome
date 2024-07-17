@@ -8,7 +8,6 @@ import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.service.CoroutineService
-import com.mas.mobile.toCurrency
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

@@ -67,94 +67,105 @@ class DML {
             VALUES(4, "Revolut", "Food", "McDonalds", "Paid €{amount} at", "${getCurrency()}");
         """.trimIndent()
 
+        val GREETING_MESSAGE_TEMPLATES = """
+            INSERT INTO message_template(id, sender, pattern, example, currency, enabled)
+            VALUES(1, "Revolut", "Paid ${'$'}{amount} at {merchant} Spent", "McDonalds 🛍 Paid ${'$'}55.70 at McDonalds Spent today: ${'$'}55.70", "USD", 1);
+            INSERT INTO message_template(id, sender, pattern, example, currency, enabled)
+            VALUES(2, "BBVA Spain", "of {amount} EUR in {merchant} with", "Payment accepted 👍💳 Payment of 4,10 EUR in aliexpress with your card ending in 1234 accepted.", "EUR", 1);
+            INSERT INTO message_template(id, sender, pattern, example, currency, enabled)
+            VALUES(3, "Swedbank", "Swedbank {amount} EUR paid at {merchant}", "Notification from Swedbank 7.6 EUR paid at JOHN SMITH", "EUR", 1);
+            INSERT INTO message_template(id, sender, pattern, example, currency, enabled)
+            VALUES(4, "ING Bankieren", "is {amount} EUR afgeschreven van rekening *007. {merchant}", "ING Bankieren Er is 2,56 EUR afgeschreven van rekening *003. ALBERT HEIJN 1493", "EUR", 1);
+        """.trimIndent()
+
         private val language = getLanguage()
         val DEFAULT_QUALIFIERS =
         """
-            INSERT INTO qualifiers(name, type) VALUES("payment", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("paid", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("debit", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("debited", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("purchase", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("purchased", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("deduction", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("deducted", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("charged", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("shopping", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("transaction", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("withdrawal", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("transfer", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("invoice", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("bill", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("confirm", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("authorize", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("authorization", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("verify", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("failed", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("decline", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("overdraft", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("cancel", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("overcharge", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("remind", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("whatsapp", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("facebook", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("instagram", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("snapchat", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("twitter", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("tiktok", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("telegram", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("linkedin", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("viber", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("zoom", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("skype", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("slack", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("pinterest", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(1, "payment", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(2, "paid", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(3, "debit", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(4, "debited", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(5, "purchase", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(6, "purchased", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(7, "deduction", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(8, "deducted", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(9, "charged", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(10, "shopping", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(11, "transaction", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(12, "withdrawal", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(13, "transfer", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(14, "invoice", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(15, "bill", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(16, "confirm", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(17, "authorize", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(18, "authorization", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(19, "verify", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(20, "failed", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(21, "decline", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(22, "overdraft", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(23, "cancel", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(24, "overcharge", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(25, "remind", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(26, "whatsapp", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(27, "facebook", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(28, "instagram", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(29, "snapchat", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(30, "twitter", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(31, "tiktok", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(32, "telegram", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(33, "linkedin", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(34, "viber", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(35, "zoom", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(36, "skype", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(37, "slack", ${Qualifier.BLACKLIST});
+            INSERT INTO qualifiers(id, name, type) VALUES(38, "pinterest", ${Qualifier.BLACKLIST});
         """.plusIf(language == "UK") {
         """
-            INSERT INTO qualifiers(name, type) VALUES("покупка", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("оплата", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("рахунок", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("списання", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("підтвердіть", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("підтвердження", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("відміна", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("помилка", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("недостатньо", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(39, "покупка", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(40, "оплата", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(41, "рахунок", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(42, "списання", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(43, "підтвердіть", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(44, "підтвердження", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(45, "відміна", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(46, "помилка", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(47, "недостатньо", ${Qualifier.SKIP});
         """ }.plusIf(language == "RU") {
                 """
-            INSERT INTO qualifiers(name, type) VALUES("покупка", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("оплата", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("счет", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("списание", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("подтвердите", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("подтверждение", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("отмена", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("ошибка", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("недостаточно", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(48, "покупка", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(49, "оплата", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(50, "счет", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(51, "списание", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(52, "подтвердите", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(53, "подтверждение", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(54, "отмена", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(55, "ошибка", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(56, "недостаточно", ${Qualifier.SKIP});
         """ }.plusIf(language == "ES") {
                 """
-            INSERT INTO qualifiers(name, type) VALUES("pago", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("pagado", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("cargo", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("compra", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("comprado", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("débito", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("deducción", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("cargado", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("compras", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("transacción", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("retiro", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("transferencia", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("factura", ${Qualifier.CATCH});
-            INSERT INTO qualifiers(name, type) VALUES("confirmar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("autorizar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("autorización", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("verificar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("fallido", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("rechazar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("sobregiro", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("cancelar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("sobrecargar", ${Qualifier.SKIP});
-            INSERT INTO qualifiers(name, type) VALUES("recordar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(57, "pago", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(58, "pagado", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(59, "cargo", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(60, "compra", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(61, "comprado", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(62, "débito", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(63, "deducción", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(64, "cargado", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(65, "compras", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(66, "transacción", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(67, "retiro", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(68, "transferencia", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(69, "factura", ${Qualifier.CATCH});
+            INSERT INTO qualifiers(id, name, type) VALUES(70, "confirmar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(71, "autorizar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(72, "autorización", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(73, "verificar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(74, "fallido", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(75, "rechazar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(76, "sobregiro", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(77, "cancelar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(78, "sobrecargar", ${Qualifier.SKIP});
+            INSERT INTO qualifiers(id, name, type) VALUES(79, "recordar", ${Qualifier.SKIP});
         """ }.trimIndent()
     }
 }

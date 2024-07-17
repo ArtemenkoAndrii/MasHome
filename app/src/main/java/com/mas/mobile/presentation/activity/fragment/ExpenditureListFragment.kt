@@ -77,16 +77,10 @@ class BudgetExpenditureListFragment: ExpenditureListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        hideBottomMenu()
         listViewModel.budget.observe(viewLifecycleOwner) { budget ->
             setTitle { "${budget.name} $it" }
         }
         return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        showBottomMenu()
-        super.onDestroy()
     }
 
     override fun resolveAddButtonDestination(): NavDirections {

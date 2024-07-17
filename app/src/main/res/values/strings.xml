@@ -20,11 +20,17 @@
     <string name="hint_spending_date">date</string>
     <string name="hint_spending_expenditure">expenditure</string>
     <string name="hint_message_rule_sender">Sender</string>
-    <string name="hint_message_rule_expenditure_matcher">Expenditure matcher</string>
-    <string name="hint_message_rule_amount_matcher">Amount matcher</string>
-    <string name="hint_message_rule_expenditure">Expenditure</string>
-    <string name="hint_message_new_message">New message</string>
-    <string name="hint_chart_expenditures">All expenditures</string>
+    <string name="hint_message_rule_expenditure_matcher">expenditure matcher</string>
+    <string name="hint_message_rule_amount_matcher">amount matcher</string>
+    <string name="hint_message_rule_expenditure">expenditure</string>
+    <string name="hint_message_new_message">new message</string>
+    <string name="hint_chart_expenditures">all expenditures</string>
+
+    <string name="hint_message_template_sender">sender</string>
+    <string name="hint_message_template_pattern">pattern</string>
+    <string name="hint_message_template_example">example</string>
+    <string name="hint_message_template_currency">currency</string>
+    <string name="hint_message_template_enabled">Enabled</string>
 
     <!-- BUTTONS -->
     <string name="btn_add">Add</string>
@@ -60,6 +66,7 @@
     <string name="menu_spending_message_rules">Rules</string>
     <string name="menu_spending">Spending</string>
     <string name="menu_messages">Messages</string>
+    <string name="menu_message_origins">Message Origins</string>
     <string name="menu_expenditures">Expenditures</string>
     <string name="menu_budgets">Budgets</string>
     <string name="menu_rules">Rules</string>
@@ -73,9 +80,14 @@
     <string name="menu_settings_about">About</string>
     <string name="menu_settings_version">Version</string>
     <string name="menu_settings_what_is">What is the MasHome?</string>
+    <string name="menu_analytics">Analysis</string>
     <string name="menu_analytics_trends">Trends Analysis</string>
     <string name="menu_analytics_alerts">Overspending Alerts</string>
     <string name="menu_analytics_distribution">Expenditure Distribution</string>
+    <string name="menu_categories">Categories</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_scheduled">Scheduled</string>
+    <string name="menu_menu">More</string>
 
     <!-- DIALOG -->
     <string name="dialog_confirmation_yes">Yes</string>
@@ -107,6 +119,7 @@
     <string name="validator_max_length">Max length is %d!</string>
     <string name="validator_value_required">The value is required!</string>
     <string name="validator_already_exists">Already exists</string>
+    <string name="validator_pattern_failed">Pattern doesn\'t match the example</string>
 
     <!-- FRAGMENT TITLES -->
     <string name="title_budget">Budget</string>
@@ -121,8 +134,10 @@
     <string name="title_message_rule_list">Message rule list</string>
     <string name="title_settings">Settings</string>
     <string name="title_qualifier_list">Qualifier</string>
+    <string name="title_black_list">Sender\'s Blacklist</string>
     <string name="title_analytics">Analytics</string>
     <string name="title_chart">Chart</string>
+    <string name="title_menu">More</string>
 
     <!-- FRAGMENT LABELS -->
     <string name="label_settings_period">Budget type</string>
@@ -151,6 +166,7 @@
     <!-- TABS -->
     <string name="tab_qualifier_catch">Catch words</string>
     <string name="tab_qualifier_skip">Skip words</string>
+    <string name="tab_qualifier_blacklist">Senders blacklist</string>
 
     <!-- TOASTS -->
     <string name="unexpected_error">Ups, something went wrong</string>

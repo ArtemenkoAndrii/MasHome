@@ -1,7 +1,12 @@
 package com.mas.mobile.presentation.activity.binding
 
+import android.text.Editable
+import android.text.SpannableString
+import android.text.TextWatcher
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.mas.mobile.presentation.activity.converter.MoneyConverter
@@ -54,5 +59,31 @@ fun TextInputEditText.onFocusLost(value: Double) {
 fun LinearProgressIndicator.onFocusLost(value: Int?) {
     if (value != null){
         this.setIndicatorColor(this.context.getColor(value))
+    }
+}
+
+@BindingAdapter("spannableText")
+fun setSpannableText(view: TextView, value: SpannableString?) {
+    if (view.text != value) {
+        view.text = value
+    }
+}
+
+@InverseBindingAdapter(attribute = "spannableText", event = "spannableTextAttrChanged")
+fun getSpannableText(view: TextView): SpannableString {
+    return SpannableString(view.text)
+}
+
+@BindingAdapter("spannableTextAttrChanged")
+fun setSpannableTextListener(view: TextView, listener: InverseBindingListener?) {
+    if (listener != null) {
+        view.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                listener.onChange()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 }

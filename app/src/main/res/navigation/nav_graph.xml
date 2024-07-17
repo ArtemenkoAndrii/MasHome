@@ -56,8 +56,11 @@
             android:id="@+id/action_to_qualifiers"
             app:destination="@id/nav_qualifier_list" >
         </action>
+        <action
+            android:id="@+id/action_to_senders"
+            app:destination="@id/nav_message_template_list_fragment" >
+        </action>
     </fragment>
-
 
     <!-- Expenditure flow-->
     <fragment
@@ -424,6 +427,48 @@
             app:argType="integer"/>
     </fragment>
 
+    <!-- Message Template flow -->
+    <fragment
+        android:id="@+id/nav_message_template_list_fragment"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MessageTemplateListFragment"
+        android:label="Message Templates"
+        tools:layout="@layout/message_template_list_fragment">
+
+        <action
+            android:id="@+id/action_to_message_template"
+            app:destination="@id/nav_message_template_fragment" >
+            <argument
+                android:name="action"
+                android:defaultValue="EDIT"
+                app:argType="string"/>
+            <argument
+                android:name="messageTemplateId"
+                android:defaultValue="-1"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_to_black_list"
+            app:destination="@id/nav_black_list" >
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_message_template_fragment"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MessageTemplateFragment"
+        android:label="Message Template"
+        tools:layout="@layout/message_template_list_fragment">
+
+        <argument
+            android:name="action"
+            android:defaultValue="VIEW"
+            app:argType="string"/>
+        <argument
+            android:name="messageTemplateId"
+            android:defaultValue="-1"
+            app:argType="integer"/>
+    </fragment>
+
+
     <!-- Message Rules flow -->
     <fragment
         android:id="@+id/nav_message_rules_list"
@@ -501,6 +546,12 @@
         android:label="@string/title_qualifier_list"
         tools:layout = "@layout/qualifier_list_fragment">
     </fragment>
+    <fragment
+        android:id = "@+id/nav_black_list"
+        android:name = "com.mas.mobile.presentation.activity.fragment.BlackListFragment"
+        android:label="@string/title_black_list"
+        tools:layout = "@layout/qualifier_list_tab">
+    </fragment>
 
     <!-- Analytics flow-->
     <fragment
@@ -529,6 +580,35 @@
         <argument
             android:name="type"
             app:argType="com.mas.mobile.domain.analytics.Type"/>
+    </fragment>
+
+    <!-- Menu flow-->
+    <fragment
+        android:id = "@+id/nav_menu"
+        android:name = "com.mas.mobile.presentation.activity.fragment.MenuFragment"
+        android:label="@string/title_menu"
+        tools:layout = "@layout/menu_fragment">
+
+        <action
+            android:id="@+id/action_to_budgets"
+            app:destination="@id/nav_budget_list">
+        </action>
+        <action
+            android:id="@+id/action_to_analytics"
+            app:destination="@id/nav_analytics">
+        </action>
+        <action
+            android:id="@+id/action_to_message_templates"
+            app:destination="@id/nav_message_template_list_fragment">
+        </action>
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings">
+        </action>
+        <!--
+            menuCategoriesLayout
+            menuScheduledLayout
+        -->
     </fragment>
 
     <!--Global-->

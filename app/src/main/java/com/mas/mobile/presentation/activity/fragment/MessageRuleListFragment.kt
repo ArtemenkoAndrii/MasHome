@@ -44,16 +44,10 @@ open class MessageRuleListFragment : ListFragment() {
             this.findNavController().navigate(action)
         }
 
-        hideBottomMenu()
         return layout
     }
 
     override fun resolveAddButtonDestination() =
         MessageRuleListFragmentDirections.actionToMessageRules(Action.ADD.name)
-
-    override fun onDestroy() {
-        showBottomMenu()
-        super.onDestroy()
-    }
 }
 

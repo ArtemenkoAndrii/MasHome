@@ -13,6 +13,7 @@ import com.mas.mobile.repository.db.dao.DeferredActionDAO
 import com.mas.mobile.repository.db.dao.ExpenditureDAO
 import com.mas.mobile.repository.db.dao.IdGeneratorDAO
 import com.mas.mobile.repository.db.dao.MessageRuleDAO
+import com.mas.mobile.repository.db.dao.MessageTemplateDAO
 import com.mas.mobile.repository.db.dao.QualifierDAO
 import com.mas.mobile.repository.db.dao.SettingsDAO
 import com.mas.mobile.repository.db.dao.SpendingDAO
@@ -22,6 +23,7 @@ import com.mas.mobile.repository.db.entity.DeferrableAction
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import com.mas.mobile.repository.db.entity.IdGenerator
 import com.mas.mobile.repository.db.entity.MessageRule
+import com.mas.mobile.repository.db.entity.MessageTemplate
 import com.mas.mobile.repository.db.entity.Qualifier
 import com.mas.mobile.repository.db.entity.Settings
 import com.mas.mobile.repository.db.entity.SpendingData
@@ -30,7 +32,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 8,
+    version = 10,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -41,7 +43,8 @@ import java.time.LocalDate
         Settings::class,
         IdGenerator::class,
         Qualifier::class,
-        DeferrableAction::class
+        DeferrableAction::class,
+        MessageTemplate::class
     ]
 )
 @TypeConverters(SQLiteTypeConverter::class)
@@ -62,9 +65,10 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQLs(DML.TEMPLATE_EXPENDITURES)
                             db.execSQLs(DML.GREETING_MESSAGE_RULES)
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
+                            db.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     .build()
             }
             return INSTANCE!!
@@ -80,6 +84,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun idGeneratorDAO(): IdGeneratorDAO
     abstract fun qualifierDAO(): QualifierDAO
     abstract fun deferredActionDAO(): DeferredActionDAO
+    abstract fun messageTemplateDAO(): MessageTemplateDAO
 }
 
 internal fun SupportSQLiteDatabase.execSQLs(sqlBlock: String): Unit =
@@ -139,5 +144,41 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
 val MIGRATION_7_8 = object : Migration(7, 8) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE deferrable_actions (key TEXT NOT NULL PRIMARY KEY, type INTEGER NOT NULL, increment INTEGER NOT NULL, active_after INTEGER NOT NULL)")
+    }
+}
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""
+            CREATE TABLE message_template (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                sender TEXT NOT NULL,
+                pattern TEXT NOT NULL,
+                example TEXT NOT NULL,
+                currency TEXT NOT NULL,
+                enabled INTEGER NOT NULL DEFAULT 1
+            );
+        """.trimIndent())
+        database.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
+    }
+}
+
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQLs("""
+            BEGIN TRANSACTION;
+            CREATE TABLE qualifiers_new (
+                id INTEGER NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                type INTEGER NOT NULL
+            );
+            INSERT INTO qualifiers_new (id, name, type)
+            SELECT ROW_NUMBER() OVER (ORDER BY name), name, type
+            FROM qualifiers;
+            DROP TABLE qualifiers;
+            ALTER TABLE qualifiers_new RENAME TO qualifiers;
+            CREATE INDEX index_qualifiers_on_type_name ON qualifiers(type, name);
+            COMMIT;
+        """.trimIndent())
     }
 }

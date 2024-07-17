@@ -59,32 +59,52 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
     }
 
     private fun MatchResult?.toResult(amountFirst: Boolean = true) = this?.let { result ->
-        when (result.groupValues.size) {
-            2 -> Data(result.groupValues[1].asDouble(), null)
-            3 -> {
-                val (_, first, second) = result.groupValues
-                val amount = if (amountFirst) first.asDouble() else second.asDouble()
-                val merchant = if (amountFirst) second else first
-                Data(amount, merchant)
-            }
+        when (result.groups.size) {
+            2 -> respondAmount(result.groups[1]!!)
+            3 -> if (amountFirst) {
+                    respondAmountAndMerchant(result.groups[1]!!, result.groups[2]!!)
+                 } else {
+                    respondAmountAndMerchant(result.groups[2]!!, result.groups[1]!!)
+                 }
             else -> null
         }
     }
 
+    private fun respondAmount(amount: MatchGroup) =
+        Data(
+            amount.value.asDouble(),
+            null,
+            Indexes(amount.range.first, amount.range.last, -1, -1)
+        )
+
+    private fun respondAmountAndMerchant(amount: MatchGroup, merchant: MatchGroup) =
+        Data(
+            amount.value.asDouble(),
+            merchant.value,
+            Indexes(amount.range.first, amount.range.last, merchant.range.first, merchant.range.last)
+        )
+
     private fun String?.asDouble() = this?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
 
-    private companion object {
-        const val MAX_LENGTH = 100
-        const val AMOUNT_PLACEHOLDER = "{amount}"
-        const val MERCHANT_PLACEHOLDER = "{merchant}"
-        const val ANY_STRING_REGEX = ".*"
-        const val AMOUNT_REGEX = "(\\d+(?:[.,]\\d+)?)"
-        const val MERCHANT_REGEX = "($ANY_STRING_REGEX)"
-        const val START_STRING = "^"
-        const val END_STRING = "$"
+    companion object {
+        val SIMPLE = Pattern("{amount}")
+        private const val MAX_LENGTH = 100
+        private const val AMOUNT_PLACEHOLDER = "{amount}"
+        private const val MERCHANT_PLACEHOLDER = "{merchant}"
+        private const val ANY_STRING_REGEX = ".*"
+        private const val AMOUNT_REGEX = "(\\d+(?:[.,]\\d+)?)"
+        private const val MERCHANT_REGEX = "($ANY_STRING_REGEX)"
+        private const val START_STRING = "^"
+        private const val END_STRING = "$"
     }
 
     sealed interface Result
-    data class Data(val amount: Double, val merchant: String?) : Result
+    data class Data(val amount: Double, val merchant: String?, val indexes: Indexes) : Result
+    data class Indexes(
+        val amountStart: Int,
+        val amountEnd: Int,
+        val merchantStart: Int,
+        val merchantEnd: Int
+    )
     object Empty : Result
 }

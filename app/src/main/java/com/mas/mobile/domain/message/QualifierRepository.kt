@@ -6,11 +6,10 @@ import com.mas.mobile.domain.Repository
 interface QualifierRepository : Repository<Qualifier> {
     val live: QualifierLiveData
 
-    fun getCatchQualifiers(): List<CatchQualifier>
-    fun getSkipQualifiers(): List<SkipQualifier>
+    fun getQualifiers(type: Qualifier.Type): List<Qualifier>
+    fun create(): Qualifier
 }
 
 interface QualifierLiveData {
-    fun getCatchQualifiers(): LiveData<List<CatchQualifier>>
-    fun getSkipQualifiers(): LiveData<List<SkipQualifier>>
+    fun getQualifiers(type: Qualifier.Type): LiveData<List<Qualifier>>
 }

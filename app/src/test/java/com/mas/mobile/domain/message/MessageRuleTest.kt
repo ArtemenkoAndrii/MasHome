@@ -139,8 +139,8 @@ class MessageRuleTest {
 
     private companion object {
         val EMPTY = Pattern.Empty
-        val AMOUNT_AND_MERCHANT = Pattern.Data(1.00, "merchant")
-        val ONLY_AMOUNT = Pattern.Data(2.00, null)
+        val AMOUNT_AND_MERCHANT = Pattern.Data(1.00, "merchant", Pattern.Indexes(-1,-1,-1,-1))
+        val ONLY_AMOUNT = Pattern.Data(2.00, null, Pattern.Indexes(-1,-1,-1,-1))
         val CURRENCY = Currency.getInstance("EUR")
     }
 }

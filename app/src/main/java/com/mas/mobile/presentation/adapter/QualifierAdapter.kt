@@ -17,25 +17,16 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
             qualifier = item
             oldQualifier = item.copy()
 
-            qualifier.let {
-                if (it?.value == "") {
-                    binding.editable = true
-                    binding.qualifierNameEditor.requestFocus()
-                    binding.qualifierNameEditor.setSelection(0)
-
-                    binding.qualifierNameEditor.post {
-                        val imm = fragment.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.showSoftInput(binding.qualifierNameEditor, InputMethodManager.SHOW_IMPLICIT)
-                    }
-                }
+            if (item.value.isBlank()) {
+                showEditor(binding)
             }
 
-            handleMenuBtn(this, item)
-            handleSaveBtn(this, item, oldQualifier as Qualifier)
-            handleDeleteBtn(this, item)
+            handleMenuBtn(this, qualifier!!)
+            handleSaveBtn(this, qualifier!!, oldQualifier as Qualifier)
+            handleCancelBtn(this, qualifier!!)
 
             qualifierNameViewer.setOnLongClickListener {
-                editable = true
+                showEditor(binding)
                 true
             }
         }
@@ -48,7 +39,12 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
                 setOnMenuItemClickListener { action ->
                     when (action.itemId) {
                         R.id.ud_row_menu_edit -> {
-                            binding.editable = true
+                            showEditor(binding)
+                            binding.qualifierNameEditor.setOnFocusChangeListener { _, hasFocus ->
+                                if (!hasFocus) {
+                                    binding.editable = false
+                                }
+                            }
                             true
                         }
                         else -> {
@@ -70,11 +66,31 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
         }
     }
 
-    private fun handleDeleteBtn(binding: QualifierListRowBinding, item: Qualifier) {
+    private fun handleCancelBtn(binding: QualifierListRowBinding, item: Qualifier) {
         binding.qualifierDeleteBtn.setOnClickListener {
-            fragment.removeQualifier(item)
+            if (item.value.isBlank()) {
+                fragment.removeQualifier(item)
+            }
+
             binding.editable = false
         }
+    }
+
+    private fun showEditor(binding: QualifierListRowBinding) =
+        with(binding) {
+            reload()
+            editable = true
+            qualifierNameEditor.requestFocus()
+            qualifierNameEditor.setSelection(qualifierNameEditor.length())
+
+            qualifierNameEditor.post {
+                val imm = fragment.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(qualifierNameEditor, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
+
+    private fun QualifierListRowBinding.reload() {
+        qualifier = oldQualifier?.copy()
     }
 
     override fun getBinding(view: View) = QualifierListRowBinding.bind(view)

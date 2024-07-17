@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 @Singleton
 class QualifierService @Inject constructor(
-    private val qualifierRepository: QualifierRepository
+    private val repository: QualifierRepository
 ) {
     fun isRecommended(text: String): Boolean {
         val lowerText = text.lowercase()
@@ -26,8 +26,8 @@ class QualifierService @Inject constructor(
     private fun matchesKeywords(text: String): Boolean {
         val words = text.split(WORDS_REGEX)
 
-        val skipWords = qualifierRepository.getSkipQualifiers().map { it.value.lowercase() }
-        val catchWords = qualifierRepository.getCatchQualifiers().map { it.value.lowercase() }
+        val skipWords = repository.getQualifiers(Qualifier.Type.SKIP).map { it.value.lowercase() }
+        val catchWords = repository.getQualifiers(Qualifier.Type.CATCH).map { it.value.lowercase() }
 
         return !words.any { skipWords.contains(it) } && words.any { catchWords.contains(it) }
     }

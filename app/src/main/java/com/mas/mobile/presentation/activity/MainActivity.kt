@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -34,7 +35,7 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     private val dateListener = DateListener()
-    private lateinit var appBarConfiguration : AppBarConfiguration
+    private lateinit var appBarConfig : AppBarConfiguration
 
     @Inject
     lateinit var messageRepository: MessageRepository
@@ -56,17 +57,17 @@ class MainActivity : AppCompatActivity() {
         }
         navController.graph = graph
 
-        val drawerLayout : DrawerLayout? = findViewById(R.id.drawer_layout)
-        appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.nav_expenditure_list,
-                      R.id.nav_spending_list,
-                      R.id.nav_message_list_fragment ,
-                      R.id.nav_budget_list),
-                drawerLayout)
+        val rootFragments = setOf(
+            R.id.nav_expenditure_list,
+            R.id.nav_spending_list,
+            R.id.nav_message_list_fragment ,
+            R.id.nav_menu
+        )
 
-        setupActionBar(navController, appBarConfiguration)
-        setupNavigationMenu(navController)
-        setupBottomNavMenu(navController)
+        setupActionBar(navController, rootFragments)
+        setupBottomNavMenu(navController, rootFragments)
+        setupHamburgerNavMenu(navController)
+
         this.applicationContext.registerReceiver(dateListener, IntentFilter(Intent.ACTION_TIME_TICK))
 
         schedulePeriodicAppUpdatesCheck()
@@ -83,31 +84,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupActionBar(navController: NavController, appBarConfig : AppBarConfiguration) {
+    private fun setupActionBar(navController: NavController, rootFragments: Set<Int>) {
+        val drawerLayout : DrawerLayout? = findViewById(R.id.drawer_layout)
+        appBarConfig = AppBarConfiguration(rootFragments, drawerLayout)
         setupActionBarWithNavController(navController, appBarConfig)
     }
 
-    private fun setupNavigationMenu(navController: NavController) {
+    private fun setupHamburgerNavMenu(navController: NavController) {
        val sideNavView = findViewById<NavigationView>(R.id.nav_view)
        sideNavView?.setupWithNavController(navController)
     }
 
-    private fun setupBottomNavMenu(navController: NavController) {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.nav_bottom_view)
-        bottomNav?.setupWithNavController(navController)
+    private fun setupBottomNavMenu(navController: NavController, rootFragments: Set<Int>) {
+        val bottomNavMenu = findViewById<BottomNavigationView>(R.id.nav_bottom_view) ?: return
 
-        if (bottomNav != null) {
+        with(bottomNavMenu) {
+            setupWithNavController(navController)
+
             // Do not keep stack for every tab
-            bottomNav.setOnItemReselectedListener {
+            setOnItemReselectedListener {
                 navController.popBackStack(it.itemId, inclusive = false)
             }
-            bottomNav.setOnItemSelectedListener {
+            setOnItemSelectedListener {
                 NavigationUI.onNavDestinationSelected(it, navController, false)
                 true
             }
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                visibility = if (destination.id in rootFragments) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            }
 
             messageRepository.countUnreadLive(LocalDate.now().minusDays(30)).observeForever {
-                val badge = bottomNav.getOrCreateBadge(R.id.nav_message_list_fragment)
+                val badge = getOrCreateBadge(R.id.nav_message_list_fragment)
                 if (it > 0) {
                     badge.number = it
                     badge.isVisible = true
@@ -138,7 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.nav_host_view).navigateUp(appBarConfiguration)
+        return findNavController(R.id.nav_host_view).navigateUp(appBarConfig)
     }
 
     private fun schedulePeriodicAppUpdatesCheck() {

@@ -15,4 +15,9 @@
         android:title = "@string/menu_settings"
         android:orderInCategory = "3"
         />
+    <item
+        android:id = "@+id/message_sender_list"
+        android:title = "Senders"
+        android:orderInCategory = "4"
+        />
 </menu>

@@ -55,6 +55,7 @@ class MessageListFragment: ListFragment() {
             R.id.message_list_rules -> go(MessageListFragmentDirections.actionToMessageRules())
             R.id.message_list_discovery -> go(MessageListFragmentDirections.actionToQualifiers())
             R.id.message_list_settings -> go(MessageListFragmentDirections.actionToSettings())
+            R.id.message_sender_list -> go(MessageListFragmentDirections.actionToSenders())
             else -> super.onOptionsItemSelected(item)
         }
     }

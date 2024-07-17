@@ -33,10 +33,20 @@ abstract class ListFragment: CommonFragment() {
         }
     }
 
+    @Deprecated(
+        message = "The bottom menu hides automatically anyway",
+        replaceWith = ReplaceWith("See MainActivity.setupBottomNavMenu()"),
+        level = DeprecationLevel.WARNING
+    )
     fun hideBottomMenu() {
         updateMenu(false)
     }
 
+    @Deprecated(
+        message = "The bottom menu hides automatically anyway",
+        replaceWith = ReplaceWith("See MainActivity.setupBottomNavMenu()"),
+        level = DeprecationLevel.WARNING
+    )
     fun showBottomMenu() {
         updateMenu(true)
     }
