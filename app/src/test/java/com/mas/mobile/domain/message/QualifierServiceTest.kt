@@ -19,8 +19,12 @@ class QualifierServiceTest {
     fun setUp() {
         every { mockMessageRuleRepository.getQualifiers(Qualifier.Type.SKIP) }
             .returns(listOf(
-                Qualifier(QualifierId(1), Qualifier.Type.CATCH,"confirmation"),
-                Qualifier(QualifierId(1), Qualifier.Type.CATCH, "code")
+                Qualifier(QualifierId(1), Qualifier.Type.SKIP,"confirmation"),
+                Qualifier(QualifierId(2), Qualifier.Type.SKIP, "code")
+            ))
+        every { mockMessageRuleRepository.getQualifiers(Qualifier.Type.CATCH) }
+            .returns(listOf(
+                Qualifier(QualifierId(3), Qualifier.Type.CATCH,"payment of")
             ))
     }
 

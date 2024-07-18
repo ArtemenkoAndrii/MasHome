@@ -24,12 +24,13 @@ class QualifierService @Inject constructor(
         }
 
     private fun matchesKeywords(text: String): Boolean {
-        val words = text.split(WORDS_REGEX)
-
         val skipWords = repository.getQualifiers(Qualifier.Type.SKIP).map { it.value.lowercase() }
-        val catchWords = repository.getQualifiers(Qualifier.Type.CATCH).map { it.value.lowercase() }
+        if (skipWords.any { text.contains(it) }) {
+            return false
+        }
 
-        return !words.any { skipWords.contains(it) } && words.any { catchWords.contains(it) }
+        val catchWords = repository.getQualifiers(Qualifier.Type.CATCH).map { it.value.lowercase() }
+        return catchWords.any { text.contains(it) }
     }
 
     companion object {
