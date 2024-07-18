@@ -15,6 +15,11 @@ class FieldValidator @Inject constructor(
             NO_ERRORS
         }
 
+    fun minLength(list: List<String>, minLength: Int) =
+        list.firstOrNull { it.length < minLength }
+            ?.errorMessage(R.string.validator_min_length_in_list, minLength)
+            ?: NO_ERRORS
+
     fun onlyFuture(value: LocalDate?) =
         if (value == null || value < LocalDate.now()) {
             getValidationMessage(R.string.validator_only_future)
@@ -33,6 +38,9 @@ class FieldValidator @Inject constructor(
         val mask = this.context.getString(resId)
         return String.format(mask, *args)
     }
+
+    private fun String.errorMessage(resId: Int, vararg args: Any?) =
+        getValidationMessage(resId, this, *args)
 
     companion object {
         const val NO_ERRORS = ""

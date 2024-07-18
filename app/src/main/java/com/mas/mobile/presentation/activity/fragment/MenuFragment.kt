@@ -24,7 +24,7 @@ class MenuFragment : CommonFragment() {
             menuAnalyticsLayout.navigateOnClick(MenuFragmentDirections.actionToAnalytics())
             menuSettingsLayout.navigateOnClick(MenuFragmentDirections.actionToSettings())
             menuMessageOriginsLayout.navigateOnClick(MenuFragmentDirections.actionToMessageTemplates())
-            //menuCategoriesLayout.navigateOnClick()
+            menuCategoriesLayout.navigateOnClick(MenuFragmentDirections.actionToCategories())
             //menuScheduledLayout.navigateOnClick()
         }
 

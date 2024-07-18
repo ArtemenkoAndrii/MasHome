@@ -1,0 +1,55 @@
+package com.mas.mobile.presentation.activity.fragment
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mas.mobile.R
+import com.mas.mobile.appComponent
+import com.mas.mobile.databinding.CategoryListFragmentBinding
+import com.mas.mobile.databinding.MessageRuleListFragmentBinding
+import com.mas.mobile.presentation.adapter.CategoryAdapter
+import com.mas.mobile.presentation.adapter.MessageRuleAdapter
+import com.mas.mobile.presentation.viewmodel.CategoryListViewModel
+import com.mas.mobile.presentation.viewmodel.MessageRuleListViewModel
+import com.mas.mobile.presentation.viewmodel.validator.Action
+
+class CategoryListFragment : ListFragment() {
+    private lateinit var binding: CategoryListFragmentBinding
+
+    val listViewModel: CategoryListViewModel by lazyViewModel {
+        this.requireContext().appComponent.categoryListViewModelModel().create()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        setHasOptionsMenu(true)
+        val layout = inflater.inflate(R.layout.category_list_fragment, container, false)
+
+        val adapter = CategoryAdapter(this)
+        binding = CategoryListFragmentBinding.bind(layout)
+        binding.categoryList.adapter = adapter
+        binding.categoryList.layoutManager = LinearLayoutManager(requireContext())
+
+        listViewModel.categories.observe(viewLifecycleOwner) {
+            adapter.setItems(it)
+        }
+
+        binding.categoryAddBtn.setOnClickListener {
+            val action = resolveAddButtonDestination()
+            this.findNavController().navigate(action)
+        }
+
+        return layout
+    }
+
+    override fun resolveAddButtonDestination() =
+        CategoryListFragmentDirections.actionToCategory(Action.ADD.name)
+}
+

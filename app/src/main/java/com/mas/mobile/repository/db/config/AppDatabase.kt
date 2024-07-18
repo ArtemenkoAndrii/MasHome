@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.dao.BudgetDAO
+import com.mas.mobile.repository.db.dao.CategoryDAO
 import com.mas.mobile.repository.db.dao.DeferredActionDAO
 import com.mas.mobile.repository.db.dao.ExpenditureDAO
 import com.mas.mobile.repository.db.dao.IdGeneratorDAO
@@ -19,6 +20,7 @@ import com.mas.mobile.repository.db.dao.SettingsDAO
 import com.mas.mobile.repository.db.dao.SpendingDAO
 import com.mas.mobile.repository.db.dao.SpendingMessageDAO
 import com.mas.mobile.repository.db.entity.Budget
+import com.mas.mobile.repository.db.entity.Category
 import com.mas.mobile.repository.db.entity.DeferrableAction
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import com.mas.mobile.repository.db.entity.IdGenerator
@@ -32,7 +34,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 10,
+    version = 11,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -44,7 +46,8 @@ import java.time.LocalDate
         IdGenerator::class,
         Qualifier::class,
         DeferrableAction::class,
-        MessageTemplate::class
+        MessageTemplate::class,
+        Category::class
     ]
 )
 @TypeConverters(SQLiteTypeConverter::class)
@@ -66,9 +69,12 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQLs(DML.GREETING_MESSAGE_RULES)
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                             db.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
+                            db.execSQLs(DML.GREETING_CATEGORIES)
                         }
                     })
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                        MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
+                        MIGRATION_10_11)
                     .build()
             }
             return INSTANCE!!
@@ -85,6 +91,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun qualifierDAO(): QualifierDAO
     abstract fun deferredActionDAO(): DeferredActionDAO
     abstract fun messageTemplateDAO(): MessageTemplateDAO
+    abstract fun categoryDAO(): CategoryDAO
 }
 
 internal fun SupportSQLiteDatabase.execSQLs(sqlBlock: String): Unit =
@@ -180,5 +187,22 @@ val MIGRATION_9_10 = object : Migration(9, 10) {
             CREATE INDEX index_qualifiers_on_type_name ON qualifiers(type, name);
             COMMIT;
         """.trimIndent())
+    }
+}
+
+val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""
+            CREATE TABLE categories (
+                id INTEGER NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                plan REAL NOT NULL,
+                active INTEGER NOT NULL,
+                description TEXT NOT NULL,
+                merchants TEXT NOT NULL
+            );
+        """.trimIndent())
+        database.execSQL("CREATE INDEX index_categories_on_name ON categories(name);")
+        database.execSQLs(DML.GREETING_CATEGORIES)
     }
 }

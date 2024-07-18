@@ -1,5 +1,6 @@
 package com.mas.mobile.repository.db.config
 
+import androidx.room.ColumnInfo
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.entity.Qualifier
 import com.mas.mobile.util.CurrencyTools
@@ -167,6 +168,43 @@ class DML {
             INSERT INTO qualifiers(id, name, type) VALUES(78, "sobrecargar", ${Qualifier.SKIP});
             INSERT INTO qualifiers(id, name, type) VALUES(79, "recordar", ${Qualifier.SKIP});
         """ }.trimIndent()
+
+        val GREETING_CATEGORIES = """
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(1, "Rent", "Payments for living accommodations, cars, etc.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(2, "Groceries", "Regular purchases of food and household supplies etc.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(3, "Utilities/Bills", "Costs for essential services like electricity, water, gas, and heating.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(4, "Transport", "xpenses related to commuting and travel, including public transport, fuel and car maintenance.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(5, "Health", "Medical expenses such as doctor visits, medications and other health-related costs.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(6, "Education", "Costs related to schooling, including tuition fees, books, supplies, and educational activities.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(7, "Insurance", "Premiums paid for various types of insurance coverage, such as health, home, and auto insurance.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(8, "Childcare", "Expenses for daycare, babysitting, after-school programs, and other child-related care services.", 100.00, 0, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(9, "Shopping", "Expenditures on clothing, accessories, electronics, and other personal or household items.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(10, "Restaurants", "Money spent on dining out at restaurants, cafes, and other eateries.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(11, "Entertainment", "Money spent on dining out at restaurants, cafes, and other eateries.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(12, "Subscriptions", "Monthly fees for services like streaming platforms, magazines, memberships, and other subscription-based services.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(13, "Beauty", "Spending on personal care and beauty products, salon services, skincare, and cosmetics.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(14, "Sport", "Costs associated with sports activities, gym memberships, fitness classes, and sporting equipment.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(15, "Leisure", "Expenses for leisure activities such as travel, vacations, hobbies, and other recreational pursuits.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(16, "Pet care", "Costs for pet food, veterinary care, grooming, and other pet-related expenses.", 100.00, 0, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants)
+            VALUES(17, "Gifts/Charity", "Money spent on gifts for others and donations to charitable organizations.", 100.00, 1, "");
+        """.trimIndent()
     }
 }
 

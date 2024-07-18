@@ -56,6 +56,15 @@ abstract class ItemViewModel<T>(
     fun validateOnSave(field: MutableLiveData<String>, validator: () -> String) =
         registerAndRun(validator.hashCode(), field, validator)
 
+    fun or(vararg results: String): String {
+        for (str in results) {
+            if (str.isNotEmpty()) {
+                return str
+            }
+        }
+        return ""
+    }
+
     private fun registerAndRun(key: Int, field: MutableLiveData<String>, validator: () -> String) {
         validators[key] = {
             field.value = validator()

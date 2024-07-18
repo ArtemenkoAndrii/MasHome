@@ -39,9 +39,6 @@ data class Budget(
     @ColumnInfo(name = "currency")
     var currency: String
 ): Searchable(id, name) {
-    fun getProgress() = (fact * 100 / plan).toInt()
-    fun getStatus() = "${MoneyConverter.doubleToString(fact)} / ${MoneyConverter.doubleToString(plan)}"
-
     companion object {
         const val TEMPLATE_ID = 1
     }

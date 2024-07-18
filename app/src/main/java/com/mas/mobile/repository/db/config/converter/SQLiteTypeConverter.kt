@@ -52,4 +52,16 @@ class SQLiteTypeConverter {
     fun mapToString(value: Map<String, String>?): String {
         return Gson().toJson(value) ?: ""
     }
+
+    @TypeConverter
+    fun fromStringList(value: List<String>): String {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun toStringList(value: String): List<String> {
+        if (value == "") return emptyList()
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(value, listType)
+    }
 }

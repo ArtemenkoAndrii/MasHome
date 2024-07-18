@@ -25,12 +25,17 @@
     <string name="hint_message_rule_expenditure">expenditure</string>
     <string name="hint_message_new_message">new message</string>
     <string name="hint_chart_expenditures">all expenditures</string>
-
     <string name="hint_message_template_sender">sender</string>
     <string name="hint_message_template_pattern">pattern</string>
     <string name="hint_message_template_example">example</string>
     <string name="hint_message_template_currency">currency</string>
     <string name="hint_message_template_enabled">Enabled</string>
+
+    <string name="hint_category_name">name</string>
+    <string name="hint_description">description</string>
+    <string name="hint_category_plan">estimation</string>
+    <string name="hint_is_active">Include in budgets</string>
+    <string name="hint_merchant">add merchant here</string>
 
     <!-- BUTTONS -->
     <string name="btn_add">Add</string>
@@ -115,6 +120,7 @@
 
     <!-- VALIDATOR -->
     <string name="validator_min_length">At least %d characters!</string>
+    <string name="validator_min_length_in_list">The `%s` should be at least %d characters!</string>
     <string name="validator_only_future">The date should be greater than current</string>
     <string name="validator_max_length">Max length is %d!</string>
     <string name="validator_value_required">The value is required!</string>
@@ -138,6 +144,8 @@
     <string name="title_analytics">Analytics</string>
     <string name="title_chart">Chart</string>
     <string name="title_menu">More</string>
+    <string name="title_category_list">Categories</string>
+    <string name="title_category">Category</string>
 
     <!-- FRAGMENT LABELS -->
     <string name="label_settings_period">Budget type</string>

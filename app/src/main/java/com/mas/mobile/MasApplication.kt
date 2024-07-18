@@ -3,6 +3,7 @@ package com.mas.mobile
 import android.app.Application
 import android.content.Context
 import com.mas.mobile.domain.budget.BudgetRepository
+import com.mas.mobile.domain.budget.CategoryRepository
 import com.mas.mobile.domain.budget.ExchangeRepository
 import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.budget.SpendingRepository
@@ -18,6 +19,7 @@ import com.mas.mobile.presentation.activity.PolicyActivity
 import com.mas.mobile.presentation.activity.fragment.CommonFragment
 import com.mas.mobile.presentation.viewmodel.*
 import com.mas.mobile.repository.BudgetRepositoryImpl
+import com.mas.mobile.repository.budget.CategoryRepositoryImpl
 import com.mas.mobile.repository.budget.ExpenditureRepositoryImpl
 import com.mas.mobile.repository.budget.FreeCurrencyAPIRepositoryImpl
 import com.mas.mobile.repository.budget.SpendingRepositoryImpl
@@ -78,12 +80,11 @@ interface AppComponent {
 
     fun spendingViewModel(): SpendingViewModel.Factory
     fun spendingListViewModel(): SpendingListViewModel.Factory
-
     fun qualifierListViewModel(): QualifierListViewModel.Factory
-
     fun settingsModel(): SettingsViewModel.Factory
-
     fun chartViewModelModel(): ChartViewModel.Factory
+    fun categoryViewModelModel(): CategoryViewModel.Factory
+    fun categoryListViewModelModel(): CategoryListViewModel.Factory
 
     fun injectSmsListener(smsListener: SmsListener)
     fun injectDateListener(dateListener: DateListener)
@@ -166,6 +167,12 @@ class AppModule {
     @Singleton
     fun resolveDeferredActionRepositoryImpl(db: AppDatabase): DeferrableActionRepository {
         return DeferrableActionRepositoryImpl(db)
+    }
+
+    @Provides
+    @Singleton
+    fun resolveCategoryRepositoryImpl(db: AppDatabase): CategoryRepository {
+        return CategoryRepositoryImpl(db)
     }
 
     @Provides
