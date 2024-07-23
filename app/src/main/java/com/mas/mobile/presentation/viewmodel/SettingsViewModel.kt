@@ -13,6 +13,7 @@ import com.mas.mobile.util.DateTool
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.DayOfWeek
+import java.util.Currency
 
 class SettingsViewModel @AssistedInject constructor(
     settingsRepository: SettingsRepository,
@@ -27,6 +28,7 @@ class SettingsViewModel @AssistedInject constructor(
     var startDayOfMonthVisible = MutableLiveData<Boolean>()
     var startDayOfWeek = MutableLiveData<String>()
     var startDayOfWeekVisible = MutableLiveData<Boolean>()
+    var currency = MutableLiveData<Currency>()
     var captureSms = MutableLiveData<Boolean>()
     var captureNotifications = MutableLiveData<Boolean>()
     var discoveryMode = MutableLiveData<Boolean>()
@@ -63,6 +65,12 @@ class SettingsViewModel @AssistedInject constructor(
         period.observeForever { p ->
             model.period = periodMap.entries.first { it.value == p }.key
             switchDateFields(model.period)
+            save()
+        }
+
+        currency.value = model.currency
+        currency.observeForever {
+            model.currency = it
             save()
         }
 

@@ -4,24 +4,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.mas.mobile.domain.message.MessageTemplate
 import com.mas.mobile.domain.message.MessageTemplateId
+import com.mas.mobile.domain.message.MessageTemplateLiveData
 import com.mas.mobile.domain.message.MessageTemplateRepository
 import com.mas.mobile.domain.message.Pattern
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.util.CurrencyTools
-import java.util.Currency
 import javax.inject.Singleton
 import com.mas.mobile.repository.db.entity.MessageTemplate as MessageTemplateData
 
 @Singleton
 class MessageTemplateRepositoryImpl(val db: AppDatabase) : MessageTemplateRepository {
     val dao = db.messageTemplateDAO()
+    override val live: MessageTemplateLiveData
+        get() = MessageTemplateLiveDataImpl(db)
+
+
     override fun getById(id: MessageTemplateId): MessageTemplate? =
         dao.getById(id.value)?.toModel()
 
-    override fun getAll(): LiveData<List<MessageTemplate>> =
-        Transformations.map(dao.getAllLive()) { list ->
-            list.map { it.toModel() }.toList()
-        }
+    override fun getAll(): List<MessageTemplate> =
+        dao.getAll().map { it.toModel() }
 
     override fun create(): MessageTemplate =
         MessageTemplate(
@@ -29,7 +31,7 @@ class MessageTemplateRepositoryImpl(val db: AppDatabase) : MessageTemplateReposi
             sender = "",
             pattern = Pattern.SIMPLE,
             example = "",
-            currency = CurrencyTools.getDefaultCurrency(),
+            currency = CurrencyTools.getSystemCurrency(),
             isEnabled = true
         )
 
@@ -43,6 +45,15 @@ class MessageTemplateRepositoryImpl(val db: AppDatabase) : MessageTemplateReposi
     override suspend fun remove(item: MessageTemplate) {
         dao.delete(item.toDTO())
     }
+}
+
+class MessageTemplateLiveDataImpl(val db: AppDatabase) : MessageTemplateLiveData {
+    val dao = db.messageTemplateDAO()
+
+    override fun getAll(): LiveData<List<MessageTemplate>> =
+        Transformations.map(dao.getAllLive()) { mt ->
+            mt.map { it.toModel() }.toList()
+        }
 }
 
 private fun MessageTemplate.toDTO() = MessageTemplateMapper.toDTO(this)

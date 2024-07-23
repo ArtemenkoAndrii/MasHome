@@ -37,7 +37,6 @@ class BudgetViewModel @AssistedInject constructor(
     val lastDayAtError = MutableLiveData(Validator.NO_ERRORS)
     val currency = MutableLiveData<Currency>()
     val comment = MutableLiveData<String?>()
-    val isTemplate = budgetId == Budget.TEMPLATE_ID
 
     init {
         initProperties(model)

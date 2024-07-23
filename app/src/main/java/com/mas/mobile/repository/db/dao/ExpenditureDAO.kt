@@ -12,7 +12,7 @@ interface ExpenditureDAO {
     fun getAllLive(): LiveData<List<Expenditure>>
 
     @Transaction
-    @Query("SELECT DISTINCT 1 `id`, `name`, 0 `plan`, 0 `fact`, '' `comment`, 1 `budget_id` FROM expenditures e")
+    @Query("SELECT DISTINCT 1 `id`, `name`, -1 `category_id`, 0 `plan`, 0 `fact`, '' `comment`, 1 `budget_id` FROM expenditures e")
     fun getUniqueNamesLive(): LiveData<List<Expenditure>>
 
     @Query("SELECT DISTINCT `name` FROM expenditures")

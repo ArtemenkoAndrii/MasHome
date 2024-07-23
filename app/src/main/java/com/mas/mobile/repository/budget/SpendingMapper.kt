@@ -20,7 +20,7 @@ object SpendingMapper {
                 ExchangeInfo(
                     rawAmount = it ,
                     rate = dto.rate ?: 0.00,
-                    currency = Currency.getInstance(dto.currency) ?: CurrencyTools.getDefaultCurrency()
+                    currency = Currency.getInstance(dto.currency) ?: CurrencyTools.getSystemCurrency()
                 )
             }
         )

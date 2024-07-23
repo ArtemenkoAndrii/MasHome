@@ -4,6 +4,7 @@ import android.util.Log
 import com.mas.mobile.DummyTaskService
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.BudgetService
+import com.mas.mobile.domain.budget.CategoryRepository
 import com.mas.mobile.domain.budget.ExchangeRepository
 import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.domain.budget.ExpenditureRepository
@@ -13,7 +14,6 @@ import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
-import com.mas.mobile.service.TaskService
 import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,8 +22,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -37,6 +35,7 @@ class MessageServiceTest {
     private val mockQualifierService = mockk<QualifierService>(relaxed = true)
     private val mockMessageRepository = mockk<MessageRepository>(relaxed = true)
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
+    private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
     private val mockAnalytics = mockk<Analytics>(relaxed = true)
 
     // BudgetService mockk doesn't work because of bug with mocking Int value classes
@@ -49,6 +48,7 @@ class MessageServiceTest {
             )
         },
         mockExchangeRepository,
+        mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
         mockk<BudgetRepository>(relaxed = true),
         mockk<ExpenditureRepository>(relaxed = true)
@@ -96,9 +96,9 @@ class MessageServiceTest {
         assertEquals("AliExpress 🛍 Paid €3.77 at AliExpress Spent today: €100.00.", result.text)
         assertTrue(result.isNew)
         with(result.status as Message.Matched) {
-            assertEquals(1, ruleId.value)
-            assertEquals(3.77, suggestedAmount, 0.001)
-            assertEquals("Other", suggestedExpenditureName)
+            assertEquals(1, messageTemplateId.value)
+            assertEquals(3.77, amount, 0.001)
+            assertEquals("Other", merchant)
         }
     }
 

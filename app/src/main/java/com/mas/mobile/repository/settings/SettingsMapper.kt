@@ -4,12 +4,14 @@ import com.mas.mobile.domain.settings.DayOfMonth
 import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.Settings
 import java.time.DayOfWeek
+import java.util.Currency
 import com.mas.mobile.repository.db.entity.Settings as SettingsData
 
 object SettingsMapper {
     fun toModel(dto: List<SettingsData>): Settings {
         val settings = Settings()
         getValue(PERIOD, dto)?.let { settings.period = Period.valueOf(it) }
+        getValue(CURRENCY, dto)?.let { settings.currency = Currency.getInstance(it) }
         getValue(START_DAY_OF_MONTH, dto)?.let { settings.startDayOfMonth = DayOfMonth(it.toInt()) }
         getValue(START_DAY_OF_WEEK, dto)?.let { settings.startDayOfWeek = DayOfWeek.of(it.toInt()) }
         getValue(CAPTURE_SMS, dto)?.let { settings.captureSms = it.toBoolean() }
@@ -22,6 +24,7 @@ object SettingsMapper {
     fun toDto(model: Settings): List<SettingsData> =
         mutableListOf<SettingsData>().also {
             it.setValue(PERIOD, model.period.toString())
+            it.setValue(CURRENCY, model.currency.currencyCode)
             it.setValue(START_DAY_OF_MONTH, model.startDayOfMonth.value.toString())
             it.setValue(START_DAY_OF_WEEK, model.startDayOfWeek.value.toString())
             it.setValue(CAPTURE_SMS, model.captureSms.toString())
@@ -38,6 +41,7 @@ object SettingsMapper {
         dto.firstOrNull { it.key == key }?.value
 
     private const val PERIOD = "budget.period"
+    private const val CURRENCY = "budget.currency"
     private const val START_DAY_OF_MONTH = "budget.startDayOfMonth"
     private const val START_DAY_OF_WEEK = "budget.startDayOfWeek"
     private const val CAPTURE_SMS = "budget.captureSMS"

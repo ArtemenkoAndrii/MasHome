@@ -13,6 +13,8 @@ import com.mas.mobile.appComponent
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.util.Analytics
+import com.mynameismidori.currencypicker.CurrencyPicker
+import java.util.Currency
 import javax.inject.Inject
 
 abstract class CommonFragment : Fragment() {
@@ -87,4 +89,13 @@ abstract class CommonFragment : Fragment() {
             activity.findViewById<View>(R.id.toolbar)?.isVisible = isEnabled
         }
     }
+
+    protected fun showCurrencyPicker(handler: (Currency) -> Unit) =
+        with(CurrencyPicker.newInstance(getResourceService().dialogCurrencyTitle())) {
+            setListener { _, code, _, _ ->
+                handler(Currency.getInstance(code))
+                dismiss()
+            }
+            show(this@CommonFragment.requireActivity().supportFragmentManager, "CURRENCY_PICKER")
+        }
 }

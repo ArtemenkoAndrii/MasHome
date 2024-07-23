@@ -81,7 +81,7 @@ class CategoryViewModel @AssistedInject constructor(
         merchantsError.value = FieldValidator.NO_ERRORS
         merchants.value = item.merchants.map { it.value }.toMutableSet()
         merchants.observeForever {
-            item.merchants = it.map { value -> Merchant(value) }
+            item.merchants = it.map { value -> Merchant(value) }.toMutableList()
         }
     }
 

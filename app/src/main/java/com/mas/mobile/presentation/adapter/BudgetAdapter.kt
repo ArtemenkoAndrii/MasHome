@@ -25,9 +25,9 @@ class BudgetAdapter(private val listMenu: ListMenu<Budget>): BaseAdapter<Budget,
             with(PopupMenu(viewMenu.context, viewMenu)) {
                 inflate(R.menu.budget_row_menu)
 
-                if (item.id.value == Budget.TEMPLATE_ID) {
-                    findRemoveButton(menu, viewMenu)?.let { it.isEnabled = false }
-                }
+//                if (item.id.value == Budget.TEMPLATE_ID) {
+//                    findRemoveButton(menu, viewMenu)?.let { it.isEnabled = false }
+//                }
 
                 setOnMenuItemClickListener {
                     listMenu.onRowMenuSelected(it, item)

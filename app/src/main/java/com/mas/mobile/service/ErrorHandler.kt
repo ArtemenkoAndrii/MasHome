@@ -1,12 +1,15 @@
 package com.mas.mobile.service
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.mas.mobile.R
 import com.mas.mobile.presentation.activity.MainActivity
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class ErrorHandler @Inject constructor(
@@ -16,10 +19,12 @@ class ErrorHandler @Inject constructor(
 
     fun handleAndNotify(error: Throwable,  message: String = defaultMessage) {
         Log.e(MainActivity::class.java.name, message, error)
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        toast(message)
     }
 
     fun toast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 }

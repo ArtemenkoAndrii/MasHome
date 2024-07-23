@@ -53,6 +53,9 @@ data class ExpenditureData(
     @ColumnInfo(name = "name")
     override var name: String = "",
 
+    @ColumnInfo(name = "category_id")
+    var categoryId: Int = -1,
+
     @ColumnInfo(name = "plan")
     var plan: Double = 0.0,
 

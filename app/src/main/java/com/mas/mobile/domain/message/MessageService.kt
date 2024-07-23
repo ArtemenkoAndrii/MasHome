@@ -2,8 +2,7 @@ package com.mas.mobile.domain.message
 
 import android.util.Log
 import com.mas.mobile.domain.budget.BudgetService
-import com.mas.mobile.domain.budget.SpendingId
-import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.domain.budget.CategoryService
 import com.mas.mobile.service.TaskService
 import com.mas.mobile.util.Analytics
 import java.time.LocalDateTime
@@ -13,13 +12,14 @@ import javax.inject.Singleton
 @Singleton
 class MessageService @Inject constructor(
     private val coroutineService: TaskService,
-    private val ruleRepository: MessageRuleRepository,
+    private val messageTemplateRepository: MessageTemplateRepository,
+    private val categoryService: CategoryService,
     private val budgetService: BudgetService,
     private val qualifierService: QualifierService,
     private val analytics: Analytics,
     val messageRepository: MessageRepository
 ) {
-    fun handleMessage(sender: String, text: String, date: LocalDateTime) {
+    fun handleMessage(sender: String, text: String, date: LocalDateTime) = coroutineService.backgroundTask {
         val status = evaluateStatus(sender.trim(), text.trim())
         analytics.logEvent(Analytics.Event.MESSAGE_EVALUATED, Analytics.Param.STATUS, status::class.simpleName ?: "")
 
@@ -31,51 +31,56 @@ class MessageService @Inject constructor(
                 it.status = status
                 it.isNew = true
             }
-            save(message)
+
+            if (status is Message.Matched) {
+                createSpending(message)
+                analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, "auto")
+            }
+
+            messageRepository.save(message)
         } else {
             Log.i(this::class.simpleName, "A message from $sender doesn't match any rule.")
         }
     }
 
-    private fun evaluateStatus(sender: String, text: String, rules: List<MessageRule> = ruleRepository.getAll()): Message.Status {
-        data class R(val rule: MessageRule, val match: MessageRule.Match)
-
-        val result = rules
-            .mapNotNull { rule ->
-                rule.evaluate(sender, text).let {
-                    if (it is MessageRule.Match) { R(rule, it) } else null
-                }
-            }
-            .let { r ->
-                r.firstOrNull { it.match.expenditureName != null } ?: r.firstOrNull()
-            }
-
-        return when {
-            result != null -> {
-                Message.Matched(
-                    ruleId = result.rule.id,
-                    suggestedAmount = result.match.amount,
-                    suggestedExpenditureName = result.match.expenditureName
-                )
-            }
-            qualifierService.isRecommended(text) -> Message.Recommended
-            else -> Message.Rejected
+    fun evaluateMessageStatus(template: MessageTemplate, text: String): Message.Matched? =
+        template.parse(text)?.let { result ->
+            Message.Matched(
+                messageTemplateId = template.id ,
+                amount = result.amount,
+                merchant = result.merchant
+            )
         }
+
+    private suspend fun createSpending(message: Message) {
+        val status = message.status as? Message.Matched ?: return
+        val merchant = status.merchant ?: return
+        val category = categoryService.findCategoryByMerchant(merchant) ?: return
+        val currency = messageTemplateRepository.getById(status.messageTemplateId)?.currency ?: return
+
+        message.spendingId = budgetService.spend(
+            date = message.receivedAt,
+            amount = status.amount,
+            expenditureName = category.name,
+            comment = message.text,
+            currency = currency
+        )
     }
 
-    private fun save(message: Message) = coroutineService.backgroundTask {
-        (message.status as? Message.Matched)?.let {
-            if (it.suggestedExpenditureName != null) {
-                message.spendingId = budgetService.spend(
-                    date = message.receivedAt,
-                    amount = it.suggestedAmount,
-                    expenditureName = it.suggestedExpenditureName,
-                    comment = message.text,
-                    currency = ruleRepository.getById(it.ruleId)?.currency
-                )
-                analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, "auto")
-            }
+    private fun evaluateStatus(sender: String, text: String): Message.Status =
+        findMatched(sender, text) ?: findRecommended(sender, text) ?: Message.Rejected
+
+    private fun findMatched(sender: String, text: String): Message.Matched? =
+        messageTemplateRepository.getAll()
+            .asSequence()
+            .filter { it.sender.equals(sender, true) }
+            .map { evaluateMessageStatus(it, text) }
+            .firstOrNull()
+
+    private fun findRecommended(sender: String, text: String): Message.Recommended? =
+        if (qualifierService.isRecommended(sender, text)) {
+            Message.Recommended
+        } else {
+            null
         }
-        messageRepository.save(message)
-    }
 }

@@ -1,10 +1,13 @@
 package com.mas.mobile.domain.settings
 
+import com.mas.mobile.util.CurrencyTools
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.util.Currency
 
 data class Settings(
     var period: Period = Period.MONTH,
+    var currency: Currency = CurrencyTools.getSystemCurrency(),
     var startDayOfMonth: DayOfMonth = LocalDate.now().startDayOfMonth(),
     var startDayOfWeek: DayOfWeek = LocalDate.now().startDayOfWeek(),
     var captureSms: Boolean = false,

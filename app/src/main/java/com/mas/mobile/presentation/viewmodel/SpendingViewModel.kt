@@ -26,8 +26,9 @@ class SpendingViewModel @AssistedInject constructor(
     private val spendingRepository: SpendingRepository,
     private val expenditureRepository: ExpenditureRepository,
     private val fieldValidator: FieldValidator,
-    private val messageRuleService: MessageRuleService,
     private val messageService: MessageService,
+    private val categoryService: CategoryService,
+    private val messageTemplateService: MessageTemplateService,
     private val analytics: Analytics,
     @Assisted private val action: Action,
     @Assisted("spendingId") private val pSpendingId: Int,
@@ -35,7 +36,8 @@ class SpendingViewModel @AssistedInject constructor(
     @Assisted("budgetId") private val pBudgetId: Int,
     @Assisted("messageId") private val pMessageId: Int,
 ) : ItemViewModel<Spending>(coroutineService, SpendingRepositoryAdapter(budgetService, BudgetId(pBudgetId))) {
-    private var changedRule: MessageRule? = null
+    private var discoveredMessageTemplate: MessageTemplate? = null
+    private var category: Category? = null
 
     val budget: Budget = loadBudget()
     override val model: Spending = loadModel()
@@ -78,18 +80,35 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
+    /*
+        1. If the spending is created based on a matched message that has a merchant but does not have spendingId populated.
+        2. If the spending is created based on a discovered message template.
+    */
     fun hasChangedRule(): Boolean {
-        val candidate = changedRule ?: (message?.status as? Message.Matched)?.ruleId?.let { ruleId ->
-            messageRuleService.ruleRepository.getById(ruleId)
+        if (action == Action.ADD) {
+            if (discoveredMessageTemplate != null) {
+                return true
+            }
+
+            if (message.getMerchantToSave() != null) {
+                return true
+            }
         }
+        return false
+    }
 
-        changedRule = messageRuleService.evaluateRuleChanges(message, candidate, expenditureNameValue)
-
-        return changedRule != null
+    private fun Message?.getMerchantToSave(): Merchant? {
+        val merchant = (this?.status as? Message.Matched)?.merchant ?: return null
+        return if (this.spendingId == null && categoryService.findCategoryByMerchant(merchant) == null) {
+            merchant
+        } else {
+            null
+        }
     }
 
     fun resetRuleChanges() {
-        changedRule = null
+        discoveredMessageTemplate = null
+        category = null
     }
 
     init {
@@ -153,7 +172,7 @@ class SpendingViewModel @AssistedInject constructor(
         message?.let {
             if (this.action == Action.ADD) {
                 if (it.status is Message.Matched) {
-                    amount.value = (it.status as Message.Matched).suggestedAmount
+                    amount.value = (it.status as Message.Matched).amount
                     comment.value = it.text
                 } else {
                     discoverMode.value = true
@@ -199,30 +218,24 @@ class SpendingViewModel @AssistedInject constructor(
     }
 
     private suspend fun doDiscover(message: Message): Boolean {
-        val rule = messageRuleService.generateRuleFromMessage(message)
+        val template = messageTemplateService.generateTemplateFromMessage(message) ?: return false
+        val status = messageService.evaluateMessageStatus(template, message.text) ?: return false
 
-        return when (val result = rule?.evaluate(message.sender, message.text)) {
-            is MessageRule.Match -> {
-                this.discoverMode.value = false
-                this.changedRule = rule
-                this.message = message.toMatched(rule.id, result.amount, "")
+        this.discoveredMessageTemplate = template
+        this.discoverMode.value = false
+        this.message = message.also { it.status = status }
 
-                comment.value = message.text
-                date.value = message.receivedAt
-                expenditureName.value = ""
-                amount.value = result.amount
-                exchangeCurrency.value = rule.currency
-                true
-            }
-            else -> {
-                this.changedRule = null
-                false
-            }
-        }
+        comment.value = message.text
+        date.value = message.receivedAt
+        expenditureName.value = ""
+        amount.value = status.amount
+        exchangeCurrency.value = template.currency
+
+        return true
     }
 
     override suspend fun doSave() {
-        model.expenditure = findOrCreateExpenditure(expenditureNameValue)
+        beforeSave()
         super.doSave()
         saveDependencies()
         logEvent()
@@ -237,16 +250,29 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun saveDependencies() {
-        changedRule?.let {
-            it.expenditureName = model.expenditure.name
-            it.currency = model.exchangeInfo?.currency ?: budget.currency
-            messageRuleService.ruleRepository.save(it)
-        }
+    private fun beforeSave() {
+        model.expenditure = findOrCreateExpenditure(expenditureNameValue)
 
+        val merchant = message.getMerchantToSave()
+        if (merchant != null) {
+            this.category = categoryService.findCategoryByName(expenditureNameValue)?.also {
+                it.merchants.add(merchant)
+            }
+        }
+    }
+
+    private suspend fun saveDependencies() {
         message?.let {
             it.spendingId = model.id
             messageService.messageRepository.save(it)
+        }
+
+        discoveredMessageTemplate?.let {
+            messageTemplateService.repository.save(it)
+        }
+
+        category?.let {
+            categoryService.repository.save(it)
         }
     }
 

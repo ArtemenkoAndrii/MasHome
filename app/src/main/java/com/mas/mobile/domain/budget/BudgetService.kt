@@ -9,13 +9,11 @@ import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
-import com.mas.mobile.util.CurrencyTools
 import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Currency
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,6 +23,7 @@ class BudgetService @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val spendingRepository: SpendingRepository,
     private val exchangeRepository: ExchangeRepository,
+    private val categoryRepository: CategoryRepository,
     private val errorHandler: ErrorHandler,
     val budgetRepository: BudgetRepository,
     val expenditureRepository: ExpenditureRepository,
@@ -78,11 +77,10 @@ class BudgetService @Inject constructor(
             maxOf(it, LocalDate.now())
         } ?: LocalDate.now()
 
-        val template = budgetRepository.getBudget(TEMPLATE_BUDGET_ID)
         val budget = createBudget(startDate).also {
-            it.currency = template?.currency ?: CurrencyTools.getDefaultCurrency()
+            it.currency = settings.currency
             uniquifyName(it)
-            populateExpenditures(it, template)
+            populateExpenditures(it)
         }
 
         budgetRepository.save(budget)
@@ -132,13 +130,13 @@ class BudgetService @Inject constructor(
         }
     }
 
-    private fun populateExpenditures(budget: Budget, template: Budget?) {
-        template?.budgetDetails?.expenditure?.forEach { sample ->
+    private fun populateExpenditures(budget: Budget) {
+        val categories = categoryRepository.getAll().filter { it.isActive }
+        categories.forEach { category ->
             val expenditure = expenditureRepository.create().also {
-                it.name = sample.name
-                it.plan = sample.plan
+                it.name = category.name
+                it.plan = category.plan
             }
-
             budget.addExpenditure(expenditure)
         }
     }
@@ -229,7 +227,6 @@ class BudgetService @Inject constructor(
         }
 
     companion object {
-        const val TEMPLATE_BUDGET_ID = 1
         const val DEFAULT_NAME_SUFFIX = 2
     }
 }

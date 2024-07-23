@@ -34,7 +34,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 11,
+    version = 14,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -64,8 +64,6 @@ abstract class AppDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             db.execSQL(DML.TEMPLATE_GENERATOR)
-                            db.execSQL(DML.TEMPLATE_BUDGET)
-                            db.execSQLs(DML.TEMPLATE_EXPENDITURES)
                             db.execSQLs(DML.GREETING_MESSAGE_RULES)
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                             db.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
@@ -74,7 +72,7 @@ abstract class AppDatabase : RoomDatabase() {
                     })
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                         MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
-                        MIGRATION_10_11)
+                        MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14)
                     .build()
             }
             return INSTANCE!!
@@ -139,7 +137,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
 
 val MIGRATION_6_7 = object : Migration(6, 7) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        val currency = CurrencyTools.getDefaultCurrency()
+        val currency = CurrencyTools.getSystemCurrency()
         database.execSQL("ALTER TABLE budgets ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
         database.execSQL("ALTER TABLE message_rules ADD COLUMN currency TEXT NOT NULL DEFAULT '$currency'")
         database.execSQL("ALTER TABLE spendings ADD COLUMN currency TEXT DEFAULT NULL")
@@ -204,5 +202,39 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
         """.trimIndent())
         database.execSQL("CREATE INDEX index_categories_on_name ON categories(name);")
         database.execSQLs(DML.GREETING_CATEGORIES)
+    }
+}
+
+val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQLs("""
+            DELETE FROM categories;
+            INSERT INTO categories (id, name, plan, active, description, merchants)
+            SELECT 
+                ROW_NUMBER() OVER (ORDER BY name) AS id, 
+                name, 
+                max(plan) AS plan, 
+                1 AS active, 
+                'export' AS description, 
+                '' AS merchants
+            FROM expenditures
+            GROUP BY name;
+        """.trimIndent())
+        database.execSQL("DELETE FROM expenditures WHERE id = 1;")
+        database.execSQL("ALTER TABLE expenditures ADD COLUMN category_id INTEGER NOT NULL DEFAULT -1;")
+        database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
+    }
+}
+
+val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DELETE FROM expenditures WHERE id = 1;")
+    }
+}
+
+val MIGRATION_13_14 = object : Migration(13, 14) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE expenditures ADD COLUMN category_id INTEGER NOT NULL DEFAULT -1;")
+        database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
     }
 }

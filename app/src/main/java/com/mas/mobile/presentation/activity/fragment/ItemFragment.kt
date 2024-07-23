@@ -54,15 +54,6 @@ abstract class ItemFragment<T: ItemViewModel<*>>: CommonFragment() {
         }, startYear, startMonth, startDay).show()
     }
 
-    protected fun showCurrencyPicker(handler: (Currency) -> Unit) =
-        with(CurrencyPicker.newInstance(getResourceService().dialogCurrencyTitle())) {
-            setListener { _, code, _, _ ->
-                handler(Currency.getInstance(code))
-                dismiss()
-            }
-            show(this@ItemFragment.requireActivity().supportFragmentManager, "CURRENCY_PICKER")
-        }
-
     private fun getBudgetName(budgetId: Int): String {
         return "FIX ME"
     }

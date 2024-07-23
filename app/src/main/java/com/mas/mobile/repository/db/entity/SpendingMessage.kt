@@ -30,6 +30,9 @@ data class SpendingMessage(
     @ColumnInfo(name = "suggested_expenditure_name")
     var suggestedExpenditureName: String? = null,
 
+    @ColumnInfo(name = "suggested_merchant")
+    var suggestedMerchant: String? = null,
+
     @ColumnInfo(name = "suggested_amount")
     var suggestedAmount: Double = 0.0,
 

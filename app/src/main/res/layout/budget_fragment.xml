@@ -41,7 +41,6 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:enabled="false"
-            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}"
             app:error="@{budget.startsOnError}"
             app:errorEnabled='@{!(budget.startsOnError == "")}'>
 
@@ -63,7 +62,6 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:enabled="@{budget.isEditable()}"
-            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}"
             app:error="@{budget.lastDayAtError}"
             app:errorEnabled='@{!(budget.startsOnError == "")}'>
 
@@ -84,8 +82,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="@{budget.isEditable()}"
-            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}">
+            android:enabled="@{budget.isEditable()}">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -103,8 +100,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:enabled="false"
-            android:visibility="@{budget.isTemplate ? View.GONE : View.VISIBLE}">
+            android:enabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"

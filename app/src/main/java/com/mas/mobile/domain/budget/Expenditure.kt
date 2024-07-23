@@ -3,6 +3,7 @@ package com.mas.mobile.domain.budget
 data class Expenditure (
     val id: ExpenditureId,
     var name: String,
+    var categoryId: CategoryId,
     var plan: Double,
     var fact: Double,
     var comment: String,

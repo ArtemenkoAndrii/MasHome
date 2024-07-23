@@ -4,12 +4,11 @@ import com.mas.mobile.util.CurrencyTools
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Currency
-import java.util.Locale
 
 fun String.toCurrency(): Currency = try {
         Currency.getInstance(this)
     } catch (e: IllegalArgumentException) {
-        CurrencyTools.getDefaultCurrency()
+        CurrencyTools.getSystemCurrency()
     }
 
 fun Double.halfEven() =

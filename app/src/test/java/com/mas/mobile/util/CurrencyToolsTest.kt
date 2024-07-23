@@ -23,18 +23,18 @@ class CurrencyToolsTest {
     @Test
     fun `should return default currency for country local`() {
         Locale.setDefault(Locale.UK)
-        val currency = CurrencyTools.getDefaultCurrency()
+        val currency = CurrencyTools.getSystemCurrency()
         assertEquals(Currency.getInstance("GBP"), currency)
     }
 
     @Test
     fun `should return default currency for lang`() {
         Locale.setDefault(Locale("en", "XX"))
-        var currency = CurrencyTools.getDefaultCurrency()
+        var currency = CurrencyTools.getSystemCurrency()
         assertEquals(Currency.getInstance("USD"), currency)
 
         Locale.setDefault(Locale("es", "XX"))
-        currency = CurrencyTools.getDefaultCurrency()
+        currency = CurrencyTools.getSystemCurrency()
         assertEquals(Currency.getInstance("EUR"), currency)
     }
 }

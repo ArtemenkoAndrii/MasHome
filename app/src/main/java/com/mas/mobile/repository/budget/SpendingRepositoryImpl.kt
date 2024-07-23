@@ -18,7 +18,7 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
             amount = 0.0,
             expenditure = Expenditure(
                 id = ExpenditureId(-1),
-                name = "",
+                name = "",CategoryId(-1),
                 plan = 0.0,
                 fact = 0.0,
                 comment = "",

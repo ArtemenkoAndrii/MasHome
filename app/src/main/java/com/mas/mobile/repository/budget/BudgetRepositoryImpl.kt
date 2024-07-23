@@ -108,9 +108,6 @@ class BudgetLiveDataImpl(val db: AppDatabase) : BudgetLiveData {
         NullableTransformations.map<BudgetData, Budget>(this) {
             it?.toModel()
         }
-//        Transformations.map(this) {
-//            it.toModel()
-//        }
 }
 
 private fun getLoader(db: AppDatabase, budgetId: BudgetId) = lazy {

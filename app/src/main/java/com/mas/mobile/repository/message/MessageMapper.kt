@@ -1,9 +1,10 @@
 package com.mas.mobile.repository.message
 
+import com.mas.mobile.domain.budget.Merchant
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.domain.message.Message
 import com.mas.mobile.domain.message.MessageId
-import com.mas.mobile.domain.message.MessageRuleId
+import com.mas.mobile.domain.message.MessageTemplateId
 import com.mas.mobile.repository.db.entity.SpendingMessage
 
 object MessageMapper {
@@ -16,9 +17,9 @@ object MessageMapper {
             spendingId = dto.spendingId?.let { SpendingId(it) },
             status = if (dto.status == SpendingMessage.MATCHED) {
                         Message.Matched(
-                            ruleId = MessageRuleId(dto.ruleId),
-                            suggestedAmount = dto.suggestedAmount,
-                            suggestedExpenditureName = dto.suggestedExpenditureName
+                            messageTemplateId = MessageTemplateId(dto.ruleId),
+                            amount = dto.suggestedAmount,
+                            merchant = dto.suggestedMerchant?.let { Merchant(it) }
                         )
                      } else {
                         Message.Recommended
@@ -34,9 +35,9 @@ object MessageMapper {
                 message = model.text,
                 receivedAt = model.receivedAt,
                 status = if (this != null) SpendingMessage.MATCHED else SpendingMessage.RECOMMENDED,
-                ruleId = this?.ruleId?.value ?: -1,
-                suggestedExpenditureName = this?.suggestedExpenditureName,
-                suggestedAmount = this?.suggestedAmount ?: 0.0,
+                ruleId = this?.messageTemplateId?.value ?: -1,
+                suggestedMerchant = this?.merchant?.value,
+                suggestedAmount = this?.amount ?: 0.0,
                 spendingId = model.spendingId?.value,
                 isNew = model.isNew,
             )

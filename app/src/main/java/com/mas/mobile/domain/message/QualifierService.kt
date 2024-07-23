@@ -8,13 +8,18 @@ import javax.inject.Singleton
 class QualifierService @Inject constructor(
     private val repository: QualifierRepository
 ) {
-    fun isRecommended(text: String): Boolean {
+    fun isRecommended(sender: String, text: String): Boolean {
         val lowerText = text.lowercase()
         return (lowerText.length < MESSAGE_LIMIT)
+                && !isInBlackList(sender)
                 && containsAmount(lowerText)
                 && containsCurrency(lowerText)
                 && matchesKeywords(lowerText)
     }
+
+    private fun isInBlackList(sender: String): Boolean =
+        repository.getQualifiers(Qualifier.Type.BLACKLIST)
+            .any { it.value.equals(sender, true) }
 
     private fun containsAmount(text: String) = AMOUNT_REGEX.containsMatchIn(text)
 
@@ -51,7 +56,7 @@ class QualifierService @Inject constructor(
             "CNY" to "¥",
             "RUB" to "₽"
         ).also {
-            with(CurrencyTools.getDefaultCurrency()) {
+            with(CurrencyTools.getSystemCurrency()) {
                 it[currencyCode.uppercase()] = symbol
             }
         }

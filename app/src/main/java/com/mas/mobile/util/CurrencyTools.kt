@@ -4,7 +4,7 @@ import java.util.Currency
 import java.util.Locale
 
 object CurrencyTools {
-    fun getDefaultCurrency(): Currency {
+    fun getSystemCurrency(): Currency {
         val local = Locale.getDefault()
 
         return try {

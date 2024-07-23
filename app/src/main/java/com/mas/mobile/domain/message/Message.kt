@@ -1,5 +1,6 @@
 package com.mas.mobile.domain.message
 
+import com.mas.mobile.domain.budget.Merchant
 import com.mas.mobile.domain.budget.SpendingId
 import java.time.LocalDateTime
 
@@ -14,18 +15,13 @@ data class Message(
 ) {
     fun hasSpending() = spendingId != null
 
-    fun toMatched(ruleId: MessageRuleId, suggestedAmount: Double, suggestedExpenditureName: String?) =
-        this.copy(
-            status = Matched(ruleId, suggestedAmount, suggestedExpenditureName)
-        )
-
     sealed class Status
     object Recommended: Status()
     object Rejected: Status()
     data class Matched(
-        val ruleId: MessageRuleId,
-        val suggestedAmount: Double,
-        val suggestedExpenditureName: String?
+        val messageTemplateId: MessageTemplateId,
+        val amount: Double,
+        val merchant: Merchant?
     ): Status()
 }
 

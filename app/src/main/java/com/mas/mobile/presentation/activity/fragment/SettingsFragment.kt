@@ -26,6 +26,7 @@ import com.mas.mobile.MasApplication
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.SettingsFragmentBinding
+import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.SettingsViewModel
 import com.mas.mobile.service.NotificationListener
 
@@ -115,6 +116,15 @@ class SettingsFragment : CommonFragment() {
         }
         binding.settingsRules.setOnClickListener {
             go(SettingsFragmentDirections.actionToMessageRulesList())
+        }
+
+        with(binding.settingsCurrencyLayout) {
+            setOnClickListener {
+                showCurrencyPicker { currency ->
+                    settingsViewModel.currency.value = currency
+                    clearFocus()
+                }
+            }
         }
 
         settingsViewModel.onRequestSMSPermissions { requestSMSPermissions() }

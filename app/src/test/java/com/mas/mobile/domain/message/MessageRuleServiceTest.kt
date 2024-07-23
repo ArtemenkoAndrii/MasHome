@@ -85,9 +85,9 @@ class MessageRuleServiceTest {
             sender = "Sender",
             text = "Purchase of 12.50 EUR in $SAME_MERCHANT with card ends 1234",
             status = Message.Matched(
-                ruleId = RULE.id,
-                suggestedAmount = 12.50,
-                suggestedExpenditureName = null
+                messageTemplateId = RULE.id,
+                amount = 12.50,
+                merchant = null
             )
         )
 
@@ -96,9 +96,9 @@ class MessageRuleServiceTest {
             sender = "Sender",
             text = "Purchase of 5.00 EUR in $NEW_MERCHANT with card ends 1234",
             status = Message.Matched(
-                ruleId = RULE.id,
-                suggestedAmount = 5.00,
-                suggestedExpenditureName = null
+                messageTemplateId = RULE.id,
+                amount = 5.00,
+                merchant = null
             )
         )
     }

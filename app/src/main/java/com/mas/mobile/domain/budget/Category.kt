@@ -6,7 +6,7 @@ data class Category(
     var plan: Double,
     var isActive: Boolean,
     var description: String,
-    var merchants: List<Merchant>
+    var merchants: MutableList<Merchant>
 )
 
 @JvmInline

@@ -4,7 +4,6 @@ import com.mas.mobile.presentation.activity.converter.MoneyConverter
 import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 import java.util.Currency
-import java.util.Locale
 
 data class Budget(
     val id: BudgetId,
@@ -14,7 +13,7 @@ data class Budget(
     var startsOn: LocalDate = LocalDate.now(),
     var lastDayAt: LocalDate = LocalDate.now(),
     var comment: String? = null,
-    var currency: Currency = CurrencyTools.getDefaultCurrency(),
+    var currency: Currency = CurrencyTools.getSystemCurrency(),
     private val lazyLoader: Lazy<BudgetDetails>
 ) {
     val budgetDetails: BudgetDetails
@@ -84,10 +83,6 @@ data class Budget(
         }
 
         require(!duplicate) { "Expenditure name ${expenditure.name} isn't unique" }
-    }
-
-    companion object {
-        const val TEMPLATE_ID = 1
     }
 }
 

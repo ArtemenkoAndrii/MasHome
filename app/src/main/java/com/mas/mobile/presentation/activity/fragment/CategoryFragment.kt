@@ -39,6 +39,7 @@ class CategoryFragment: ItemFragment<CategoryViewModel>() {
             binding.merchantChipGroup.removeAllViews()
             merchants.forEach { merchant ->
                 val chip = Chip(context)
+                //chip.isEnabled = binding.addChipButton.isEnable
                 chip.text = merchant
                 chip.isCloseIconVisible = true
                 chip.setOnCloseIconClickListener {

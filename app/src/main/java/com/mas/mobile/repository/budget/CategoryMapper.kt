@@ -13,7 +13,7 @@ object CategoryMapper {
             plan = dto.plan,
             isActive = dto.isActive,
             description = dto.description,
-            merchants = dto.merchants.map { Merchant(it) }
+            merchants = dto.merchants.map { Merchant(it) }.toMutableList()
         )
 
     fun toDTO(model: Category): CategoryData =

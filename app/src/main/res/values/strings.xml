@@ -76,6 +76,7 @@
     <string name="menu_budgets">Budgets</string>
     <string name="menu_rules">Rules</string>
     <string name="menu_settings_period">Period</string>
+    <string name="menu_settings_currency">Currency</string>
     <string name="menu_settings_start">Start Day</string>
     <string name="menu_settings_notifications">Capture Notifications</string>
     <string name="menu_settings_sms">Capture SMS</string>

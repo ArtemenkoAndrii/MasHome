@@ -7,7 +7,6 @@ import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import io.mockk.*
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -27,12 +26,14 @@ class BudgetServiceTest {
     private val mockResourceService = mockk<ResourceService>(relaxed = true)
     private val mockSettingsRepository = mockk<SettingsRepository>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
+    private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
 
     private var testInstance = BudgetService(
         mockResourceService,
         mockSettingsRepository,
         mockk<SpendingRepository>(relaxed = true),
         mockk<ExchangeRepository>(relaxed = true),
+        mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
         mockBudgetRepository,
         mockExpenditureRepository
@@ -43,14 +44,16 @@ class BudgetServiceTest {
     @BeforeEach
     fun setUp() {
         every { mockSettingsRepository.get() } returns mockSettings
+        every { mockSettings.currency } returns Currency.getInstance("EUR")
 
         every { mockBudgetRepository.createBudget() } returns Budget(id = BudgetId(BUDGET_ID), lazyLoader = lazy { BudgetDetails( mutableListOf(), mutableListOf()) })
         every { mockBudgetRepository.getBudget(any()) } returns TEMPLATE
         every { mockBudgetRepository.getBudgetByName(any()) } returns null
 
-        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
+        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", CategoryId(-1), 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
 
         every { mockResourceService.budgetTruncatedComment(capture(dateSlot)) } answers { String.format(COMMENT, dateSlot.captured) }
+        every { mockCategoryRepository.getAll() } returns CATEGORIES
     }
 
     private fun periodCases() = Stream.of(
@@ -104,13 +107,13 @@ class BudgetServiceTest {
         with (testInstance.createNext()) {
             assertEquals(CURRENCY, currency)
 
-            assertNotEquals(TEMPLATE.budgetDetails.expenditure[0].id, budgetDetails.expenditure[0].id)
-            assertEquals(TEMPLATE.budgetDetails.expenditure[0].name, budgetDetails.expenditure[0].name)
-            assertEquals(TEMPLATE.budgetDetails.expenditure[0].plan, budgetDetails.expenditure[0].plan)
+            assertEquals(budgetDetails.expenditure.size, 2)
 
-            assertNotEquals(TEMPLATE.budgetDetails.expenditure[1].id, budgetDetails.expenditure[1].id)
-            assertEquals(TEMPLATE.budgetDetails.expenditure[1].name, budgetDetails.expenditure[1].name)
-            assertEquals(TEMPLATE.budgetDetails.expenditure[1].plan, budgetDetails.expenditure[1].plan)
+            assertEquals(CATEGORIES[0].name, budgetDetails.expenditure[0].name)
+            assertEquals(CATEGORIES[0].plan, budgetDetails.expenditure[0].plan)
+
+            assertEquals(CATEGORIES[1].name, budgetDetails.expenditure[1].name)
+            assertEquals(CATEGORIES[1].plan, budgetDetails.expenditure[1].plan)
         }
     }
 
@@ -138,27 +141,37 @@ class BudgetServiceTest {
             currency = CURRENCY,
             lazyLoader = lazy {
                 BudgetDetails(
-                    expenditure = mutableListOf(
-                        Expenditure(
-                            id = ExpenditureId(1),
-                            name = "Expenditure 1",
-                            plan = 1.0,
-                            fact = 0.0,
-                            comment = "Expenditure 1 comment",
-                            budgetId = BudgetId(TEMPLATE_ID)
-                        ),
-                        Expenditure(
-                            id = ExpenditureId(2),
-                            name = "Expenditure 2",
-                            plan = 2.0,
-                            fact = 0.0,
-                            comment = "Expenditure 2 comment",
-                            budgetId = BudgetId(TEMPLATE_ID)
-                        ),
-                    ),
+                    expenditure = mutableListOf(),
                     spending = mutableListOf()
                 )
             }
+        )
+
+        val CATEGORIES = mutableListOf(
+            Category(
+                id = CategoryId(1),
+                name = "Category1",
+                plan = 1.0,
+                description = "Description 1",
+                isActive = true,
+                merchants = emptyList()
+            ),
+            Category(
+                id = CategoryId(2),
+                name = "Category2",
+                plan = 2.0,
+                description = "Description 2",
+                isActive = true,
+                merchants = emptyList()
+            ),
+            Category(
+                id = CategoryId(3),
+                name = "Category3",
+                plan = 3.0,
+                description = "Description 3",
+                isActive = false,
+                merchants = emptyList()
+            )
         )
 
         var getNextInt = 10

@@ -1,11 +1,9 @@
 package com.mas.mobile.repository.db.config
 
-import androidx.room.ColumnInfo
 import com.mas.mobile.repository.db.config.converter.SQLiteTypeConverter
 import com.mas.mobile.repository.db.entity.Qualifier
 import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
-import java.util.Currency
 import java.util.Locale
 
 class DML {
@@ -20,41 +18,13 @@ class DML {
             }
         )
 
-        private fun getCurrency() = CurrencyTools.getDefaultCurrency()
+        private fun getCurrency() = CurrencyTools.getSystemCurrency()
 
         private fun getLanguage() = Locale.getDefault().language.uppercase()
 
         val TEMPLATE_GENERATOR = """
             INSERT INTO generator(id)
             VALUES(100)
-        """.trimIndent()
-
-        val TEMPLATE_BUDGET = """
-            INSERT INTO budgets(id, name, startsOn, lastDayAt, plan, fact, isActive, comment, currency)
-            VALUES(1, "TEMPLATE", $maxDate, $maxDate, 0.00, 0.00, 0, "Automatically generated", "${getCurrency()}");
-        """.trimIndent()
-
-        val TEMPLATE_EXPENDITURES = """
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(1, "Groceries", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(2, "Shopping", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(3, "Restaurants", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(4, "Entertainment", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(5, "Transport", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(6, "Beauty", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(7, "Sports", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(8, "Subscriptions", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(9, "Utilities", 1000.00, 0.00, "Automatically generated", 1);
-            INSERT INTO expenditures(id, name, plan, fact, comment, budget_id)
-            VALUES(10, "Rent", 1000.00, 0.00, "Automatically generated", 1);
         """.trimIndent()
 
         val GREETING_MESSAGE_RULES = """

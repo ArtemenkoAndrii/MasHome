@@ -10,7 +10,7 @@ class MessageTemplateListViewModel @AssistedInject constructor(
     repository: MessageTemplateRepository,
     @Assisted param: String
 ): ViewModel() {
-    val senders = repository.getAll()
+    val senders = repository.live.getAll()
 
     @AssistedFactory
     interface Factory {
