@@ -7,17 +7,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
-import com.mas.mobile.databinding.MessageRuleFragmentBinding
 import com.mas.mobile.databinding.MessageTemplateFragmentBinding
-import com.mas.mobile.databinding.MessageTemplateListFragmentBinding
 import com.mas.mobile.presentation.activity.converter.TextDrawable
-import com.mas.mobile.presentation.adapter.MessageTemplateAdapter
-import com.mas.mobile.presentation.viewmodel.BudgetViewModel
 import com.mas.mobile.presentation.viewmodel.MessageTemplateViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 

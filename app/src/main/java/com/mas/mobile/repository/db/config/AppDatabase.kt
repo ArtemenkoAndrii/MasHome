@@ -13,7 +13,6 @@ import com.mas.mobile.repository.db.dao.CategoryDAO
 import com.mas.mobile.repository.db.dao.DeferredActionDAO
 import com.mas.mobile.repository.db.dao.ExpenditureDAO
 import com.mas.mobile.repository.db.dao.IdGeneratorDAO
-import com.mas.mobile.repository.db.dao.MessageRuleDAO
 import com.mas.mobile.repository.db.dao.MessageTemplateDAO
 import com.mas.mobile.repository.db.dao.QualifierDAO
 import com.mas.mobile.repository.db.dao.SettingsDAO
@@ -24,7 +23,6 @@ import com.mas.mobile.repository.db.entity.Category
 import com.mas.mobile.repository.db.entity.DeferrableAction
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import com.mas.mobile.repository.db.entity.IdGenerator
-import com.mas.mobile.repository.db.entity.MessageRule
 import com.mas.mobile.repository.db.entity.MessageTemplate
 import com.mas.mobile.repository.db.entity.Qualifier
 import com.mas.mobile.repository.db.entity.Settings
@@ -34,14 +32,13 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 14,
+    version = 15,
     exportSchema = true,
     entities = [
         Budget::class,
         SpendingData::class,
         ExpenditureData::class,
         SpendingMessage::class,
-        MessageRule::class,
         Settings::class,
         IdGenerator::class,
         Qualifier::class,
@@ -64,7 +61,6 @@ abstract class AppDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             db.execSQL(DML.TEMPLATE_GENERATOR)
-                            db.execSQLs(DML.GREETING_MESSAGE_RULES)
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                             db.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
                             db.execSQLs(DML.GREETING_CATEGORIES)
@@ -72,7 +68,8 @@ abstract class AppDatabase : RoomDatabase() {
                     })
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                         MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
-                        MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14)
+                        MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14,
+                        MIGRATION_14_15)
                     .build()
             }
             return INSTANCE!!
@@ -83,7 +80,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun expenditureDao(): ExpenditureDAO
     abstract fun spendingDao(): SpendingDAO
     abstract fun spendingMessageDao(): SpendingMessageDAO
-    abstract fun messageRuleDao(): MessageRuleDAO
     abstract fun settingsDao(): SettingsDAO
     abstract fun idGeneratorDAO(): IdGeneratorDAO
     abstract fun qualifierDAO(): QualifierDAO
@@ -236,5 +232,11 @@ val MIGRATION_13_14 = object : Migration(13, 14) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE expenditures ADD COLUMN category_id INTEGER NOT NULL DEFAULT -1;")
         database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
+    }
+}
+
+val MIGRATION_14_15 = object : Migration(14, 15) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE IF EXISTS message_rules;")
     }
 }

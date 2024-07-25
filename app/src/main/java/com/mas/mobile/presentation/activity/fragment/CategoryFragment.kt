@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
 import com.mas.mobile.R
@@ -39,14 +40,18 @@ class CategoryFragment: ItemFragment<CategoryViewModel>() {
             binding.merchantChipGroup.removeAllViews()
             merchants.forEach { merchant ->
                 val chip = Chip(context)
-                //chip.isEnabled = binding.addChipButton.isEnable
                 chip.text = merchant
                 chip.isCloseIconVisible = true
                 chip.setOnCloseIconClickListener {
-                    viewModel.removeMerchant(merchant)
+                    if (it.isEnabled) {
+                        viewModel.removeMerchant(merchant)
+                    }
                 }
                 binding.merchantChipGroup.addView(chip)
             }
+        }
+        viewModel.isEditable.observe(viewLifecycleOwner) { enabled ->
+            binding.merchantChipGroup.children.forEach { it.isEnabled = enabled }
         }
         binding.addChipButton.setOnClickListener {
             viewModel.addMerchant()

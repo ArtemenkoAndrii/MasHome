@@ -2,6 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable name="list"
+            type="com.mas.mobile.presentation.viewmodel.MessageTemplateListViewModel"/>
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,7 +21,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Settings" />
+            android:text="@string/label_templates_settings" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -39,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:textAppearance="?attr/textAppearanceSubtitle1"
-                        android:text="Autodetect" />
+                        android:text="@string/label_templates_autodetect" />
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -48,7 +54,7 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:checked="true" />
+                        android:checked="@={list.autodetect}" />
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/message_template_blacklist"
@@ -65,7 +71,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Black list"
+                        android:text="@string/label_templates_blacklist"
                         android:textAppearance="?attr/textAppearanceSubtitle1" />
                     <View
                         android:layout_width="0dp"
@@ -76,7 +82,37 @@
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
                         app:tint="@color/colorDeepGray"
-                        app:srcCompat="@drawable/ic_arrow_right_24" />
+                        app:srcCompat="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@string/label_templates_autodetect" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/message_template_filters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_templates_filters"
+                        android:textAppearance="?attr/textAppearanceSubtitle1" />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"/>
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        app:tint="@color/colorDeepGray"
+                        app:srcCompat="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@string/label_templates_filters" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -87,7 +123,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Sources" />
+            android:text="@string/label_templates_sources" />
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_sender_list"
             android:background="@color/colorGray"

@@ -9,7 +9,6 @@ import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
-import com.mas.mobile.domain.message.MessageRuleRepository
 import com.mas.mobile.domain.message.MessageTemplateRepository
 import com.mas.mobile.domain.message.QualifierRepository
 import com.mas.mobile.domain.settings.DeferrableActionRepository
@@ -17,7 +16,20 @@ import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.activity.PolicyActivity
 import com.mas.mobile.presentation.activity.fragment.CommonFragment
-import com.mas.mobile.presentation.viewmodel.*
+import com.mas.mobile.presentation.viewmodel.BudgetListViewModel
+import com.mas.mobile.presentation.viewmodel.BudgetViewModel
+import com.mas.mobile.presentation.viewmodel.CategoryListViewModel
+import com.mas.mobile.presentation.viewmodel.CategoryViewModel
+import com.mas.mobile.presentation.viewmodel.ChartViewModel
+import com.mas.mobile.presentation.viewmodel.ExpenditureListViewModel
+import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel
+import com.mas.mobile.presentation.viewmodel.MessageListViewModel
+import com.mas.mobile.presentation.viewmodel.MessageTemplateListViewModel
+import com.mas.mobile.presentation.viewmodel.MessageTemplateViewModel
+import com.mas.mobile.presentation.viewmodel.QualifierListViewModel
+import com.mas.mobile.presentation.viewmodel.SettingsViewModel
+import com.mas.mobile.presentation.viewmodel.SpendingListViewModel
+import com.mas.mobile.presentation.viewmodel.SpendingViewModel
 import com.mas.mobile.repository.BudgetRepositoryImpl
 import com.mas.mobile.repository.budget.CategoryRepositoryImpl
 import com.mas.mobile.repository.budget.ExpenditureRepositoryImpl
@@ -25,12 +37,18 @@ import com.mas.mobile.repository.budget.FreeCurrencyAPIRepositoryImpl
 import com.mas.mobile.repository.budget.SpendingRepositoryImpl
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.message.MessageRepositoryImpl
-import com.mas.mobile.repository.message.MessageRuleRepositoryImpl
 import com.mas.mobile.repository.message.MessageTemplateRepositoryImpl
 import com.mas.mobile.repository.message.QualifierRepositoryImpl
 import com.mas.mobile.repository.settings.DeferrableActionRepositoryImpl
 import com.mas.mobile.repository.settings.SettingsRepositoryImpl
-import com.mas.mobile.service.*
+import com.mas.mobile.service.AppUpdateCheckWorker
+import com.mas.mobile.service.CoroutineService
+import com.mas.mobile.service.DateListener
+import com.mas.mobile.service.NotificationListener
+import com.mas.mobile.service.NotificationService
+import com.mas.mobile.service.ResourceService
+import com.mas.mobile.service.SmsListener
+import com.mas.mobile.service.TaskService
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
 import com.mas.mobile.service.ai.GptChatApiClient
 import com.mas.mobile.service.ai.GptChatConnector
@@ -69,9 +87,6 @@ interface AppComponent {
     fun messageListViewModel(): MessageListViewModel.Factory
     fun messageTemplateListViewModel(): MessageTemplateListViewModel.Factory
     fun messageTemplateViewModel(): MessageTemplateViewModel.Factory
-    fun messageRuleViewModel(): MessageRuleViewModel.Factory
-    fun messageRuleListViewModel(): MessageRuleListViewModel.Factory
-
     fun budgetViewModel(): BudgetViewModel.Factory
     fun budgetListViewModel(): BudgetListViewModel.Factory
 
@@ -131,12 +146,6 @@ class AppModule {
     @Singleton
     fun resolveMessageRepository(db: AppDatabase): MessageRepository {
         return MessageRepositoryImpl(db)
-    }
-
-    @Provides
-    @Singleton
-    fun resolveMessageRuleRepository(db: AppDatabase): MessageRuleRepository {
-        return MessageRuleRepositoryImpl(db)
     }
 
     @Provides

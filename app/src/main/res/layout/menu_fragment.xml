@@ -158,7 +158,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:contentDescription="@string/menu_message_origins"
+                        android:contentDescription="@string/menu_message_template_list"
                         android:minWidth="48dp"
                         android:minHeight="48dp"
                         app:tint="@color/colorDeepGray"
@@ -172,7 +172,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:textAppearance="?attr/textAppearanceSubtitle1"
-                        android:text="@string/menu_message_origins" />
+                        android:text="@string/menu_message_template_list" />
                     <View
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -181,7 +181,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:contentDescription="@string/menu_message_origins"
+                        android:contentDescription="@string/menu_message_template_list"
                         android:clickable="false"
                         android:minWidth="48dp"
                         android:minHeight="48dp"

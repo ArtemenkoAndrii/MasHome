@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.mobile.NavGraphDirections
@@ -15,7 +16,6 @@ import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.MessageListFragmentBinding
 import com.mas.mobile.presentation.adapter.SpendingMessageAdapter
 import com.mas.mobile.presentation.viewmodel.MessageListViewModel
-import com.mas.mobile.presentation.viewmodel.validator.Action
 
 class MessageListFragment: ListFragment() {
     private lateinit var binding: MessageListFragmentBinding
@@ -52,10 +52,7 @@ class MessageListFragment: ListFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.message_list_rules -> go(MessageListFragmentDirections.actionToMessageRules())
-            R.id.message_list_discovery -> go(MessageListFragmentDirections.actionToQualifiers())
-            R.id.message_list_settings -> go(MessageListFragmentDirections.actionToSettings())
-            R.id.message_sender_list -> go(MessageListFragmentDirections.actionToSenders())
+            R.id.spending_message_list_menu_template -> go(MessageListFragmentDirections.actionToMessageTemplates())
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -73,6 +70,7 @@ class MessageListFragment: ListFragment() {
         }
     }
 
-    override fun resolveAddButtonDestination() =
-        MessageListFragmentDirections.actionToMessageRules(Action.VIEW.name)
+    override fun resolveAddButtonDestination(): NavDirections {
+        TODO("Not yet implemented")
+    }
 }

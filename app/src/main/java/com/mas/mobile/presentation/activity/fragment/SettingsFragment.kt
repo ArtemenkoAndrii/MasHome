@@ -104,18 +104,8 @@ class SettingsFragment : CommonFragment() {
             startActivity(intent)
         }
 
-        binding.settingsDiscoverySettingsLayout.setOnClickListener {
-            go(SettingsFragmentDirections.actionToQualifierList())
-        }
-        binding.settingsDiscoverySettings.setOnClickListener {
-            go(SettingsFragmentDirections.actionToQualifierList())
-        }
-
-        binding.settingsRulesLayout.setOnClickListener {
-            go(SettingsFragmentDirections.actionToMessageRulesList())
-        }
-        binding.settingsRules.setOnClickListener {
-            go(SettingsFragmentDirections.actionToMessageRulesList())
+        binding.settingsMessageTemplatesLayout.setOnClickListener {
+            go(SettingsFragmentDirections.actionToMessageTemplateList())
         }
 
         with(binding.settingsCurrencyLayout) {

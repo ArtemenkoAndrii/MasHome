@@ -2,17 +2,12 @@ package com.mas.mobile.presentation.adapter
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.mas.mobile.R
 import com.mas.mobile.databinding.CategoryListRowBinding
-import com.mas.mobile.databinding.MessageRuleListRowBinding
 import com.mas.mobile.domain.budget.Category
-import com.mas.mobile.domain.message.MessageRule
 import com.mas.mobile.presentation.activity.fragment.CategoryListFragment
 import com.mas.mobile.presentation.activity.fragment.CategoryListFragmentDirections
-import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragment
-import com.mas.mobile.presentation.activity.fragment.MessageRuleListFragmentDirections
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
 class CategoryAdapter(

@@ -30,7 +30,6 @@
     <string name="hint_message_template_example">example</string>
     <string name="hint_message_template_currency">currency</string>
     <string name="hint_message_template_enabled">Enabled</string>
-
     <string name="hint_category_name">name</string>
     <string name="hint_description">description</string>
     <string name="hint_category_plan">estimation</string>
@@ -71,18 +70,15 @@
     <string name="menu_spending_message_rules">Rules</string>
     <string name="menu_spending">Spending</string>
     <string name="menu_messages">Messages</string>
-    <string name="menu_message_origins">Message Origins</string>
+    <string name="menu_message_template_list">Message Policies</string>
     <string name="menu_expenditures">Expenditures</string>
     <string name="menu_budgets">Budgets</string>
-    <string name="menu_rules">Rules</string>
     <string name="menu_settings_period">Period</string>
     <string name="menu_settings_currency">Currency</string>
     <string name="menu_settings_start">Start Day</string>
     <string name="menu_settings_notifications">Capture Notifications</string>
     <string name="menu_settings_sms">Capture SMS</string>
-    <string name="menu_settings_discovery_mode">Discovery mode</string>
-    <string name="menu_settings_discovery_settings">Discovery Settings</string>
-    <string name="menu_settings_rules">Expense Rules</string>
+    <string name="menu_settings_discovery_mode">Autodetect</string>
     <string name="menu_settings_about">About</string>
     <string name="menu_settings_version">Version</string>
     <string name="menu_settings_what_is">What is the MasHome?</string>
@@ -137,10 +133,10 @@
     <string name="title_spending">Spending</string>
     <string name="title_spending_list">Spendings</string>
     <string name="title_message_list">Messages</string>
-    <string name="title_message_rule">Message rule</string>
-    <string name="title_message_rule_list">Message rule list</string>
+    <string name="title_template_message">Message Template</string>
+    <string name="title_template_message_list">Message Policies</string>
     <string name="title_settings">Settings</string>
-    <string name="title_qualifier_list">Qualifier</string>
+    <string name="title_qualifier_list">Filters</string>
     <string name="title_black_list">Sender\'s Blacklist</string>
     <string name="title_analytics">Analytics</string>
     <string name="title_chart">Chart</string>
@@ -158,6 +154,11 @@
     <string name="label_analytics_plan">Plan</string>
     <string name="label_analytics_fact">Fact</string>
     <string name="label_analytics_graphs">GRAPHS</string>
+    <string name="label_templates_settings">Senders</string>
+    <string name="label_templates_sources">Templates</string>
+    <string name="label_templates_autodetect">Autodetect</string>
+    <string name="label_templates_blacklist">Black list</string>
+    <string name="label_templates_filters">Filters</string>
 
     <!-- Constants -->
     <string name="constant_budget_truncated">The start date was automatically truncated. Original value is %s</string>
@@ -173,8 +174,8 @@
     <string name="error_unexpected">Ups, something went wrong</string>
 
     <!-- TABS -->
-    <string name="tab_qualifier_catch">Catch words</string>
-    <string name="tab_qualifier_skip">Skip words</string>
+    <string name="tab_qualifier_catch">Include words</string>
+    <string name="tab_qualifier_skip">Exclude words</string>
     <string name="tab_qualifier_blacklist">Senders blacklist</string>
 
     <!-- TOASTS -->

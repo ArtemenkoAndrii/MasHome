@@ -27,17 +27,6 @@ class DML {
             VALUES(100)
         """.trimIndent()
 
-        val GREETING_MESSAGE_RULES = """
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
-            VALUES(1, "BANK OF AMERICA", "Food", "walmart", "{amount}", "${getCurrency()}");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
-            VALUES(2, "BBVA", "Purchases", "amazon", "Purchase of {amount} EUR", "${getCurrency()}");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
-            VALUES(3, "BANK OF SCOT", "Food", "burgerkg", "You spent £{amount} at", "${getCurrency()}");
-            INSERT INTO message_rules(id, name, expenditure_name, expenditure_matcher, amount_matcher, currency)
-            VALUES(4, "Revolut", "Food", "McDonalds", "Paid €{amount} at", "${getCurrency()}");
-        """.trimIndent()
-
         val GREETING_MESSAGE_TEMPLATES = """
             INSERT INTO message_template(id, sender, pattern, example, currency, enabled)
             VALUES(1, "Revolut", "Paid ${'$'}{amount} at {merchant} Spent", "McDonalds 🛍 Paid ${'$'}55.70 at McDonalds Spent today: ${'$'}55.70", "USD", 1);

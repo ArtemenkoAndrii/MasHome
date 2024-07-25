@@ -36,10 +36,14 @@ class MessageTemplateListFragment: ListFragment() {
         }
 
         binding = MessageTemplateListFragmentBinding.bind(layout)
+        binding.list = listViewModel
         binding.messageTemplateList.adapter = adapter
         binding.messageTemplateList.layoutManager = LinearLayoutManager(requireContext())
         binding.messageTemplateBlacklist.setOnClickListener {
             go(MessageTemplateListFragmentDirections.actionToBlackList())
+        }
+        binding.messageTemplateFilters.setOnClickListener {
+            go(MessageTemplateListFragmentDirections.actionToFilters())
         }
 
         return layout

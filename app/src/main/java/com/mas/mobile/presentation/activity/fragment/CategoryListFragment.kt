@@ -5,16 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.CategoryListFragmentBinding
-import com.mas.mobile.databinding.MessageRuleListFragmentBinding
 import com.mas.mobile.presentation.adapter.CategoryAdapter
-import com.mas.mobile.presentation.adapter.MessageRuleAdapter
 import com.mas.mobile.presentation.viewmodel.CategoryListViewModel
-import com.mas.mobile.presentation.viewmodel.MessageRuleListViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
 class CategoryListFragment : ListFragment() {

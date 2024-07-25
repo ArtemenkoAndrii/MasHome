@@ -1,7 +1,6 @@
 package com.mas.mobile.repository.db.dao
 
 import androidx.room.*
-import com.mas.mobile.repository.db.entity.MessageRule
 import com.mas.mobile.repository.db.entity.Settings
 
 @Dao

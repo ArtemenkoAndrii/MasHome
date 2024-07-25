@@ -10,9 +10,19 @@ import javax.inject.Singleton
 @Singleton
 class SettingsService @Inject constructor(
     private val context: Context,
-    private val settingsRepository: SettingsRepository,
-    private val coroutineService: CoroutineService
+    private val coroutineService: CoroutineService,
+    val repository: SettingsRepository
 ) {
+    var autodetect: Boolean
+        get() = repository.get().discoveryMode
+        set(value) {
+            coroutineService.backgroundTask {
+                val allSettings = repository.get()
+                allSettings.discoveryMode = value
+                repository.save(allSettings)
+            }
+        }
+
     fun isFirstLaunch(): Boolean =
         context.getSharedPreferences(BuildConfig.APPLICATION_ID, 0).getBoolean(FIRST_RUN_KEY, true)
 
@@ -27,18 +37,18 @@ class SettingsService @Inject constructor(
     }
 
     fun isMessageCapturingEnabled() =
-        with(settingsRepository.get()) {
+        with(repository.get()) {
             captureSms || captureNotifications
         }
 
     fun needToShowPolicy() =
-        settingsRepository.get().policyVersion != POLICY_VERSION
+        repository.get().policyVersion != POLICY_VERSION
 
     fun confirmPolicyReading() {
         coroutineService.backgroundTask {
-            val settings = settingsRepository.get()
+            val settings = repository.get()
             settings.policyVersion = POLICY_VERSION
-            settingsRepository.save(settings)
+            repository.save(settings)
         }
     }
 

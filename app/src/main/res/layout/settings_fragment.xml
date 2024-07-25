@@ -224,68 +224,9 @@
                             android:layout_weight="1"
                             android:checked="@={settings.captureSms}" />
                     </LinearLayout>
+
                     <LinearLayout
-                        android:id="@+id/settingsDiscoveryModeLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:textAppearance="?attr/textAppearanceSubtitle1"
-                            android:text="@string/menu_settings_discovery_mode" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="2"/>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:checked="@={settings.discoveryMode}" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/settingsDiscoverySettingsLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:textAppearance="?attr/textAppearanceSubtitle1"
-                            android:text="@string/menu_settings_discovery_settings" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="2"/>
-
-                        <ImageButton
-                            android:id="@+id/settingsDiscoverySettings"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@android:color/transparent"
-                            app:tint="@color/colorDeepGray"
-                            app:srcCompat="@drawable/ic_arrow_right_24" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/settingsRulesLayout"
+                        android:id="@+id/settingsMessageTemplatesLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
@@ -301,7 +242,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:textAppearance="?attr/textAppearanceSubtitle1"
-                            android:text="@string/menu_settings_rules" />
+                            android:text="@string/menu_message_template_list" />
 
                         <View
                             android:layout_width="0dp"
@@ -314,7 +255,8 @@
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent"
                             app:tint="@color/colorDeepGray"
-                            app:srcCompat="@drawable/ic_arrow_right_24" />
+                            app:srcCompat="@drawable/ic_arrow_right_24"
+                            android:contentDescription="@string/menu_message_template_list" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

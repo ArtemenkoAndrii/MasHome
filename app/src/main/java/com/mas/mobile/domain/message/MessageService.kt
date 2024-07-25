@@ -3,6 +3,7 @@ package com.mas.mobile.domain.message
 import android.util.Log
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.CategoryService
+import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.TaskService
 import com.mas.mobile.util.Analytics
 import java.time.LocalDateTime
@@ -16,6 +17,7 @@ class MessageService @Inject constructor(
     private val categoryService: CategoryService,
     private val budgetService: BudgetService,
     private val qualifierService: QualifierService,
+    private val settings: SettingsService,
     private val analytics: Analytics,
     val messageRepository: MessageRepository
 ) {
@@ -75,10 +77,11 @@ class MessageService @Inject constructor(
             .asSequence()
             .filter { it.sender.equals(sender, true) }
             .map { evaluateMessageStatus(it, text) }
+            .filterNotNull()
             .firstOrNull()
 
     private fun findRecommended(sender: String, text: String): Message.Recommended? =
-        if (qualifierService.isRecommended(sender, text)) {
+        if (qualifierService.isRecommended(sender, text) && settings.autodetect) {
             Message.Recommended
         } else {
             null
