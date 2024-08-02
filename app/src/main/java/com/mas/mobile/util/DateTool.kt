@@ -11,6 +11,7 @@ class DateTool {
         private const val TIME = "HH:mm"
         private const val DATE_TIME = "d.MM HH:mm"
         private const val DATE = "dd/MM/yyyy"
+        private const val ABBREVIATED_DATE  = "dd MMM, yyyy"
 
         fun timeAsString(date: LocalDateTime): String {
             val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(TIME)
@@ -32,6 +33,11 @@ class DateTool {
 
         fun dateToString(date: LocalDate): String {
             val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE)
+            return date.format(formatter)
+        }
+
+        fun dateToAbbreviatedString(date: LocalDate): String {
+            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(ABBREVIATED_DATE)
             return date.format(formatter)
         }
 

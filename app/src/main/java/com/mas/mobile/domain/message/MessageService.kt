@@ -19,14 +19,14 @@ class MessageService @Inject constructor(
     private val qualifierService: QualifierService,
     private val settings: SettingsService,
     private val analytics: Analytics,
-    val messageRepository: MessageRepository
+    val repository: MessageRepository
 ) {
-    fun handleMessage(sender: String, text: String, date: LocalDateTime) = coroutineService.backgroundTask {
-        val status = evaluateStatus(sender.trim(), text.trim())
+    fun handleRawMessage(sender: String, text: String, date: LocalDateTime) = coroutineService.backgroundTask {
+        val status = assessStatus(sender, text)
         analytics.logEvent(Analytics.Event.MESSAGE_EVALUATED, Analytics.Param.STATUS, status::class.simpleName ?: "")
 
         if (status !is Message.Rejected) {
-            val message = messageRepository.create().also {
+            val message = repository.create().also {
                 it.sender = sender
                 it.text = text
                 it.receivedAt = date
@@ -39,20 +39,38 @@ class MessageService @Inject constructor(
                 analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, "auto")
             }
 
-            messageRepository.save(message)
+            repository.save(message)
         } else {
             Log.i(this::class.simpleName, "A message from $sender doesn't match any rule.")
         }
     }
 
-    fun evaluateMessageStatus(template: MessageTemplate, text: String): Message.Matched? =
-        template.parse(text)?.let { result ->
+    fun promoteRecommendedMessage(message: Message, template: MessageTemplate): Message? {
+        val newStatus = matchesTemplate(message.sender, message.text, template)
+        return if (newStatus is Message.Matched) {
+            message.copy(status = newStatus)
+        } else {
+            null
+        }
+    }
+
+    private fun matchesTemplate(sender: String, text: String, template: MessageTemplate): Message.Status? {
+        if (!sender.equals(template.sender, true)) {
+            return null
+        }
+
+        val result = template.parse(text) ?: return null
+
+        return if (template.isEnabled) {
             Message.Matched(
-                messageTemplateId = template.id ,
+                messageTemplateId = template.id,
                 amount = result.amount,
                 merchant = result.merchant
             )
+        } else {
+            Message.Rejected
         }
+    }
 
     private suspend fun createSpending(message: Message) {
         val status = message.status as? Message.Matched ?: return
@@ -69,18 +87,17 @@ class MessageService @Inject constructor(
         )
     }
 
-    private fun evaluateStatus(sender: String, text: String): Message.Status =
-        findMatched(sender, text) ?: findRecommended(sender, text) ?: Message.Rejected
+    private fun assessStatus(sender: String, text: String): Message.Status =
+        isMatched(sender, text) ?: isRecommended(sender, text) ?: Message.Rejected
 
-    private fun findMatched(sender: String, text: String): Message.Matched? =
+    private fun isMatched(sender: String, text: String): Message.Status? =
         messageTemplateRepository.getAll()
             .asSequence()
-            .filter { it.sender.equals(sender, true) }
-            .map { evaluateMessageStatus(it, text) }
+            .map { matchesTemplate(sender, text, it) }
             .filterNotNull()
             .firstOrNull()
 
-    private fun findRecommended(sender: String, text: String): Message.Recommended? =
+    private fun isRecommended(sender: String, text: String): Message.Status? =
         if (qualifierService.isRecommended(sender, text) && settings.autodetect) {
             Message.Recommended
         } else {

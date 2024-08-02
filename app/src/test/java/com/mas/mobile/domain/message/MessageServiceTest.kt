@@ -5,6 +5,7 @@ import com.mas.mobile.DummyTaskService
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.CategoryRepository
+import com.mas.mobile.domain.budget.CategoryService
 import com.mas.mobile.domain.budget.ExchangeRepository
 import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.domain.budget.ExpenditureRepository
@@ -12,11 +13,11 @@ import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.settings.SettingsRepository
+import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -24,6 +25,7 @@ import io.mockk.slot
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,12 +33,14 @@ import java.time.LocalDateTime
 import java.util.Currency
 
 class MessageServiceTest {
-    private val mockMessageRuleRepository = mockk<MessageRuleRepository>(relaxed = true)
     private val mockQualifierService = mockk<QualifierService>(relaxed = true)
     private val mockMessageRepository = mockk<MessageRepository>(relaxed = true)
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
     private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
     private val mockAnalytics = mockk<Analytics>(relaxed = true)
+    private val mockMessageTemplateRepository = mockk<MessageTemplateRepository>(relaxed = true)
+    private val mockCategoryService = mockk<CategoryService>(relaxed = true)
+    private val mockSettingsService = mockk<SettingsService>(relaxed = true)
 
     // BudgetService mockk doesn't work because of bug with mocking Int value classes
     private val budgetService = BudgetService(
@@ -44,7 +48,7 @@ class MessageServiceTest {
         mockk<SettingsRepository>(relaxed = true),
         mockk<SpendingRepository>(relaxed = true) {
             every { create() } returns Spending(
-                SPENDING_ID, "", TIME_NOW, 0.0, mockk<Expenditure>(relaxed = true), null
+                SPENDING_ID, "", TIMESTAMP, 0.0, mockk<Expenditure>(relaxed = true), null
             )
         },
         mockExchangeRepository,
@@ -58,9 +62,11 @@ class MessageServiceTest {
 
     private val testInstance = MessageService(
         DummyTaskService,
-        mockMessageRuleRepository,
+        mockMessageTemplateRepository,
+        mockCategoryService,
         budgetService,
         mockQualifierService,
+        mockSettingsService,
         mockAnalytics,
         mockMessageRepository
     )
@@ -70,9 +76,10 @@ class MessageServiceTest {
         mockkStatic(Log::class)
         every { Log.i(any(), any()) } returns 0
 
-        every { mockMessageRuleRepository.getAll() } returns listOf(RULE)
-        every { mockMessageRepository.create() } returns MESSAGE
-        every { mockQualifierService.isRecommended(any()) } returns true
+        every { mockMessageTemplateRepository.getAll() } returns listOf(TEMPLATE)
+        every { mockMessageRepository.create() } returns NEW_MESSAGE
+        every { mockQualifierService.isRecommended(any(), any()) } returns true
+        every { mockSettingsService.autodetect } returns true
 
         coEvery { mockMessageRepository.save(capture(message)) } returns Unit
         coEvery { mockExchangeRepository.getRate(any(), any()) } returns Result.success(RATE)
@@ -84,72 +91,93 @@ class MessageServiceTest {
     }
 
     @Test
-    fun `should handle matched`() {
-        testInstance.handleMessage(
-            "Revolut",
-            "AliExpress 🛍 Paid €3.77 at AliExpress Spent today: €100.00.",
-            TIME_NOW
+    fun `should handle raw message as matched`() {
+        testInstance.handleRawMessage(
+            SENDER,
+            TEXT,
+            TIMESTAMP
         )
 
-        val result = message.captured
-        assertEquals("Revolut", result.sender)
-        assertEquals("AliExpress 🛍 Paid €3.77 at AliExpress Spent today: €100.00.", result.text)
-        assertTrue(result.isNew)
-        with(result.status as Message.Matched) {
-            assertEquals(1, messageTemplateId.value)
-            assertEquals(3.77, amount, 0.001)
-            assertEquals("Other", merchant)
+        with(message.captured) {
+            assertEquals(SENDER, sender)
+            assertEquals(TEXT, text)
+            assertTrue(isNew)
+            with(status as Message.Matched) {
+                assertEquals(3.77, amount, 0.001)
+                assertEquals("AliExpress", merchant!!.value)
+            }
         }
     }
 
     @Test
-    fun `should handle recommended`() {
-        testInstance.handleMessage(
-            "BBVA",
-            "Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted.",
-            TIME_NOW
+    fun `should handle raw message as recommended`() {
+        every { mockMessageTemplateRepository.getAll() } returns emptyList()
+
+        testInstance.handleRawMessage(
+            SENDER,
+            TEXT,
+            TIMESTAMP
         )
 
-        val result = message.captured
-        assertEquals("BBVA", result.sender)
-        assertEquals("Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted.", result.text)
-        assertTrue(result.isNew)
-        assertTrue(result.status is Message.Recommended)
+        with(message.captured) {
+            assertEquals(SENDER, sender)
+            assertEquals(TEXT, text)
+            assertTrue(isNew)
+            assertTrue(status is Message.Recommended)
+        }
     }
 
     @Test
-    fun `should reject`() {
-        every { mockQualifierService.isRecommended(any()) } returns false
+    fun `should handle raw message as rejected`() {
+        every { mockMessageTemplateRepository.getAll() } returns emptyList()
+        every { mockQualifierService.isRecommended(any(), any()) } returns false
 
-        testInstance.handleMessage(
-            "BBVA",
-            "Payment of 4,10 EUR in aliexpress with your card ending in 8850 accepted.",
-            TIME_NOW
+        testInstance.handleRawMessage(
+            SENDER,
+            TEXT,
+            TIMESTAMP
         )
 
-        coVerify(exactly = 0) { mockMessageRepository.save(any()) }
+        assertFalse(message.isCaptured)
+    }
+
+    @Test
+    fun `should promoted to matched`() {
+        val result = testInstance.promoteRecommendedMessage(RECOMMENDED_MESSAGE, TEMPLATE)
+
+        with(result!!.status as Message.Matched) {
+            assertEquals(3.77, amount, 0.001)
+            assertEquals("AliExpress", merchant!!.value)
+        }
     }
 
     private companion object {
-        val TIME_NOW: LocalDateTime = LocalDateTime.now()
-        val RATE: Double = 1.0
-        val RULE_ID = MessageRuleId(1)
-        val MESSAGE_ID = MessageId(1)
-        val SPENDING_ID = SpendingId(1)
-        val CURRENCY: Currency = Currency.getInstance("EUR")
-        val RULE = MessageRule(
-            id = RULE_ID,
-            name = "Revolut",
-            pattern = Pattern("Paid €{amount} at {merchant} Spent"),
-            expenditureMatcher = "AliExpress",
-            expenditureName = "Other",
-            currency = CURRENCY
-        )
-        val MESSAGE = Message(
-            id = MESSAGE_ID,
-            sender= "",
+        const val RATE: Double = 1.00
+        const val SENDER = "Revolut"
+        const val TEXT = "AliExpress 🛍 Paid €3.77 at AliExpress Spent today: €100.00."
+        val TIMESTAMP: LocalDateTime = LocalDateTime.now()
+        val SPENDING_ID: SpendingId = SpendingId(0)
+        val CURRENCY = Currency.getInstance("EUR")
+
+        val NEW_MESSAGE = Message(
+            id = MessageId(0),
+            sender = "",
             text = "",
             status = Message.Rejected
+        )
+        val RECOMMENDED_MESSAGE = Message(
+            id = MessageId(0),
+            sender = SENDER,
+            text = TEXT,
+            status = Message.Recommended
+        )
+        val TEMPLATE = MessageTemplate(
+            id = MessageTemplateId(0),
+            sender = SENDER,
+            pattern = Pattern("Paid €{amount} at {merchant} Spent"),
+            example = TEXT,
+            currency = CURRENCY,
+            isEnabled = true
         )
     }
 }

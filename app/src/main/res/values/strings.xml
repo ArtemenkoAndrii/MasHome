@@ -40,6 +40,7 @@
     <string name="btn_add">Add</string>
     <string name="btn_save">Save</string>
     <string name="btn_next">Next</string>
+    <string name="btn_close">Close</string>
     <string name="btn_settings_month">month</string>
     <string name="btn_settings_two_weeks">two weeks</string>
     <string name="btn_settings_week">one week</string>
@@ -50,6 +51,9 @@
     <string name="btn_policy_decline">Decline</string>
     <string name="btn_spending_message_bind">Click to bind</string>
     <string name="btn_spending_message_discover">Discover</string>
+    <string name="btn_message_category">Select Category</string>
+    <string name="btn_message_accept">Accept</string>
+    <string name="btn_message_blacklist">Blacklist</string>
 
     <!-- MENU -->
     <string name="menu_view">View</string>
@@ -71,7 +75,7 @@
     <string name="menu_spending">Spending</string>
     <string name="menu_messages">Messages</string>
     <string name="menu_message_template_list">Message Policies</string>
-    <string name="menu_expenditures">Expenditures</string>
+    <string name="menu_expenditures">Home</string>
     <string name="menu_budgets">Budgets</string>
     <string name="menu_settings_period">Period</string>
     <string name="menu_settings_currency">Currency</string>
@@ -99,6 +103,7 @@
     <string name="dialog_confirmation_ok">Ok</string>
     <string name="dialog_confirmation_cancel">Cancel</string>
     <string name="dialog_currency_title">Select currency</string>
+    <string name="dialog_blacklist">Do you really want to add %s to the blacklist?</string>
 
     <!-- MESSAGES -->
     <string name="message_budget_removing">Budgets can only be removed from the end.</string>
@@ -186,6 +191,9 @@
     <string name="notification_new_version_text">A new version of the app is available. Tap to update now!</string>
     <string name="notification_update">Update</string>
     <string name="notification_ignore">Ignore</string>
+
+    <string name="content_icon">Icon</string>
+    <string name="content_new_message">New message</string>
 
     <!-- DESCRIPTION -->
     <string name="desc_analytics_trends">Compare plan vs. fact budget trends</string>

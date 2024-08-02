@@ -3,9 +3,7 @@ package com.mas.mobile.service
 import android.app.Notification
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.MATCH_UNINSTALLED_PACKAGES
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -35,7 +33,7 @@ class NotificationListener: NotificationListenerService() {
                 "$title\n$text"
             }
 
-            messageService.handleMessage(sender, message, date)
+            messageService.handleRawMessage(sender.trim(), message.trim(), date)
         }
     }
 

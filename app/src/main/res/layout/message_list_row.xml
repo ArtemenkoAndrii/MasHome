@@ -8,138 +8,200 @@
 
         <variable name="message"
             type="com.mas.mobile.domain.message.Message"/>
-        <variable name="callback"
-            type="android.view.View.OnClickListener"/>
-        <variable name="expenditureCallback"
-            type="android.view.View.OnClickListener"/>
     </data>
 
     <LinearLayout
-        android:id="@+id/message_list_row_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="10dp"
-        android:clickable="false"
-        android:focusable="false"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/message_list_row_line1"
+        <TextView
+            android:id="@+id/messageListDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textStyle="bold"
+            app:hintEnabled="false"/>
 
-            <TextView
-                android:id="@+id/message_list_row_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{DateConverter.dateTimeToString(message.receivedAt)}"
-
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            <ImageView
-                android:id="@+id/message_list_new_message"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/ic_dot_24"
-                android:visibility="@{message.isNew ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/message_list_row_date"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/hint_message_new_message" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/message_list_row_line2"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/messageListRowCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true">
 
-            <TextView
-                android:id="@+id/message_list_row_sender"
+            <LinearLayout
+                android:id="@+id/messageListRowLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:paddingEnd="0dp"
-                android:text="@{message.sender}"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            <Button
-                android:id="@+id/message_list_row_menu"
-                style="@style/Widget.App.Button.OutlinedButton.IconOnly"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:onClick="@{callback}"
-                app:icon="@drawable/ic_baseline_more_vert_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/message_list_row_line3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/message_list_row_message"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:paddingEnd="0dp"
-                android:text="@{message.text}"
-                android:textAppearance="?attr/textAppearanceBody2"
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/message_list_row_menu_fake1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            <Button
-                android:id="@+id/message_list_row_menu_fake1"
-                style="@style/Widget.App.Button.OutlinedButton.IconOnly"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:visibility="invisible"
-                app:icon="@drawable/ic_baseline_more_vert_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/messageListRowOkIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="2dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/ic_check_24"
+                    android:contentDescription="@string/content_icon"
+                    app:tint="@color/colorGreen" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/message_list_row_line4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="5dp"
-            android:paddingEnd="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+                <ImageView
+                    android:id="@+id/messageListRowQuestionIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="2dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/ic_question_24"
+                    android:contentDescription="@string/content_icon"
+                    app:tint="@color/colorYellow"/>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/message_list_row_suggested_expenditure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{expenditureCallback}"
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/messageListRowInfoIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="2dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/ic_info_24"
+                    android:contentDescription="@string/content_icon"
+                    app:tint="@color/colorBlue"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:orientation="vertical">
+
+                    <!-- Sender line -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?attr/textAppearanceSubtitle1"
+                            android:text="@{message.sender}"/>
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="2dp"/>
+
+                        <ImageView
+                            android:id="@+id/messageListNewMessage"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:scaleType="fitStart"
+                            android:src="@drawable/ic_dot_24"
+                            android:visibility="@{message.isNew ? View.VISIBLE : View.GONE}"
+                            android:contentDescription="@string/content_new_message" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="2dp"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+                    <!-- Time line -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{DateConverter.dateTimeToTimeAsString(message.receivedAt)}"
+                        app:hintEnabled="false"/>
+
+                    <!-- Message line -->
+                    <TextView
+                        android:id="@+id/message_list_row_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{message.text}"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        app:hintEnabled="false"/>
+
+                    <!-- Category -->
+                    <LinearLayout
+                        android:id="@+id/messageListCategoryLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/menu_categories"
+                            android:minWidth="24dp"
+                            android:minHeight="24dp"
+                            app:tint="@color/colorDeepGray"
+                            app:srcCompat="@drawable/ic_categories_24"/>
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0" />
+                        <TextView
+                            android:id="@+id/messageListRowCategory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:textAppearance="?attr/textAppearanceSubtitle1"
+                            android:text="@string/menu_categories" />
+                    </LinearLayout>
+
+                    <!-- Buttons Matched -->
+                    <LinearLayout
+                        android:id="@+id/messageListMatchedLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/Button.Card.Borderless"
+                            android:id="@+id/messageListMatchedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/btn_message_category" />
+                    </LinearLayout>
+
+                    <!-- Buttons Recommended -->
+                    <LinearLayout
+                        android:id="@+id/messageListRecommendedLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/Button.Card.Borderless"
+                            android:id="@+id/messageListAcceptButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/btn_message_accept" />
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="2dp"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/Button.Card.Borderless"
+                            android:id="@+id/messageListBlacklistButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/btn_message_blacklist" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </layout>

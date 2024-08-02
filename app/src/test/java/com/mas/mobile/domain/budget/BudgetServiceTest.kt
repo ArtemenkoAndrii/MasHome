@@ -7,6 +7,8 @@ import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import io.mockk.*
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -14,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Currency
 import java.util.stream.Stream
@@ -27,12 +30,14 @@ class BudgetServiceTest {
     private val mockSettingsRepository = mockk<SettingsRepository>(relaxed = true)
     private val mockSettings = mockk<Settings>(relaxed = true)
     private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
+    private val mockSpendingRepository = mockk<SpendingRepository>(relaxed = true)
+    private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
 
     private var testInstance = BudgetService(
         mockResourceService,
         mockSettingsRepository,
-        mockk<SpendingRepository>(relaxed = true),
-        mockk<ExchangeRepository>(relaxed = true),
+        mockSpendingRepository,
+        mockExchangeRepository,
         mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
         mockBudgetRepository,
@@ -40,6 +45,7 @@ class BudgetServiceTest {
     )
 
     private val dateSlot = slot<LocalDate>()
+    private val budgetSlot = slot<Budget>()
 
     @BeforeEach
     fun setUp() {
@@ -47,13 +53,19 @@ class BudgetServiceTest {
         every { mockSettings.currency } returns Currency.getInstance("EUR")
 
         every { mockBudgetRepository.createBudget() } returns Budget(id = BudgetId(BUDGET_ID), lazyLoader = lazy { BudgetDetails( mutableListOf(), mutableListOf()) })
-        every { mockBudgetRepository.getBudget(any()) } returns TEMPLATE
+        every { mockBudgetRepository.getBudget(any()) } returns BUDGET
+        every { mockBudgetRepository.getOnDate(any()) } returns BUDGET
         every { mockBudgetRepository.getBudgetByName(any()) } returns null
+        coEvery { mockBudgetRepository.save(capture(budgetSlot)) } returns Unit
 
         every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", CategoryId(-1), 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
 
+        every { mockSpendingRepository.create() } returns SPENDING
+
         every { mockResourceService.budgetTruncatedComment(capture(dateSlot)) } answers { String.format(COMMENT, dateSlot.captured) }
         every { mockCategoryRepository.getAll() } returns CATEGORIES
+
+        coEvery { mockExchangeRepository.getRate(any(), any()) } returns Result.success(2.00)
     }
 
     private fun periodCases() = Stream.of(
@@ -117,6 +129,46 @@ class BudgetServiceTest {
         }
     }
 
+    @Test
+    fun `should create spending`() = runTest {
+        testInstance.spend(
+            date = DATE,
+            amount = 5.00,
+            comment = "Comment",
+            expenditureName = "Food",
+            currency = null
+        )
+
+        with(budgetSlot.captured.budgetDetails.spending[0]) {
+            assertEquals(DATE, this.date)
+            assertEquals(5.00, this.amount, 0.001)
+            assertEquals("Comment", this.comment)
+            assertEquals("Food", this.expenditure.name)
+            assertNull(this.exchangeInfo)
+        }
+    }
+
+    @Test
+    fun `should create spending with exchange`() = runTest {
+        testInstance.spend(
+            date = DATE,
+            amount = 5.00,
+            comment = "Comment",
+            expenditureName = "Food",
+            currency = Currency.getInstance("USD")
+        )
+
+        with(budgetSlot.captured.budgetDetails.spending[0]) {
+            assertEquals(DATE, this.date)
+            assertEquals(10.00, this.amount, 0.001)
+            assertEquals("Comment", this.comment)
+            assertEquals("Food", this.expenditure.name)
+            assertEquals(5.00, this.exchangeInfo!!.rawAmount, 0.001)
+            assertEquals(2.00, this.exchangeInfo!!.rate, 0.001)
+            assertEquals("USD", this.exchangeInfo!!.currency.currencyCode)
+        }
+    }
+
     data class Case(
         val period: Period,
         val now: Any?,
@@ -135,8 +187,9 @@ class BudgetServiceTest {
         const val BUDGET_ID = 0
         const val COMMENT = "The start date was automatically truncated. Original value is %s"
 
+        val DATE = LocalDateTime.of(2024,1,1,15, 0,0)
         val CURRENCY = Currency.getInstance("EUR")
-        val TEMPLATE = Budget(
+        val BUDGET = Budget(
             id = BudgetId(TEMPLATE_ID),
             currency = CURRENCY,
             lazyLoader = lazy {
@@ -154,7 +207,7 @@ class BudgetServiceTest {
                 plan = 1.0,
                 description = "Description 1",
                 isActive = true,
-                merchants = emptyList()
+                merchants = mutableListOf()
             ),
             Category(
                 id = CategoryId(2),
@@ -162,7 +215,7 @@ class BudgetServiceTest {
                 plan = 2.0,
                 description = "Description 2",
                 isActive = true,
-                merchants = emptyList()
+                merchants = mutableListOf()
             ),
             Category(
                 id = CategoryId(3),
@@ -170,7 +223,22 @@ class BudgetServiceTest {
                 plan = 3.0,
                 description = "Description 3",
                 isActive = false,
-                merchants = emptyList()
+                merchants = mutableListOf()
+            )
+        )
+
+        val SPENDING = Spending(
+            id = SpendingId(0),
+            comment = "",
+            date = LocalDateTime.now(),
+            amount = 0.0,
+            expenditure = Expenditure(
+                id = ExpenditureId(-1),
+                name = "",CategoryId(-1),
+                plan = 0.0,
+                fact = 0.0,
+                comment = "",
+                budgetId = BudgetId(-1)
             )
         )
 

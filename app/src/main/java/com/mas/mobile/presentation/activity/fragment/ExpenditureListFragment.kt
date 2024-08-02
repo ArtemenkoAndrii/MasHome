@@ -34,6 +34,10 @@ open class ExpenditureListFragment : ListFragment() {
         setHasOptionsMenu(true)
         val layout = inflater.inflate(R.layout.expenditure_list_fragment, container, false)
 
+        listViewModel.budget.observe(viewLifecycleOwner) { budget ->
+            setTitle { budget.name }
+        }
+
         val adapter = getAdapter()
         binding = ExpenditureListFragmentBinding.bind(layout)
         binding.expenditureList.adapter = adapter

@@ -47,6 +47,7 @@ class ResourceService @Inject constructor(
     fun dialogConfirmationOk() = context.getString(R.string.dialog_confirmation_ok)
     fun dialogConfirmationCancel() = context.getString(R.string.dialog_confirmation_cancel)
     fun dialogCurrencyTitle() = context.getString(R.string.dialog_currency_title)
+    fun dialogBlacklist() = context.getString(R.string.dialog_blacklist)
 
     fun tabQualifierCatch() = context.getString(R.string.tab_qualifier_catch)
     fun tabQualifierSkip() = context.getString(R.string.tab_qualifier_skip)

@@ -140,9 +140,9 @@ class SpendingViewModel @AssistedInject constructor(
 
     private fun loadMessage(): Message? =
         if (pMessageId > 0) {
-            messageService.messageRepository.getById(MessageId(pMessageId))
+            messageService.repository.getById(MessageId(pMessageId))
         } else {
-            messageService.messageRepository.getBySpendingId(SpendingId(pSpendingId))
+            messageService.repository.getBySpendingId(SpendingId(pSpendingId))
         }
 
     private fun initProperties() {
@@ -218,18 +218,19 @@ class SpendingViewModel @AssistedInject constructor(
     }
 
     private suspend fun doDiscover(message: Message): Boolean {
-        val template = messageTemplateService.generateTemplateFromMessage(message) ?: return false
-        val status = messageService.evaluateMessageStatus(template, message.text) ?: return false
+        val newTemplate = messageTemplateService.generateTemplateFromMessage(message) ?: return false
+        val promotedMessage = messageService.promoteRecommendedMessage(message, newTemplate) ?: return false
+        val promotedStatus = promotedMessage.status as? Message.Matched ?: return false
 
-        this.discoveredMessageTemplate = template
+        this.discoveredMessageTemplate = newTemplate
         this.discoverMode.value = false
-        this.message = message.also { it.status = status }
+        this.message = promotedMessage
 
         comment.value = message.text
         date.value = message.receivedAt
         expenditureName.value = ""
-        amount.value = status.amount
-        exchangeCurrency.value = template.currency
+        amount.value = promotedStatus.amount
+        exchangeCurrency.value = newTemplate.currency
 
         return true
     }
@@ -264,7 +265,7 @@ class SpendingViewModel @AssistedInject constructor(
     private suspend fun saveDependencies() {
         message?.let {
             it.spendingId = model.id
-            messageService.messageRepository.save(it)
+            messageService.repository.save(it)
         }
 
         discoveredMessageTemplate?.let {

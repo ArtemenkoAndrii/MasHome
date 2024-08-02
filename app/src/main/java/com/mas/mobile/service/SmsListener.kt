@@ -28,9 +28,9 @@ class SmsListener: BroadcastReceiver() {
                 val format = intentExtras.getString(SMS_FORMAT)
                 val smsMessage = SmsMessage.createFromPdu(sms[i] as ByteArray, format)
 
-                messageService.handleMessage(
+                messageService.handleRawMessage(
                     sender = smsMessage.originatingAddress.orEmpty(),
-                    text = smsMessage.messageBody,
+                    text = smsMessage.messageBody.trim(),
                     date = LocalDateTime.now()
                 )
             }

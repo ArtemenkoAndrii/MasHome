@@ -19,12 +19,12 @@ data class MessageTemplate(
             )
             else -> null
         }
+
+    data class Result(
+        val amount: Double,
+        val merchant: Merchant?
+    )
 }
 
 @JvmInline
 value class MessageTemplateId(val value: Int)
-
-data class Result(
-    val amount: Double,
-    val merchant: Merchant?
-)
