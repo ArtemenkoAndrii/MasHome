@@ -18,7 +18,7 @@
     <string name="hint_spending_exchange_rate">rate</string>
     <string name="hint_spending_comment">comment</string>
     <string name="hint_spending_date">date</string>
-    <string name="hint_spending_expenditure">expenditure</string>
+    <string name="hint_spending_expenditure">category</string>
     <string name="hint_message_rule_sender">Sender</string>
     <string name="hint_message_rule_expenditure_matcher">expenditure matcher</string>
     <string name="hint_message_rule_amount_matcher">amount matcher</string>
@@ -46,11 +46,10 @@
     <string name="btn_settings_week">one week</string>
     <string name="btn_settings_quarter">quarter</string>
     <string name="btn_settings_year">year</string>
-    <string name="btn_spending_parse_message">Discover</string>
+    <string name="btn_spending_parse_message">Confirm</string>
+    <string name="btn_spending_cancel_message">Cancel</string>
     <string name="btn_policy_agree">Agree</string>
     <string name="btn_policy_decline">Decline</string>
-    <string name="btn_spending_message_bind">Click to bind</string>
-    <string name="btn_spending_message_discover">Discover</string>
     <string name="btn_message_category">Select Category</string>
     <string name="btn_message_accept">Accept</string>
     <string name="btn_message_blacklist">Blacklist</string>
@@ -109,13 +108,15 @@
     <string name="message_budget_removing">Budgets can only be removed from the end.</string>
     <string name="message_budget_date">You can change end date only for the last budget.</string>
     <string name="message_allow_notifications">Please allow notification access for this application.</string>
-    <string name="message_rule_save">Save as a rule?</string>
+    <string name="message_link_merchant">Would you like to link %s to the \'%s\' category?</string>
     <string name="message_spending_not_found">Unable to extract spending from message</string>
     <string name="message_settings_start_day">Choose start day</string>
     <string name="message_settings_period">Choose period</string>
     <string name="message_capturing_disabled">Message capturing is not enabled. Would you like to enable it?</string>
     <string name="message_analytics_no_alerts">Yahoo! You have no alerts!</string>
     <string name="message_analytics_no_budgets">You do not have any completed budgets yet</string>
+    <string name="message_detected">New spending message detected:</string>
+    <string name="message_detected_confirmation">By clicking \'Confirm\', you agree to send this message to GPTChat for processing.</string>
 
     <!-- FORMATTER -->
     <string name="formatter_money">%.2f</string>

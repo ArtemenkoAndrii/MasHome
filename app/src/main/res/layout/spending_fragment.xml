@@ -20,13 +20,19 @@
         android:orientation="vertical"
         tools:context=".presentation.activity.MainActivity">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:hint="@string/hint_spending_comment"
-            android:enabled="false"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/message_detected"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -34,8 +40,23 @@
                 android:layout_height="wrap_content"
                 android:maxLength="250"
                 android:singleLine="false"
+                android:focusable="false"
+                android:clickable="false"
+                android:longClickable="false"
+                android:textIsSelectable="false"
+                android:focusableInTouchMode="false"
+                android:background="@color/colorGray"
                 android:text='@{model.message != null ? model.message.text : ""}' />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/message_detected_confirmation"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/spendingForeignAmountLayout"
@@ -178,31 +199,54 @@
             android:enabled="@{model.isEditable()}"
             android:visibility="@{model.isEditable() &amp;&amp; !model.discoverMode ? View.VISIBLE : View.GONE}"
             android:text="@string/btn_save" />
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:gravity="end"
+            android:orientation="horizontal"
             android:visibility="@{model.discoverMode ? View.VISIBLE : View.GONE}">
+
+            <Button
+                android:id="@+id/messageParsingCancel"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:enabled="@{model.isEditable()}"
+                android:text="@string/btn_spending_cancel_message" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="2dp"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/messageParsingButton"
-                    style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="end">
+
+                <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:enabled="@{model.isEditable()}"
-                    android:text="@string/btn_spending_parse_message" />
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/messageParsingButton"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:enabled="@{model.isEditable()}"
+                        android:text="@string/btn_spending_parse_message" />
+                </FrameLayout>
+                <ProgressBar
+                    android:id="@+id/messageParsingProgressBar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone"/>
             </FrameLayout>
-            <ProgressBar
-                android:id="@+id/messageParsingProgressBar"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:visibility="gone"/>
-        </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 </layout>

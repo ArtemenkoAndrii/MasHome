@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
@@ -42,17 +43,17 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
         binding.lifecycleOwner = this
 
         binding.spendingSaveButton.setOnClickListener {
-            if (viewModel.hasChangedRule()) {
-                showConfirmationDialog(
-                    this.getResourceService().messageRuleSave(),
-                    {
-                        saveAndClose(viewModel)
-                    },
-                    {
-                        viewModel.resetRuleChanges()
-                        saveAndClose(viewModel)
-                    }
-                )
+            if (viewModel.hasUnsavedMerchant()) {
+                val dialogText = getResourceService().messageLinkMerchant(
+                    viewModel.getMerchant(), viewModel.getCategory())
+                val onConfirm = {
+                    saveAndClose(viewModel)
+                }
+                val onCancel = {
+                    viewModel.skipSavingMerchant()
+                    saveAndClose(viewModel)
+                }
+                showConfirmationDialog(dialogText, onConfirm, onCancel)
             } else {
                 saveAndClose(viewModel)
             }
@@ -60,12 +61,16 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
 
         binding.messageParsingButton.setOnClickListener {
             inProgress(true)
-            viewModel.discover { success ->
+            viewModel.loadFromRecommended { success ->
                 inProgress(false)
                 if (!success) {
                     showInfoDialog(this.getResourceService().messageSpendingNotFound()) {}
                 }
             }
+        }
+
+        binding.messageParsingCancel.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         binding.spendingDate.setOnClickListener {

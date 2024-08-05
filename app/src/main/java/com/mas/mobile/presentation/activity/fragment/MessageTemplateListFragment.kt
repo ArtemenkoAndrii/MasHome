@@ -57,8 +57,4 @@ class MessageTemplateListFragment: ListFragment() {
     override fun resolveAddButtonDestination(): NavDirections {
         TODO("Not yet implemented")
     }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-    }
 }

@@ -80,11 +80,6 @@ class MessageListFragment: ListFragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.message_list_menu, menu)
-    }
-
     fun blacklist(item: Message) {
         val template = getResourceService().dialogBlacklist()
         val message = String.format(template, item.sender)

@@ -19,6 +19,9 @@ class MessageRepositoryImpl(val db: AppDatabase) : MessageRepository {
     override fun getBySpendingId(id: SpendingId): Message? =
         db.spendingMessageDao().getBySpendingId(id.value)?.toModel()
 
+    override fun getBySender(name: String): List<Message> =
+        db.spendingMessageDao().getBySender(name).map { it.toModel() }
+
     override fun create(): Message =
         Message(
             id = MessageId(db.idGeneratorDAO().generateId().toInt()),

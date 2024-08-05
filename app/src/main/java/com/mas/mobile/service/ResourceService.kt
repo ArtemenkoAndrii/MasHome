@@ -21,7 +21,9 @@ class ResourceService @Inject constructor(
     fun budgetChangeDateMessage() = context.getString(R.string.message_budget_date)
     fun budgetRemoveMessage() = context.getString(R.string.message_budget_removing)
 
-    fun messageRuleSave() = context.getString(R.string.message_rule_save)
+    fun messageLinkMerchant(vararg args: Any) =
+        String.format(context.getString(R.string.message_link_merchant), *args)
+
     fun messageSpendingNotFound() = context.getString(R.string.message_spending_not_found)
 
     fun messageAreYouSure() = context.getString(R.string.dialog_confirmation_remove)
@@ -31,9 +33,6 @@ class ResourceService @Inject constructor(
     fun messageCapturingDisabled() = context.getString(R.string.message_capturing_disabled)
     fun messageAnalyticsNoAlerts() = context.getString(R.string.message_analytics_no_alerts)
     fun messageAnalyticsNoBudgets() = context.getString(R.string.message_analytics_no_budgets)
-
-    fun spendingMessageClickToBind() = context.getString(R.string.btn_spending_message_bind)
-    fun spendingMessageClickToDiscover() = context.getString(R.string.btn_spending_message_discover)
 
     fun constantToday() = context.getString(R.string.constant_today)
     fun constantYesterday() = context.getString(R.string.constant_yesterday)

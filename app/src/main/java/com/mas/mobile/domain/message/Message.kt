@@ -14,6 +14,8 @@ data class Message(
     var isNew: Boolean = true
 ) {
     fun hasSpending() = spendingId != null
+    fun getAmount(): Double? = (status as? Matched)?.amount
+    fun getMerchant(): Merchant? = (status as? Matched)?.merchant
 
     sealed class Status
     object Recommended: Status()

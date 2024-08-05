@@ -18,11 +18,13 @@ import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -38,6 +40,7 @@ class MessageServiceTest {
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
     private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
     private val mockAnalytics = mockk<Analytics>(relaxed = true)
+    private val mockMessageTemplateService = mockk<MessageTemplateService>(relaxed = true)
     private val mockMessageTemplateRepository = mockk<MessageTemplateRepository>(relaxed = true)
     private val mockCategoryService = mockk<CategoryService>(relaxed = true)
     private val mockSettingsService = mockk<SettingsService>(relaxed = true)
@@ -62,7 +65,7 @@ class MessageServiceTest {
 
     private val testInstance = MessageService(
         DummyTaskService,
-        mockMessageTemplateRepository,
+        mockMessageTemplateService,
         mockCategoryService,
         budgetService,
         mockQualifierService,
@@ -76,13 +79,16 @@ class MessageServiceTest {
         mockkStatic(Log::class)
         every { Log.i(any(), any()) } returns 0
 
+        every { mockMessageTemplateService.repository } returns mockMessageTemplateRepository
         every { mockMessageTemplateRepository.getAll() } returns listOf(TEMPLATE)
         every { mockMessageRepository.create() } returns NEW_MESSAGE
         every { mockQualifierService.isRecommended(any(), any()) } returns true
         every { mockSettingsService.autodetect } returns true
+        every { mockMessageRepository.getBySender(any()) } returns listOf(RECOMMENDED_MESSAGE.copy())
 
         coEvery { mockMessageRepository.save(capture(message)) } returns Unit
         coEvery { mockExchangeRepository.getRate(any(), any()) } returns Result.success(RATE)
+        coEvery { mockMessageTemplateService.generateTemplateFromMessage(any()) } returns TEMPLATE
     }
 
     @AfterEach
@@ -142,8 +148,10 @@ class MessageServiceTest {
     }
 
     @Test
-    fun `should promoted to matched`() {
-        val result = testInstance.promoteRecommendedMessage(RECOMMENDED_MESSAGE, TEMPLATE)
+    fun `should promoted to matched`() = runTest {
+        val result = testInstance.promoteRecommendedMessage(RECOMMENDED_MESSAGE)
+
+        coVerify { mockMessageTemplateRepository.save(TEMPLATE) }
 
         with(result!!.status as Message.Matched) {
             assertEquals(3.77, amount, 0.001)

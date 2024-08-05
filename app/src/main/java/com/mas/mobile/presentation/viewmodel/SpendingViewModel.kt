@@ -28,7 +28,6 @@ class SpendingViewModel @AssistedInject constructor(
     private val fieldValidator: FieldValidator,
     private val messageService: MessageService,
     private val categoryService: CategoryService,
-    private val messageTemplateService: MessageTemplateService,
     private val analytics: Analytics,
     @Assisted private val action: Action,
     @Assisted("spendingId") private val pSpendingId: Int,
@@ -36,8 +35,7 @@ class SpendingViewModel @AssistedInject constructor(
     @Assisted("budgetId") private val pBudgetId: Int,
     @Assisted("messageId") private val pMessageId: Int,
 ) : ItemViewModel<Spending>(coroutineService, SpendingRepositoryAdapter(budgetService, BudgetId(pBudgetId))) {
-    private var discoveredMessageTemplate: MessageTemplate? = null
-    private var category: Category? = null
+    private var merchantToSave: Merchant? = null
 
     val budget: Budget = loadBudget()
     override val model: Spending = loadModel()
@@ -72,49 +70,26 @@ class SpendingViewModel @AssistedInject constructor(
         .map { it.value }
         .toList()
 
-    fun discover(handleResult: (success: Boolean) -> Unit) {
-        message?.let {
-            viewModelScope.launch {
-                handleResult(doDiscover(it))
-            }
+    fun loadFromRecommended(handleResult: (success: Boolean) -> Unit) {
+        val message = this.message ?: return handleResult(false)
+        viewModelScope.launch {
+            handleResult(promoteAndLoad(message))
         }
     }
 
-    /*
-        1. If the spending is created based on a matched message that has a merchant but does not have spendingId populated.
-        2. If the spending is created based on a discovered message template.
-    */
-    fun hasChangedRule(): Boolean {
-        if (action == Action.ADD) {
-            if (discoveredMessageTemplate != null) {
-                return true
-            }
+    fun getCategory(): String = expenditureNameValue
+    fun getMerchant(): String = this.merchantToSave?.value ?: ""
+    fun hasUnsavedMerchant(): Boolean = this.merchantToSave != null && isValid()
 
-            if (message.getMerchantToSave() != null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun Message?.getMerchantToSave(): Merchant? {
-        val merchant = (this?.status as? Message.Matched)?.merchant ?: return null
-        return if (this.spendingId == null && categoryService.findCategoryByMerchant(merchant) == null) {
-            merchant
-        } else {
-            null
-        }
-    }
-
-    fun resetRuleChanges() {
-        discoveredMessageTemplate = null
-        category = null
+    fun skipSavingMerchant() {
+        this.merchantToSave = null
     }
 
     init {
         if (action != Action.VIEW) enableEditing()
         initProperties()
         initDefaultExpenditure(ExpenditureId(pExpenditureId))
+        updateMerchant()
     }
 
     private fun loadBudget() = budgetService.loadBudgetOrGetActive(BudgetId(pBudgetId))
@@ -217,22 +192,32 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun doDiscover(message: Message): Boolean {
-        val newTemplate = messageTemplateService.generateTemplateFromMessage(message) ?: return false
-        val promotedMessage = messageService.promoteRecommendedMessage(message, newTemplate) ?: return false
-        val promotedStatus = promotedMessage.status as? Message.Matched ?: return false
+    private suspend fun promoteAndLoad(message: Message): Boolean {
+        val promotedMessage = messageService.promoteRecommendedMessage(message) ?: return false
+        val amount = promotedMessage.getAmount() ?: return false
+        val currency = messageService.getCurrency(promotedMessage) ?: return false
 
-        this.discoveredMessageTemplate = newTemplate
         this.discoverMode.value = false
         this.message = promotedMessage
+        this.comment.value = message.text
+        this.date.value = message.receivedAt
+        this.amount.value = amount
+        this.exchangeCurrency.value = currency
+        this.expenditureName.value = ""
 
-        comment.value = message.text
-        date.value = message.receivedAt
-        expenditureName.value = ""
-        amount.value = promotedStatus.amount
-        exchangeCurrency.value = newTemplate.currency
+        updateMerchant()
 
         return true
+    }
+
+    private fun updateMerchant() {
+        if (action == Action.ADD) {
+            val merchant = this.message?.getMerchant() ?: return
+            val category = categoryService.findCategoryByMerchant(merchant)
+            if (category == null) {
+                this.merchantToSave = merchant
+            }
+        }
     }
 
     override suspend fun doSave() {
@@ -253,13 +238,6 @@ class SpendingViewModel @AssistedInject constructor(
 
     private fun beforeSave() {
         model.expenditure = findOrCreateExpenditure(expenditureNameValue)
-
-        val merchant = message.getMerchantToSave()
-        if (merchant != null) {
-            this.category = categoryService.findCategoryByName(expenditureNameValue)?.also {
-                it.merchants.add(merchant)
-            }
-        }
     }
 
     private suspend fun saveDependencies() {
@@ -268,12 +246,12 @@ class SpendingViewModel @AssistedInject constructor(
             messageService.repository.save(it)
         }
 
-        discoveredMessageTemplate?.let {
-            messageTemplateService.repository.save(it)
-        }
-
-        category?.let {
-            categoryService.repository.save(it)
+        this.merchantToSave?.let {
+            val category = categoryService.findCategoryByName(model.expenditure.name)
+            if (category != null) {
+                category.merchants.add(it)
+                categoryService.repository.save(category)
+            }
         }
     }
 

@@ -7,13 +7,14 @@ import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.TaskService
 import com.mas.mobile.util.Analytics
 import java.time.LocalDateTime
+import java.util.Currency
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MessageService @Inject constructor(
     private val coroutineService: TaskService,
-    private val messageTemplateRepository: MessageTemplateRepository,
+    private val messageTemplateService: MessageTemplateService,
     private val categoryService: CategoryService,
     private val budgetService: BudgetService,
     private val qualifierService: QualifierService,
@@ -45,12 +46,55 @@ class MessageService @Inject constructor(
         }
     }
 
-    fun promoteRecommendedMessage(message: Message, template: MessageTemplate): Message? {
-        val newStatus = matchesTemplate(message.sender, message.text, template)
-        return if (newStatus is Message.Matched) {
-            message.copy(status = newStatus)
-        } else {
-            null
+    fun getCurrency(message: Message): Currency? {
+        val status = message.status as? Message.Matched ?: return null
+        return messageTemplateService.repository.getById(status.messageTemplateId)?.currency
+    }
+
+    fun getAmount(message: Message): Double? {
+        val status = message.status as? Message.Matched ?: return null
+        return status.amount
+    }
+
+    suspend fun promoteRecommendedMessage(message: Message): Message? {
+        if (message.status !is Message.Recommended) {
+            return null
+        }
+
+        val newTemplate = messageTemplateService.generateTemplateFromMessage(message)
+        if (newTemplate == null) {
+            analytics.logEvent(Analytics.Event.MESSAGE_TEMPLATE_FAILED, Analytics.Param.STATUS, GENERATION)
+            return null
+        }
+
+        val newStatus = matchesTemplate(message.sender, message.text, newTemplate)
+        if (newStatus !is Message.Matched) {
+            analytics.logEvent(Analytics.Event.MESSAGE_TEMPLATE_FAILED, Analytics.Param.STATUS, EVALUATION)
+            return null
+        }
+
+        messageTemplateService.repository.save(newTemplate)
+
+        message.status = newStatus
+        repository.save(message)
+
+        coroutineService.backgroundTask {
+            promoteSiblings(message, newTemplate)
+        }
+
+        return message
+    }
+
+    private suspend fun promoteSiblings(message: Message, template: MessageTemplate) {
+        val siblings = repository.getBySender(message.sender)
+            .filter { it.status is Message.Recommended }
+
+        siblings.forEach { sibling ->
+            val status = matchesTemplate(sibling.sender, sibling.text, template)
+            if (status is Message.Matched) {
+                sibling.status = status
+                repository.save(sibling)
+            }
         }
     }
 
@@ -76,7 +120,7 @@ class MessageService @Inject constructor(
         val status = message.status as? Message.Matched ?: return
         val merchant = status.merchant ?: return
         val category = categoryService.findCategoryByMerchant(merchant) ?: return
-        val currency = messageTemplateRepository.getById(status.messageTemplateId)?.currency ?: return
+        val currency = messageTemplateService.repository.getById(status.messageTemplateId)?.currency ?: return
 
         message.spendingId = budgetService.spend(
             date = message.receivedAt,
@@ -91,7 +135,7 @@ class MessageService @Inject constructor(
         isMatched(sender, text) ?: isRecommended(sender, text) ?: Message.Rejected
 
     private fun isMatched(sender: String, text: String): Message.Status? =
-        messageTemplateRepository.getAll()
+        messageTemplateService.repository.getAll()
             .asSequence()
             .map { matchesTemplate(sender, text, it) }
             .filterNotNull()
@@ -103,4 +147,9 @@ class MessageService @Inject constructor(
         } else {
             null
         }
+
+    companion object {
+        const val GENERATION = "generation"
+        const val EVALUATION = "evaluation"
+    }
 }

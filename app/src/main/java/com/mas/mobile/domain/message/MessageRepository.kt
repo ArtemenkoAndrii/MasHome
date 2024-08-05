@@ -8,6 +8,7 @@ import java.time.LocalDate
 interface MessageRepository : Repository<Message> {
     fun getById(id: MessageId): Message?
     fun getBySpendingId(id: SpendingId): Message?
+    fun getBySender(name: String): List<Message>
     fun create(): Message
 
     fun getLiveMessages(from: LocalDate): LiveData<List<Message>>

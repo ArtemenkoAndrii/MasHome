@@ -42,11 +42,6 @@ class  BudgetListFragment: ListFragment(), ListMenu<Budget> {
         return layout
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.budget_list_menu , menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.budget_list_menu_add -> go(resolveAddButtonDestination())

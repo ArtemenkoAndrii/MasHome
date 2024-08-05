@@ -10,6 +10,8 @@ object CurrencyExpert {
         symbol.toRegex().matches(text) || currencyCode.toRegex().matches(text)
 
     // Example: .*(\bEUR\b|\d+$EUR|EUR\d+).*
-    private fun String.toRegex() =
-        Regex(".*(\\b$this\\b|\\d+$this|$this\\d+).*", setOf(RegexOption.DOT_MATCHES_ALL))
+    private fun String.toRegex(): Regex {
+        val value = Regex.escape(this)
+        return Regex(".*(\\b$value\\b|\\d+$this|$value\\d+).*", setOf(RegexOption.DOT_MATCHES_ALL))
+    }
 }

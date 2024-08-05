@@ -25,7 +25,7 @@ class Analytics {
     object Event {
         val SPENDING_CREATED = EventName("spending_created")
         val MESSAGE_EVALUATED = EventName("message_evaluated")
-        val PATTERN_BUILT = EventName("pattern_built")
+        val MESSAGE_TEMPLATE_FAILED = EventName("message_template_failed")
         val APP_UPDATE_SUGGESTED = EventName("app_update_suggested")
     }
 
