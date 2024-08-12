@@ -10,7 +10,7 @@ import com.mas.mobile.presentation.activity.fragment.BudgetExpenditureListFragme
 import com.mas.mobile.presentation.activity.fragment.ExpenditureListFragment
 import com.mas.mobile.presentation.viewmodel.validator.Action
 
-class BudgetExpenditureAdapter(private val fragment: ExpenditureListFragment): ExpenditureAdapter() {
+class BudgetExpenditureAdapter(private val fragment: ExpenditureListFragment): ExpenditureAdapter(fragment) {
     override fun bind(binding: ExpenditureListRowBinding, item: Expenditure, prior: Expenditure?) {
         binding.expenditure = item
 

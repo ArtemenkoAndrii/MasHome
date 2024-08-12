@@ -14,9 +14,14 @@ class MessageTemplateAdapter(
 ): BaseAdapter<MessageTemplate, MessageTemplateListRowBinding>(R.layout.message_template_list_row) {
     override fun bind(binding: MessageTemplateListRowBinding, item: MessageTemplate, prior: MessageTemplate?) {
         binding.messageTemplate = item
-        binding.messageTemplateCard.setOnClickListener {
+        binding.messageTemplateRow.setOnClickListener {
+            val action = MessageTemplateListFragmentDirections.actionToMessageTemplate(Action.VIEW.name, item.id.value)
+            it.findNavController().navigate(action)
+        }
+        binding.messageTemplateRow.setOnLongClickListener {
             val action = MessageTemplateListFragmentDirections.actionToMessageTemplate(Action.EDIT.name, item.id.value)
             it.findNavController().navigate(action)
+            true
         }
     }
 

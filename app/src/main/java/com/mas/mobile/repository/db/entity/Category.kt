@@ -27,5 +27,8 @@ data class Category(
     val description: String,
 
     @ColumnInfo(name = "merchants")
-    val merchants: List<String>
+    val merchants: List<String>,
+
+    @ColumnInfo(name = "icon")
+    val icon: Int?
 )

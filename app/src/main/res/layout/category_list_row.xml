@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -8,47 +8,56 @@
         <variable name="callback" type="android.view.View.OnClickListener"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/categoryRowLayout"
+    <LinearLayout
+        android:id="@+id/layoutRowCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:paddingStart="10dp"
-        android:paddingEnd="0dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:orientation="horizontal"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true">
 
-        <TextView
-            android:id="@+id/categoryRowName"
+        <ImageView
+            android:id="@+id/categoryRowIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="6dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_circle"
+            android:contentDescription="@string/content_icon"
+            app:tint="@color/colorDeepGray" />
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:text="@{model.name}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/categoryRowPlan"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/categoryRowPlan"
-            android:layout_width="80dp"
-            android:gravity="center|end"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:text="@{@string/formatter_money(model.plan)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/categoryRowMenu"
-            app:layout_constraintTop_toTopOf="parent"/>
+            <TextView
+                android:id="@+id/categoryRowName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceListItem"
+                android:text="@{model.name}"/>
+
+            <TextView
+                android:id="@+id/categoryRowPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@{@string/formatter_money(model.plan)}"/>
+        </LinearLayout>
 
         <Button
-            android:id="@+id/categoryRowMenu"
             style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            android:id="@+id/categoryRowMenu"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:contentDescription="@string/btn_menu"
             android:onClick="@{callback}"
-            app:icon="@drawable/ic_baseline_more_vert_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:icon="@drawable/ic_baseline_more_vert_24" />
+    </LinearLayout>
 </layout>

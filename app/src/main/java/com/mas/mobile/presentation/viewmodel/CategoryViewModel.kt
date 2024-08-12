@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.mas.mobile.domain.budget.Category
 import com.mas.mobile.domain.budget.CategoryId
 import com.mas.mobile.domain.budget.CategoryRepository
+import com.mas.mobile.domain.budget.IconId
 import com.mas.mobile.domain.budget.Merchant
 import com.mas.mobile.presentation.viewmodel.validator.Action
 import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
@@ -23,6 +24,7 @@ class CategoryViewModel @AssistedInject constructor(
 
     val name = MutableLiveData<String>()
     val nameError = MutableLiveData<String>()
+    val icon = MutableLiveData<IconId?>()
     val plan = MutableLiveData<Double>()
     val isActive = MutableLiveData<Boolean>()
     val description = MutableLiveData<String>()
@@ -50,9 +52,14 @@ class CategoryViewModel @AssistedInject constructor(
     }
 
     private fun initProperties(item: Category) {
+        icon.value = item.iconId
+        icon.observeForever {
+            item.iconId = it
+        }
+
         nameError.value = FieldValidator.NO_ERRORS
         name.value = item.name
-        name.observeForever{
+        name.observeForever {
             item.name = it.trim()
 
             validateOnSave(nameError) {
@@ -64,17 +71,17 @@ class CategoryViewModel @AssistedInject constructor(
         }
 
         plan.value = item.plan
-        plan.observeForever{
+        plan.observeForever {
             item.plan = it
         }
 
         isActive.value = item.isActive
-        isActive.observeForever{
+        isActive.observeForever {
             item.isActive = it
         }
 
         description.value = item.description
-        description.observeForever{
+        description.observeForever {
             item.description = it
         }
 

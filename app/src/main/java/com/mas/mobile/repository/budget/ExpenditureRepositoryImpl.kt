@@ -14,7 +14,7 @@ class ExpenditureRepositoryImpl(
         Expenditure(
             id = ExpenditureId(db.idGeneratorDAO().generateId().toInt()),
             name = "",
-            categoryId = CategoryId(-1),
+            iconId = null,
             plan = 0.0,
             fact = 0.0,
             comment = "",

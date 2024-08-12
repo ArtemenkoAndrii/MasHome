@@ -91,6 +91,8 @@ dependencies {
 
     //Misc
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.maltaisn:icondialog:3.3.0")
+    implementation("com.maltaisn:iconpack-default:1.1.0")
 
     // Testing Libraries
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0-RC2"

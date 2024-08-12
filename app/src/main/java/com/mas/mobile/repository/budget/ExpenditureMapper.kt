@@ -1,7 +1,6 @@
 package com.mas.mobile.repository.budget
 
 import com.mas.mobile.domain.budget.BudgetId
-import com.mas.mobile.domain.budget.CategoryId
 import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.domain.budget.ExpenditureId
 import com.mas.mobile.repository.db.entity.ExpenditureData
@@ -11,7 +10,7 @@ object ExpenditureMapper {
         Expenditure(
             id = ExpenditureId(dto.id),
             name = dto.name,
-            categoryId = CategoryId(dto.categoryId),
+            iconId = null,
             plan = dto.plan,
             fact = dto.fact,
             comment = dto.comment ?: "",
@@ -22,7 +21,7 @@ object ExpenditureMapper {
         ExpenditureData(
             id = model.id.value,
             name = model.name,
-            categoryId = model.categoryId.value,
+            categoryId = -1,
             plan = model.plan,
             fact = model.fact,
             comment = model.comment,

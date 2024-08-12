@@ -19,12 +19,8 @@
     <string name="hint_spending_comment">comment</string>
     <string name="hint_spending_date">date</string>
     <string name="hint_spending_expenditure">category</string>
-    <string name="hint_message_rule_sender">Sender</string>
-    <string name="hint_message_rule_expenditure_matcher">expenditure matcher</string>
-    <string name="hint_message_rule_amount_matcher">amount matcher</string>
-    <string name="hint_message_rule_expenditure">expenditure</string>
     <string name="hint_message_new_message">new message</string>
-    <string name="hint_chart_expenditures">all expenditures</string>
+    <string name="hint_chart_expenditures">all categories</string>
     <string name="hint_message_template_sender">sender</string>
     <string name="hint_message_template_pattern">pattern</string>
     <string name="hint_message_template_example">example</string>
@@ -53,6 +49,7 @@
     <string name="btn_message_category">Select Category</string>
     <string name="btn_message_accept">Accept</string>
     <string name="btn_message_blacklist">Blacklist</string>
+    <string name="btn_menu">Menu</string>
 
     <!-- MENU -->
     <string name="menu_view">View</string>
@@ -61,7 +58,7 @@
     <string name="menu_clone">Clone</string>
     <string name="menu_remove">Remove</string>
     <string name="menu_settings">Settings</string>
-    <string name="menu_budget_expenditures">See expenditures</string>
+    <string name="menu_budget_expenditures">See categories</string>
     <string name="menu_budget_spendings">See spendings</string>
     <string name="menu_budget_activate">Activate</string>
     <string name="menu_budget_template">Template</string>
@@ -120,6 +117,8 @@
 
     <!-- FORMATTER -->
     <string name="formatter_money">%.2f</string>
+    <string name="formatter_percent_of">%d%% of %.2f</string>
+    <string name="formatter_unplanned">unplanned</string>
 
     <!-- VALIDATOR -->
     <string name="validator_min_length">At least %d characters!</string>

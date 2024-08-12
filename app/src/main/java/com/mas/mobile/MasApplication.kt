@@ -2,6 +2,9 @@ package com.mas.mobile
 
 import android.app.Application
 import android.content.Context
+import com.maltaisn.icondialog.pack.IconPack
+import com.maltaisn.icondialog.pack.IconPackLoader
+import com.maltaisn.iconpack.defaultpack.createDefaultIconPack
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.CategoryRepository
 import com.mas.mobile.domain.budget.ExchangeRepository
@@ -13,6 +16,7 @@ import com.mas.mobile.domain.message.MessageTemplateRepository
 import com.mas.mobile.domain.message.QualifierRepository
 import com.mas.mobile.domain.settings.DeferrableActionRepository
 import com.mas.mobile.domain.settings.SettingsRepository
+import com.mas.mobile.presentation.activity.IconPickerActivity
 import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.activity.PolicyActivity
 import com.mas.mobile.presentation.activity.fragment.CommonFragment
@@ -109,6 +113,7 @@ interface AppComponent {
 
     fun injectMainActivity(mainActivity: MainActivity)
     fun injectPolicyActivity(policyActivity: PolicyActivity)
+    fun injectIconPickerActivity(iconPickerActivity: IconPickerActivity)
 
     @Component.Builder
     interface Builder {
@@ -210,5 +215,14 @@ class AppModule {
     @Singleton
     fun resolveNotificationService(context: Context, resourceService: ResourceService): NotificationService {
         return NotificationService(context, resourceService)
+    }
+
+    @Provides
+    @Singleton
+    fun resolveIconPack(context: Context): IconPack {
+        val loader = IconPackLoader(context)
+        val pack = createDefaultIconPack(loader)
+        pack.loadDrawables(loader.drawableLoader)
+        return pack
     }
 }

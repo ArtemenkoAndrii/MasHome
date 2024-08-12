@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.maltaisn.icondialog.pack.IconPack
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.domain.budget.BudgetService
@@ -33,11 +34,15 @@ abstract class CommonFragment : Fragment() {
         lateinit var budgetService: BudgetService
         @Inject
         lateinit var analytics: Analytics
+        @Inject
+        lateinit var iconPack: IconPack
     }
 
     fun getResourceService() = wrapper.resourceService
 
     fun getBudgetService() = wrapper.budgetService
+
+    fun getIconPack() = wrapper.iconPack
 
     fun logEvent(eventName: Analytics.EventName, param: Analytics.ParamName, value: String) {
         wrapper.analytics.logEvent(eventName, param, value)

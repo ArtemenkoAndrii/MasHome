@@ -41,6 +41,10 @@ class SpendingMessageAdapter(
 
     private fun bindCardView(binding:MessageListRowBinding, item: Message) = with (binding) {
         messageListRowCard.setOnClickListener { goToSpending(item) }
+        messageListRowCard.setOnLongClickListener {
+            goToSpending(item, Action.EDIT)
+            true
+        }
 
         messageListCategoryLayout.visibility = View.GONE
         messageListMatchedLayout.visibility = View.GONE
@@ -84,11 +88,11 @@ class SpendingMessageAdapter(
         }
     }
 
-    private fun goToSpending(item: Message) {
+    private fun goToSpending(item: Message, defaultAction: Action = Action.VIEW) {
         fragment.listViewModel.markAsRead(item)
 
         if (item.spendingId != null) {
-            MessageListFragmentDirections.actionToExistingSpending(Action.VIEW.name, item.spendingId!!.value, item.id.value)
+            MessageListFragmentDirections.actionToExistingSpending(defaultAction.name, item.spendingId!!.value, item.id.value)
         } else {
             MessageListFragmentDirections.actionToNewSpending(Action.ADD.name, item.id.value)
         }.also {

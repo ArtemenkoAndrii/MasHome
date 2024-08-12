@@ -22,11 +22,17 @@ class SpendingAdapter(
     override fun bind(binding: SpendingListRowBinding, item: Spending, prior: Spending?) {
         val rowView = binding.spendingListRowLayout
         binding.spending = item
+
         if (prior?.date?.toLocalDate() == item.date.toLocalDate()) {
             binding.spendingListRowDate.visibility = View.GONE
         } else {
             binding.spendingListRowDate.visibility = View.VISIBLE
         }
+
+        if (item.comment.isEmpty()) {
+            binding.spendingListRowComment.visibility = View.GONE
+        }
+
         binding.spendingListRowDate.setText(calcRelativeDate(item.date))
         binding.callback = View.OnClickListener { viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
@@ -68,6 +74,11 @@ class SpendingAdapter(
             val action = SpendingListFragmentDirections.actionToSpending(Action.VIEW.name, item.id.value)
             rowView.findNavController().navigate(action)
         }
+        binding.spendingListRowLayout.setOnLongClickListener {
+            val action = SpendingListFragmentDirections.actionToSpending(Action.EDIT.name, item.id.value)
+            rowView.findNavController().navigate(action)
+            true
+        }
     }
 
     private fun calcRelativeDate(value: LocalDateTime): String {
@@ -75,7 +86,7 @@ class SpendingAdapter(
         return when {
             date.equals(LocalDate.now()) -> this.today
             date.equals(LocalDate.now().minusDays(1)) -> this.yesterday
-            else -> DateTool.dateToString(date)
+            else -> DateTool.dateToAbbreviatedString(date)
         }
     }
 

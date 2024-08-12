@@ -15,15 +15,20 @@ class CategoryAdapter(
 ): BaseAdapter<Category, CategoryListRowBinding>(R.layout.category_list_row) {
     override fun bind(binding: CategoryListRowBinding, item: Category, prior: Category?) {
         binding.model = item
-        binding.categoryRowLayout.setOnClickListener {
+
+        binding.categoryRowIcon.setImageDrawable(fragment.getDrawable(item.iconId))
+
+        binding.layoutRowCard.setOnClickListener {
             val action = CategoryListFragmentDirections.actionToCategory(Action.VIEW.name, item.id.value)
             fragment.findNavController().navigate(action)
         }
-        binding.categoryRowLayout.setOnLongClickListener {
+
+        binding.layoutRowCard.setOnLongClickListener {
             val action = CategoryListFragmentDirections.actionToCategory(Action.EDIT.name, item.id.value)
             fragment.findNavController().navigate(action)
             true
         }
+
         binding.callback = View.OnClickListener{ viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)

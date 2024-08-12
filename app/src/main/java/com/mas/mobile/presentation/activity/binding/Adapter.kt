@@ -3,13 +3,20 @@ package com.mas.mobile.presentation.activity.binding
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
+import com.maltaisn.icondialog.data.Icon
+import com.mas.mobile.R
+import com.mas.mobile.domain.budget.Budget
+import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.presentation.activity.converter.MoneyConverter
+import kotlin.math.absoluteValue
+
 
 // Populates text input on model changed
 @BindingAdapter("android:text")
@@ -85,5 +92,34 @@ fun setSpannableTextListener(view: TextView, listener: InverseBindingListener?) 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+}
+
+@BindingAdapter("app:icon")
+fun setIcon(view: ImageView, icon: Icon?) {
+    if (icon != null) {
+        view.setImageDrawable(icon.drawable)
+    } else {
+        view.setImageResource(R.drawable.ic_trash_bin_24)
+    }
+}
+
+@BindingAdapter("expenditureProgress")
+fun setExpenditureProgress(textView: TextView, expenditure: Expenditure) {
+    textView.text = if (expenditure.plan.absoluteValue < 0.001) {
+        textView.context.getString(R.string.formatter_unplanned)
+    } else {
+        val format = textView.context.getString(R.string.formatter_percent_of)
+        String.format(format, expenditure.progress, expenditure.plan)
+    }
+}
+
+@BindingAdapter("budgetProgress")
+fun setBudgetProgress(textView: TextView, budget: Budget) {
+    textView.text = if (budget.plan.absoluteValue < 0.001) {
+        textView.context.getString(R.string.formatter_unplanned)
+    } else {
+        val format = textView.context.getString(R.string.formatter_percent_of)
+        String.format(format, budget.getProgress(), budget.plan)
     }
 }

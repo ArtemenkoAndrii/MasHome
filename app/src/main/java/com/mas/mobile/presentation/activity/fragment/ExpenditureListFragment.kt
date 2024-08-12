@@ -1,10 +1,12 @@
 package com.mas.mobile.presentation.activity.fragment
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -12,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.ExpenditureListFragmentBinding
+import com.mas.mobile.domain.budget.IconId
+import com.mas.mobile.presentation.activity.MainActivity
 import com.mas.mobile.presentation.adapter.BudgetExpenditureAdapter
 import com.mas.mobile.presentation.adapter.ExpenditureAdapter
 import com.mas.mobile.presentation.viewmodel.ExpenditureListViewModel
@@ -70,7 +74,12 @@ open class ExpenditureListFragment : ListFragment() {
     override fun resolveAddButtonDestination() =
         ExpenditureListFragmentDirections.actionToExpenditureSpending(Action.ADD.name)
 
-    protected open fun getAdapter() = ExpenditureAdapter()
+    protected open fun getAdapter() = ExpenditureAdapter(this)
+
+    fun getDrawable(id: IconId?): Drawable {
+        return this.getIconPack().icons[id?.value]?.drawable
+            ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_circle)!!
+    }
 }
 
 class BudgetExpenditureListFragment: ExpenditureListFragment() {

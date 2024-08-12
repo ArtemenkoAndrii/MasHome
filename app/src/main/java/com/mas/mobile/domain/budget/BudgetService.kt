@@ -136,6 +136,7 @@ class BudgetService @Inject constructor(
             val expenditure = expenditureRepository.create().also {
                 it.name = category.name
                 it.plan = category.plan
+                it.iconId = category.iconId
             }
             budget.addExpenditure(expenditure)
         }

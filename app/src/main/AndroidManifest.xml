@@ -36,6 +36,13 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+        <activity
+            android:name = ".presentation.activity.IconPickerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
         <receiver
             android:name="com.mas.mobile.service.SmsListener"
             android:enabled="true"

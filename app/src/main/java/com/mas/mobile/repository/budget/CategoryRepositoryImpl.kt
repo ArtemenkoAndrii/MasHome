@@ -26,6 +26,7 @@ class CategoryRepositoryImpl(
     override fun create(): Category =
         Category(
             id = CategoryId(db.idGeneratorDAO().generateId().toInt()),
+            iconId = null,
             name = "",
             plan = 0.0,
             isActive = false,
