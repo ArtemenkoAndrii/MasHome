@@ -1,11 +1,13 @@
 package com.mas.mobile.domain.budget
 
+import com.mas.mobile.DummyTaskService
 import com.mas.mobile.domain.settings.DayOfMonth
 import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.Settings
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
+import com.mas.mobile.util.Analytics
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertNull
@@ -32,6 +34,7 @@ class BudgetServiceTest {
     private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
     private val mockSpendingRepository = mockk<SpendingRepository>(relaxed = true)
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
+    private val mockAnalytics = mockk<Analytics>(relaxed = true)
 
     private var testInstance = BudgetService(
         mockResourceService,
@@ -40,6 +43,8 @@ class BudgetServiceTest {
         mockExchangeRepository,
         mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
+        DummyTaskService,
+        mockAnalytics,
         mockBudgetRepository,
         mockExpenditureRepository
     )
@@ -58,7 +63,7 @@ class BudgetServiceTest {
         every { mockBudgetRepository.getBudgetByName(any()) } returns null
         coEvery { mockBudgetRepository.save(capture(budgetSlot)) } returns Unit
 
-        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", CategoryId(-1), 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
+        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", null, 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
 
         every { mockSpendingRepository.create() } returns SPENDING
 
@@ -203,6 +208,7 @@ class BudgetServiceTest {
         val CATEGORIES = mutableListOf(
             Category(
                 id = CategoryId(1),
+                iconId = null,
                 name = "Category1",
                 plan = 1.0,
                 description = "Description 1",
@@ -211,6 +217,7 @@ class BudgetServiceTest {
             ),
             Category(
                 id = CategoryId(2),
+                iconId = null,
                 name = "Category2",
                 plan = 2.0,
                 description = "Description 2",
@@ -219,6 +226,7 @@ class BudgetServiceTest {
             ),
             Category(
                 id = CategoryId(3),
+                iconId = null,
                 name = "Category3",
                 plan = 3.0,
                 description = "Description 3",
@@ -234,12 +242,14 @@ class BudgetServiceTest {
             amount = 0.0,
             expenditure = Expenditure(
                 id = ExpenditureId(-1),
-                name = "",CategoryId(-1),
+                name = "",
+                iconId = null,
                 plan = 0.0,
                 fact = 0.0,
                 comment = "",
                 budgetId = BudgetId(-1)
-            )
+            ),
+            recurrence = Recurrence.Never
         )
 
         var getNextInt = 10

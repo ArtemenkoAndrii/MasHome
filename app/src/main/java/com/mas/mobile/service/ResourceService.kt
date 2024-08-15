@@ -2,6 +2,7 @@ package com.mas.mobile.service
 
 import android.content.Context
 import com.mas.mobile.R
+import com.mas.mobile.domain.budget.Recurrence
 import com.mas.mobile.util.DateTool
 import java.time.LocalDate
 import javax.inject.Inject
@@ -42,6 +43,14 @@ class ResourceService @Inject constructor(
     fun constantPeriodMonths() = context.getString(R.string.constant_period_month)
     fun constantPeriodQuarter() = context.getString(R.string.constant_period_quarter)
     fun constantPeriodYear() = context.getString(R.string.constant_period_year)
+    fun constantRecurrenceMap() =
+        mapOf(
+            Recurrence.Never to context.getString(R.string.constant_recurrence_never),
+            Recurrence.Daily to context.getString(R.string.constant_recurrence_daily),
+            Recurrence.Weekly to context.getString(R.string.constant_recurrence_weekly),
+            Recurrence.Monthly to context.getString(R.string.constant_recurrence_monthly),
+            Recurrence.Quarterly to context.getString(R.string.constant_recurrence_quarterly)
+        )
 
     fun dialogConfirmationOk() = context.getString(R.string.dialog_confirmation_ok)
     fun dialogConfirmationCancel() = context.getString(R.string.dialog_confirmation_cancel)
@@ -59,6 +68,9 @@ class ResourceService @Inject constructor(
     fun labelAnalyticsFact() = context.getString(R.string.label_analytics_fact)
 
     fun hintChartExpenditures() = context.getString(R.string.hint_chart_expenditures)
+    fun hintSpendingRecurrences() = context.getString(R.string.hint_spending_recurrences)
 
     fun validatorPatternFailed() = context.getString(R.string.validator_pattern_failed)
+
+    fun titleScheduled() = context.getString(R.string.title_scheduled)
 }

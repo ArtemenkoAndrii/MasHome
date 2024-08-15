@@ -133,7 +133,7 @@ class BudgetTest {
         val PETROL_EXPENDITURE = Expenditure(
             ExpenditureId(1),
             "Petrol",
-            CategoryId(1),
+            null,
             150.00,
             0.00,
             "A95",
@@ -143,7 +143,7 @@ class BudgetTest {
         val FOOD_EXPENDITURE = Expenditure(
             ExpenditureId(2),
             "Food",
-            CategoryId(0),
+            null,
             100.00,
             0.00,
             "",
@@ -156,7 +156,8 @@ class BudgetTest {
             LocalDateTime.now(),
             20.00,
             FOOD_EXPENDITURE,
-            null
+            null,
+            recurrence = Recurrence.Never
         )
 
         val FOOD_SPENDING_2 = Spending(
@@ -165,7 +166,8 @@ class BudgetTest {
             LocalDateTime.now(),
             5.00,
             FOOD_EXPENDITURE,
-            null
+            null,
+            recurrence = Recurrence.Never
         )
 
         val PETROL_SPENDING = Spending(
@@ -174,7 +176,8 @@ class BudgetTest {
             LocalDateTime.now(),
             80.00,
             PETROL_EXPENDITURE,
-            null
+            null,
+            recurrence = Recurrence.Never
         )
 
         private fun getEmptyBudget(): Budget {

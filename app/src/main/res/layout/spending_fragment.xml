@@ -5,6 +5,7 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.mas.mobile.domain.budget.Budget"/>
         <import type="com.mas.mobile.presentation.activity.converter.MoneyConverter"/>
         <import type="com.mas.mobile.presentation.activity.converter.DateConverter"/>
 
@@ -187,6 +188,26 @@
                 android:maxLength="30"
                 android:singleLine="true"
                 android:text="@={model.expenditureName}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spendingRecurrencesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:hint="@string/hint_spending_recurrences"
+            android:enabled="@{model.isEditable()}"
+            android:visibility="@{model.budget.isScheduled() ? View.VISIBLE : View.GONE}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/spendingRecurrences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="100"
+                android:singleLine="true"
+                android:focusable="false"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

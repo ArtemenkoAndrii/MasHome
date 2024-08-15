@@ -9,6 +9,8 @@ import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
+import com.mas.mobile.service.TaskService
+import com.mas.mobile.util.Analytics
 import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -25,6 +27,8 @@ class BudgetService @Inject constructor(
     private val exchangeRepository: ExchangeRepository,
     private val categoryRepository: CategoryRepository,
     private val errorHandler: ErrorHandler,
+    private val coroutineService: TaskService,
+    private val analytics: Analytics,
     val budgetRepository: BudgetRepository,
     val expenditureRepository: ExpenditureRepository,
 ) {
@@ -48,18 +52,18 @@ class BudgetService @Inject constructor(
     }
 
     fun loadBudgetOrGetActive(budgetId: BudgetId): Budget =
-        if (budgetId.value > 0) {
-            budgetRepository.getBudget(budgetId.value)
-        } else {
+        if (budgetId.value == -1) {
             getActiveBudget()
+        } else {
+            budgetRepository.getBudget(budgetId.value)
         }
         ?: throw BudgetException("Budget ${budgetId.value} not found.")
 
     fun loadLiveBudget(budgetId: BudgetId): LiveData<Budget> =
-        if (budgetId.value > 0) {
-            budgetRepository.live.getBudget(budgetId)
-        } else {
+        if (budgetId.value == -1) {
             this.activeLive
+        } else {
+            budgetRepository.live.getBudget(budgetId)
         }
 
     fun getActiveBudget() =
@@ -67,10 +71,6 @@ class BudgetService @Inject constructor(
 
     fun isPeriodChangeable(budget: Budget) =
         budgetRepository.getLast()?.id == budget.id
-
-    init {
-        reloadActiveBudget()
-    }
 
     fun createNext() = runBlocking {
         val startDate = budgetRepository.getLast()?.lastDayAt?.plusDays(1)?.let {
@@ -94,11 +94,8 @@ class BudgetService @Inject constructor(
                       expenditureName: String,
                       currency: Currency? = null): SpendingId {
         val budget = getActiveBudget()
-        val expenditure = budget.budgetDetails.expenditure
-            .firstOrNull { it.name.lowercase() == expenditureName.trimIndent().lowercase() }
-            ?: expenditureRepository.create().also {
-                it.name = expenditureName.trim()
-            }
+        val expenditure = budget.findExpenditure(expenditureName)
+            ?: createExpenditure(expenditureName)
 
         val spending = spendingRepository.create().also {
             it.comment = comment.trim()
@@ -128,6 +125,44 @@ class BudgetService @Inject constructor(
             errorHandler.toast("Unable to retrieve the current exchange rate. Please try again later.")
             0.00
         }
+    }
+
+    fun createScheduledSpendings() =
+        coroutineService.backgroundTask {
+            val scheduledBudget = budgetRepository.getBudget(Budget.SCHEDULED_BUDGET_ID)
+            if (scheduledBudget != null) {
+                scheduledBudget.budgetDetails.spending
+                    .filter { it.scheduledDate != null && it.scheduledDate!! < LocalDateTime.now() }
+                    .forEach { scheduled ->
+                        val date = scheduled.scheduledDate!!
+                        spend(
+                            date = date,
+                            amount = scheduled.amount,
+                            comment = scheduled.comment,
+                            expenditureName = scheduled.expenditure.name,
+                            currency = scheduled.exchangeInfo?.currency,
+                        )
+                        scheduled.date = date
+                    }
+                budgetRepository.save(scheduledBudget)
+            } else {
+                analytics.logEvent(Analytics.Event.APP_ERROR, Analytics.Param.STATUS, "Scheduled budget not found.")
+            }
+        }
+
+    fun createExpenditure(expenditureName: String): Expenditure {
+        val name = expenditureName.trim()
+        val category = categoryRepository.getAll().firstOrNull { it.name.equals(name, true) }
+
+        return expenditureRepository.create().also { expenditure ->
+            expenditure.name = expenditureName
+            expenditure.iconId = category?.iconId
+            expenditure.plan = category?.plan ?: 0.00
+        }
+    }
+
+    init {
+        reloadActiveBudget()
     }
 
     private fun populateExpenditures(budget: Budget) {

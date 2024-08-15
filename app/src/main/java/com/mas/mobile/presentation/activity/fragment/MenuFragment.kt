@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavDirections
 import com.mas.mobile.R
 import com.mas.mobile.databinding.MenuFragmentBinding
+import com.mas.mobile.domain.budget.Budget
 
 
 class MenuFragment : CommonFragment() {
@@ -25,7 +26,9 @@ class MenuFragment : CommonFragment() {
             menuSettingsLayout.navigateOnClick(MenuFragmentDirections.actionToSettings())
             menuMessageOriginsLayout.navigateOnClick(MenuFragmentDirections.actionToMessageTemplates())
             menuCategoriesLayout.navigateOnClick(MenuFragmentDirections.actionToCategories())
-            //menuScheduledLayout.navigateOnClick()
+            menuScheduledLayout.navigateOnClick(MenuFragmentDirections.actionToSpendingScheduled(
+                Budget.SCHEDULED_BUDGET_ID
+            ))
         }
 
         return layout

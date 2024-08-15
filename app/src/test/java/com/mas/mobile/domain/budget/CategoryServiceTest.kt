@@ -17,6 +17,7 @@ class CategoryServiceTest {
         every { mockCategoryRepository.getAll() } returns listOf(
             Category(
                 id = CategoryId(1),
+                iconId = null,
                 name = "Food",
                 plan = 100.00,
                 isActive = true,
@@ -26,6 +27,7 @@ class CategoryServiceTest {
             Category(
                 id = CategoryId(2),
                 name = "Petrol",
+                iconId = null,
                 plan = 200.00,
                 isActive = true,
                 description = "All about petrol",

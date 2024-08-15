@@ -53,6 +53,7 @@ data class ExpenditureData(
     @ColumnInfo(name = "name")
     override var name: String = "",
 
+    // Not used, but can't be removed without the table recreation
     @ColumnInfo(name = "category_id")
     var categoryId: Int = -1,
 
@@ -66,5 +67,8 @@ data class ExpenditureData(
     var comment: String? = null,
 
     @ColumnInfo(name = "budget_id")
-    var budget_id: Int = 0
+    var budget_id: Int = 0,
+
+    @ColumnInfo(name = "icon")
+    val icon: Int?
 ): Searchable(id, name)

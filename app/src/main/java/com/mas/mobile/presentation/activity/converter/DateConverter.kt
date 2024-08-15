@@ -34,4 +34,9 @@ object DateConverter {
     fun dateTimeToTimeAsString(value: LocalDateTime): String {
         return DateTool.timeAsString(value)
     }
+
+    @JvmStatic
+    fun dateTimeToAbbreviatedString(value: LocalDateTime): String {
+        return DateTool.dateToAbbreviatedString(value.toLocalDate())
+    }
 }

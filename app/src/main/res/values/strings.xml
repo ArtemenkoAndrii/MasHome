@@ -19,6 +19,7 @@
     <string name="hint_spending_comment">comment</string>
     <string name="hint_spending_date">date</string>
     <string name="hint_spending_expenditure">category</string>
+    <string name="hint_spending_recurrences">recurrences</string>
     <string name="hint_message_new_message">new message</string>
     <string name="hint_chart_expenditures">all categories</string>
     <string name="hint_message_template_sender">sender</string>
@@ -119,6 +120,7 @@
     <string name="formatter_money">%.2f</string>
     <string name="formatter_percent_of">%d%% of %.2f</string>
     <string name="formatter_unplanned">unplanned</string>
+    <string name="formatter_next_recurrences">%s (next: %s)</string>
 
     <!-- VALIDATOR -->
     <string name="validator_min_length">At least %d characters!</string>
@@ -148,6 +150,7 @@
     <string name="title_menu">More</string>
     <string name="title_category_list">Categories</string>
     <string name="title_category">Category</string>
+    <string name="title_scheduled">Scheduled</string>
 
     <!-- FRAGMENT LABELS -->
     <string name="label_settings_period">Budget type</string>
@@ -174,6 +177,11 @@
     <string name="constant_period_month">Month</string>
     <string name="constant_period_quarter">Quarter</string>
     <string name="constant_period_year">Year</string>
+    <string name="constant_recurrence_never">Never</string>
+    <string name="constant_recurrence_daily">Daily</string>
+    <string name="constant_recurrence_weekly">Weekly</string>
+    <string name="constant_recurrence_monthly">Monthly</string>
+    <string name="constant_recurrence_quarterly">Quarterly</string>
 
     <!-- ERRORS -->
     <string name="error_unexpected">Ups, something went wrong</string>

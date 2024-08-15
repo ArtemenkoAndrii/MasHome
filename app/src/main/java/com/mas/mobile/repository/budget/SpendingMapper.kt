@@ -2,6 +2,7 @@ package com.mas.mobile.repository.budget
 
 import com.mas.mobile.domain.budget.ExchangeInfo
 import com.mas.mobile.domain.budget.Expenditure
+import com.mas.mobile.domain.budget.Recurrence
 import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.repository.db.entity.SpendingData
@@ -22,7 +23,12 @@ object SpendingMapper {
                     rate = dto.rate ?: 0.00,
                     currency = Currency.getInstance(dto.currency) ?: CurrencyTools.getSystemCurrency()
                 )
-            }
+            },
+            recurrence = try {
+                            Recurrence.valueOf(dto.recurrence)
+                         } catch (e: IllegalArgumentException) {
+                            Recurrence.Never
+                         }
         )
 
     fun toDto(model: Spending) =
@@ -34,7 +40,8 @@ object SpendingMapper {
             expenditureId = model.expenditure.id.value,
             currency = model.exchangeInfo?.currency?.currencyCode,
             rate = model.exchangeInfo?.rate,
-            foreignAmount = model.exchangeInfo?.rawAmount
+            foreignAmount = model.exchangeInfo?.rawAmount,
+            recurrence = model.recurrence.name
         )
 }
 

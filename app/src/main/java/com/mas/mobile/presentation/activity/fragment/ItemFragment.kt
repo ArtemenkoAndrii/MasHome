@@ -38,20 +38,19 @@ abstract class ItemFragment<T: ItemViewModel<*>>: CommonFragment() {
     }
 
     protected fun showDateTimeDialog(editor: TextInputEditText) {
-        val currentDateTime = Calendar.getInstance()
-        val startYear = currentDateTime.get(Calendar.YEAR)
-        val startMonth = currentDateTime.get(Calendar.MONTH)
-        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
-        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
-        val startMinute = currentDateTime.get(Calendar.MINUTE)
+        val current = try {
+            DateTool.stringToDateTime(editor.text.toString())
+        } catch (e: Throwable) {
+            LocalDateTime.now()
+        }
 
         DatePickerDialog(requireContext(), { _, year, month, day ->
             TimePickerDialog(requireContext(), { _, hour, minute ->
                 val dateTime = LocalDateTime.of(year, month + 1, day, hour, minute)
                 val result = DateTool.dateTimeToString(dateTime)
                 editor.setText(result)
-            }, startHour, startMinute, true).show()
-        }, startYear, startMonth, startDay).show()
+            }, current.hour, current.minute, true).show()
+        }, current.year, current.month.value-1, current.dayOfMonth).show()
     }
 
     private fun getBudgetName(budgetId: Int): String {

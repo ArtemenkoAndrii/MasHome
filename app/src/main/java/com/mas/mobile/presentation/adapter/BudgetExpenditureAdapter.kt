@@ -14,6 +14,8 @@ class BudgetExpenditureAdapter(private val fragment: ExpenditureListFragment): E
     override fun bind(binding: ExpenditureListRowBinding, item: Expenditure, prior: Expenditure?) {
         binding.expenditure = item
 
+        binding.expenditureRowIcon.setImageDrawable(fragment.getDrawable(item.iconId))
+
         binding.callback = View.OnClickListener { viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)

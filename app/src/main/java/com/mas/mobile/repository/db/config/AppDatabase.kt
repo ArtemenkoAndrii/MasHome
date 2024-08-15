@@ -32,7 +32,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 16,
+    version = 17,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -60,6 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
+                            db.execSQL(DML.SCHEDULED_BUDGET)
                             db.execSQL(DML.TEMPLATE_GENERATOR)
                             db.execSQLs(DML.DEFAULT_QUALIFIERS)
                             db.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
@@ -69,7 +70,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                         MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
                         MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14,
-                        MIGRATION_14_15, MIGRATION_15_16)
+                        MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
                     .build()
             }
             return INSTANCE!!
@@ -244,5 +245,13 @@ val MIGRATION_14_15 = object : Migration(14, 15) {
 val MIGRATION_15_16 = object : Migration(15, 16) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE categories ADD COLUMN icon INTEGER;")
+    }
+}
+
+val MIGRATION_16_17 = object : Migration(16, 17) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE spendings ADD COLUMN recurrence TEXT DEFAULT 'Never'")
+        database.execSQL("ALTER TABLE expenditures ADD COLUMN icon INTEGER;")
+        database.execSQL(DML.SCHEDULED_BUDGET)
     }
 }

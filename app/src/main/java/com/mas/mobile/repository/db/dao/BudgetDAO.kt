@@ -7,10 +7,10 @@ import java.time.LocalDate
 
 @Dao
 interface BudgetDAO {
-    @Query("SELECT * FROM budgets ORDER BY startsOn DESC")
+    @Query("SELECT * FROM budgets WHERE id > 0 ORDER BY startsOn DESC")
     fun getAllLive(): LiveData<List<Budget>>
 
-    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY startsOn DESC")
+    @Query("SELECT * FROM budgets WHERE id > 0 AND lastDayAt < :date ORDER BY startsOn DESC")
     fun getCompleted(date: LocalDate = LocalDate.now()): List<Budget>
 
     @Query("SELECT * FROM budgets WHERE id = :budgetId")
@@ -22,10 +22,13 @@ interface BudgetDAO {
     @Query("SELECT * FROM budgets WHERE name = :name")
     fun getByName(name: String): Budget?
 
-    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND lastDayAt < :date ORDER BY lastDayAt DESC LIMIT 1")
+    @Query("SELECT b.* FROM budgets b JOIN expenditures e ON b.id = e.budget_id JOIN spendings s ON s.expenditure_id = e.id WHERE s.id = :id")
+    fun getBySpendingId(id: Int): Budget?
+
+    @Query("SELECT * FROM budgets WHERE id > 0 AND lastDayAt < :date ORDER BY lastDayAt DESC LIMIT 1")
     fun getLatestEndedOn(date: LocalDate): Budget?
 
-    @Query("SELECT * FROM budgets WHERE id > ${Budget.TEMPLATE_ID} AND :date BETWEEN startsOn AND lastDayAt")
+    @Query("SELECT * FROM budgets WHERE id > 0 AND :date BETWEEN startsOn AND lastDayAt")
     fun getActiveOn(date: LocalDate): Budget?
 
     @Upsert

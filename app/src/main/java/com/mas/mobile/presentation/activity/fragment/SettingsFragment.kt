@@ -174,37 +174,6 @@ class SettingsFragment : CommonFragment() {
         }
     }
 
-    private fun showOptionsPicker(title: String, list: List<String>, default: String?, result: (String) -> Unit) {
-        val layout = LayoutInflater.from(this.requireContext()).inflate(R.layout.popup_options, null)
-        val radioGroup = layout.findViewById<RadioGroup>(R.id.popupRadioGroup)
-
-        list.forEachIndexed { index, value ->
-            val button = RadioButton(layout.context).also {
-                it.text = value
-                it.id = index
-            }
-            radioGroup.addView(button)
-
-            if (value == default) {
-                radioGroup.check(index)
-            }
-        }
-
-        AlertDialog.Builder(this.requireContext())
-            .setTitle(title)
-            .setView(layout)
-            .setPositiveButton(getResourceService().dialogConfirmationOk()) { _, _ ->
-                val selectedId = radioGroup.checkedRadioButtonId
-                val radioButton = radioGroup.findViewById<RadioButton>(selectedId)
-                result(radioButton.text.toString())
-            }
-            .setNegativeButton(getResourceService().dialogConfirmationCancel()) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
     private fun showListPicker(title: String, list: List<String>, default: String?, result: (String) -> Unit) {
         val numberPicker = NumberPicker(requireContext()).apply {
             minValue = 0

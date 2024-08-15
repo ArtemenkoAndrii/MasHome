@@ -27,6 +27,7 @@ class Analytics {
         val MESSAGE_EVALUATED = EventName("message_evaluated")
         val MESSAGE_TEMPLATE_FAILED = EventName("message_template_failed")
         val APP_UPDATE_SUGGESTED = EventName("app_update_suggested")
+        val APP_ERROR = EventName("app_error")
     }
 
     object Param {

@@ -38,9 +38,5 @@ data class Budget(
 
     @ColumnInfo(name = "currency")
     var currency: String
-): Searchable(id, name) {
-    companion object {
-        const val TEMPLATE_ID = 1
-    }
-}
+): Searchable(id, name)
 

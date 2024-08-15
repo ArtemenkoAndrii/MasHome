@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.databinding.SpendingFragmentBinding
+import com.mas.mobile.presentation.activity.binding.setRecurrenceText
 import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.SpendingViewModel
 import com.mas.mobile.presentation.viewmodel.validator.Action
@@ -81,6 +82,21 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
             R.layout.autocomplete_item,
             viewModel.availableExpenditures.toList()).also {
             binding.spendingExpenditure.setAdapter(it)
+        }
+
+
+        val recurrences = viewModel.availabilityRecurrences.values.toList()
+        binding.spendingRecurrences.setOnClickListener {
+            showOptionsPicker(getResourceService().hintSpendingRecurrences(), recurrences, recurrences[0]) {
+                viewModel.recurrence.value = it
+            }
+        }
+
+        viewModel.recurrence.observeForever {
+            setRecurrenceText(binding.spendingRecurrences, viewModel.model)
+        }
+        viewModel.scheduledDate.observeForever {
+            setRecurrenceText(binding.spendingRecurrences, viewModel.model)
         }
 
 

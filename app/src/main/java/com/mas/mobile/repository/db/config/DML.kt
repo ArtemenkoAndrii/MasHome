@@ -8,7 +8,7 @@ import java.util.Locale
 
 class DML {
     companion object {
-        private val maxDate = SQLiteTypeConverter().fromLocalDate(LocalDate.MAX)
+        val MIN_DATE = SQLiteTypeConverter().fromLocalDate(LocalDate.MIN)
 
         private fun String.plusIf(condition: Boolean, value: () -> String) = this.plus(
             if (condition) {
@@ -18,13 +18,18 @@ class DML {
             }
         )
 
-        private fun getCurrency() = CurrencyTools.getSystemCurrency()
+        fun getCurrency() = CurrencyTools.getSystemCurrency()
 
         private fun getLanguage() = Locale.getDefault().language.uppercase()
 
         val TEMPLATE_GENERATOR = """
             INSERT INTO generator(id)
             VALUES(100)
+        """.trimIndent()
+
+        val SCHEDULED_BUDGET = """
+            INSERT INTO budgets(id, name, plan, fact, startsOn, lastDayAt, isActive, comment, currency)
+            VALUES(-2, 'Scheduled', 0.00, 0.00, ${MIN_DATE}, ${MIN_DATE}, false, '', '${getCurrency()}');
         """.trimIndent()
 
         val GREETING_MESSAGE_TEMPLATES = """
@@ -79,7 +84,7 @@ class DML {
             INSERT INTO qualifiers(id, name, type) VALUES(36, "skype", ${Qualifier.BLACKLIST});
             INSERT INTO qualifiers(id, name, type) VALUES(37, "slack", ${Qualifier.BLACKLIST});
             INSERT INTO qualifiers(id, name, type) VALUES(38, "pinterest", ${Qualifier.BLACKLIST});
-        """.plusIf(language == "UK") {
+        """.plusIf(language == "UA") {
         """
             INSERT INTO qualifiers(id, name, type) VALUES(39, "покупка", ${Qualifier.CATCH});
             INSERT INTO qualifiers(id, name, type) VALUES(40, "оплата", ${Qualifier.CATCH});
@@ -91,7 +96,7 @@ class DML {
             INSERT INTO qualifiers(id, name, type) VALUES(46, "помилка", ${Qualifier.SKIP});
             INSERT INTO qualifiers(id, name, type) VALUES(47, "недостатньо", ${Qualifier.SKIP});
         """ }.plusIf(language == "RU") {
-                """
+        """
             INSERT INTO qualifiers(id, name, type) VALUES(48, "покупка", ${Qualifier.CATCH});
             INSERT INTO qualifiers(id, name, type) VALUES(49, "оплата", ${Qualifier.CATCH});
             INSERT INTO qualifiers(id, name, type) VALUES(50, "счет", ${Qualifier.CATCH});
@@ -102,7 +107,7 @@ class DML {
             INSERT INTO qualifiers(id, name, type) VALUES(55, "ошибка", ${Qualifier.SKIP});
             INSERT INTO qualifiers(id, name, type) VALUES(56, "недостаточно", ${Qualifier.SKIP});
         """ }.plusIf(language == "ES") {
-                """
+        """
             INSERT INTO qualifiers(id, name, type) VALUES(57, "pago", ${Qualifier.CATCH});
             INSERT INTO qualifiers(id, name, type) VALUES(58, "pagado", ${Qualifier.CATCH});
             INSERT INTO qualifiers(id, name, type) VALUES(59, "cargo", ${Qualifier.CATCH});
@@ -129,40 +134,44 @@ class DML {
         """ }.trimIndent()
 
         val GREETING_CATEGORIES = """
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(1, "Rent", "Payments for living accommodations, cars, etc.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(2, "Groceries", "Regular purchases of food and household supplies etc.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(3, "Utilities/Bills", "Costs for essential services like electricity, water, gas, and heating.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(4, "Transport", "xpenses related to commuting and travel, including public transport, fuel and car maintenance.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(5, "Health", "Medical expenses such as doctor visits, medications and other health-related costs.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(6, "Education", "Costs related to schooling, including tuition fees, books, supplies, and educational activities.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(7, "Insurance", "Premiums paid for various types of insurance coverage, such as health, home, and auto insurance.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(8, "Childcare", "Expenses for daycare, babysitting, after-school programs, and other child-related care services.", 100.00, 0, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(9, "Shopping", "Expenditures on clothing, accessories, electronics, and other personal or household items.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(10, "Restaurants", "Money spent on dining out at restaurants, cafes, and other eateries.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(11, "Entertainment", "Money spent on dining out at restaurants, cafes, and other eateries.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(12, "Subscriptions", "Monthly fees for services like streaming platforms, magazines, memberships, and other subscription-based services.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(13, "Beauty", "Spending on personal care and beauty products, salon services, skincare, and cosmetics.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(14, "Sport", "Costs associated with sports activities, gym memberships, fitness classes, and sporting equipment.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(15, "Leisure", "Expenses for leisure activities such as travel, vacations, hobbies, and other recreational pursuits.", 100.00, 1, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(16, "Pet care", "Costs for pet food, veterinary care, grooming, and other pet-related expenses.", 100.00, 0, "");
-            INSERT INTO categories(id, name, description, plan, active, merchants)
-            VALUES(17, "Gifts/Charity", "Money spent on gifts for others and donations to charitable organizations.", 100.00, 1, "");
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(1, 'Housing', 'Rent for housing, garage fees, mortgage payments, etc.', 1000.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(2, 'Groceries', 'Regular purchases of food and household supplies etc.', 400.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(3, 'Auto', 'Gasoline, parking, maintenance, and other.', 300.00, 0, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(4, 'Utilities', 'Costs for essential services like electricity, water, gas, and heating.', 100.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(5, 'Leisure', 'Expenses for leisure activities such as travel, vacations, hobbies, and other recreational pursuits.', 200.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(6, 'Misc', 'Everything that doesn''t fall into any category.', 200.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(7, 'Shopping', 'Expenditures on clothing, accessories, electronics, and other personal or household items.', 150.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(8, 'Entertainment', 'Movies, attending concerts, playing video games etc.', 150.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(9, 'Childcare', 'Expenses for daycare, babysitting, after-school programs, and other child-related care services.', 100.00, 0, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(10, 'Restaurants', 'Money spent on dining out at restaurants, cafes, and other eateries.', 100.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(11, 'Transport', 'Expenses related to public transport.', 50.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(12, 'Health', 'Medical expenses such as doctor visits, medications, and other health-related costs.', 50.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(13, 'Education', 'Costs related to schooling, including tuition fees, books, supplies, and educational activities.', 50.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(14, 'Insurance', 'Premiums paid for various types of insurance coverage, such as health, home, and auto insurance.', 50.00, 0, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(15, 'Beauty', 'Spending on personal care and beauty products, salon services, skincare, and cosmetics.', 50.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(16, 'Sport', 'Costs associated with sports activities, gym memberships, fitness classes, and sporting equipment.', 30.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(17, 'Subscriptions', 'Monthly fees for services like streaming platforms, magazines, memberships, and other subscription-based services.', 20.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(18, 'Gifts/Charity', 'Money spent on gifts for others and donations to charitable organizations.', 20.00, 1, '', 0);            
+            INSERT INTO categories(id, name, description, plan, active, merchants, icon)
+            VALUES(19, 'Pet care', 'Costs for pet food, veterinary care, grooming, and other pet-related expenses.', 15.00, 0, '', 0);
         """.trimIndent()
     }
 }

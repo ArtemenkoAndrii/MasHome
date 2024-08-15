@@ -20,8 +20,8 @@ class SpendingListViewModel @AssistedInject constructor(
     val expenditure = expenditureRepository.getExpenditure(ExpenditureId(expenditureId))
     val spendings =
         when {
-            expenditureId > 0 -> spendingRepository.getLiveSpendings(ExpenditureId(expenditureId))
-            budgetId > 0 -> spendingRepository.getLiveSpendings(BudgetId(budgetId))
+            expenditureId != -1 -> spendingRepository.getLiveSpendings(ExpenditureId(expenditureId))
+            budgetId != -1 -> spendingRepository.getLiveSpendings(BudgetId(budgetId))
             else -> spendingRepository.getLiveSpendings(LocalDate.now().minusDays(30))
         }
 

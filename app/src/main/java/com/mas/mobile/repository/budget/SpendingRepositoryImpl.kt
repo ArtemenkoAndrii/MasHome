@@ -24,7 +24,8 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
                 fact = 0.0,
                 comment = "",
                 budgetId = BudgetId(-1)
-            )
+            ),
+            recurrence = Recurrence.Never
         )
 
     override fun getSpending(id: SpendingId): Spending? =
@@ -34,7 +35,7 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
 
     override fun getLiveSpendings(from: LocalDate): LiveData<List<Spending>> =
         Transformations.map(db.spendingDao().getLiveSpendings(from.atStartOfDay())) { list ->
-            list.map { it.data.toModel(it.expenditure.toModel()) }.toList()
+            list.map { it.data.toModel(it.expenditure.toModel()) }.toList().filter { it.expenditure.budgetId.value > 0 }
         }
 
     override fun getLiveSpendings(budgetId: BudgetId): LiveData<List<Spending>> =

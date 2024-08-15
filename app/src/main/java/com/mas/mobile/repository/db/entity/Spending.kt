@@ -71,5 +71,8 @@ data class SpendingData (
     var rate: Double? = null,
 
     @ColumnInfo(name = "foreignAmount")
-    var foreignAmount: Double? = null
+    var foreignAmount: Double? = null,
+
+    @ColumnInfo(name = "recurrence")
+    var recurrence: String
 )

@@ -21,6 +21,7 @@ data class Budget(
 
     fun getProgress() = (fact * 100 / plan).toInt()
     fun getStatus() = "${MoneyConverter.doubleToString(fact)} / ${MoneyConverter.doubleToString(plan)}"
+    fun isScheduled() = id.value == SCHEDULED_BUDGET_ID
 
     fun getExpenditure(expenditureId: ExpenditureId) =
         budgetDetails.expenditure.firstOrNull{ it.id == expenditureId }
@@ -83,6 +84,10 @@ data class Budget(
         }
 
         require(!duplicate) { "Expenditure name ${expenditure.name} isn't unique" }
+    }
+
+    companion object {
+        const val SCHEDULED_BUDGET_ID = -2
     }
 }
 

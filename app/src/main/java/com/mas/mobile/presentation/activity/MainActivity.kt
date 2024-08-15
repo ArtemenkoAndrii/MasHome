@@ -28,6 +28,7 @@ import com.mas.mobile.domain.message.MessageRepository
 import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.AppUpdateCheckWorker
 import com.mas.mobile.service.DateListener
+import com.mas.mobile.service.ScheduledSpendingWorker
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         this.applicationContext.registerReceiver(dateListener, IntentFilter(Intent.ACTION_TIME_TICK))
 
-        schedulePeriodicAppUpdatesCheck()
+        startWorkManagers()
     }
 
     override fun onDestroy() {
@@ -152,13 +153,19 @@ class MainActivity : AppCompatActivity() {
         return findNavController(R.id.nav_host_view).navigateUp(appBarConfig)
     }
 
-    private fun schedulePeriodicAppUpdatesCheck() {
+    private fun startWorkManagers() {
         val updateCheckRequest = PeriodicWorkRequestBuilder<AppUpdateCheckWorker>(2, TimeUnit.HOURS).build()
-
         WorkManager.getInstance(this.applicationContext).enqueueUniquePeriodicWork(
             "periodicUpdateCheck",
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE,
             updateCheckRequest
+        )
+
+        val scheduledSpendingRequest = PeriodicWorkRequestBuilder<ScheduledSpendingWorker>(2, TimeUnit.HOURS).build()
+        WorkManager.getInstance(this.applicationContext).enqueueUniquePeriodicWork(
+            "scheduledSpending",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            scheduledSpendingRequest
         )
     }
 }

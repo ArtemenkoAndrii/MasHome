@@ -90,23 +90,23 @@ class AnalyticsServiceTest {
 
     private companion object {
         val EXP2 = mutableListOf(
-            Expenditure(ExpenditureId(6), "TestExpenditure1", CategoryId(-1), 10.00, 8.97, "No comments", BudgetId(2)),
-            Expenditure(ExpenditureId(7), "TestExpenditure2", CategoryId(-1), 15.00, 16.11, "No comments", BudgetId(2)),
-            Expenditure(ExpenditureId(8), "TestExpenditure3", CategoryId(-1), 30.00, 45.00, "No comments", BudgetId(2)),
-            Expenditure(ExpenditureId(9), "TestExpenditure5", CategoryId(-1), 0.00, 11.00, "No comments", BudgetId(2)),
+            Expenditure(ExpenditureId(6), "TestExpenditure1", null, 10.00, 8.97, "No comments", BudgetId(2)),
+            Expenditure(ExpenditureId(7), "TestExpenditure2", null, 15.00, 16.11, "No comments", BudgetId(2)),
+            Expenditure(ExpenditureId(8), "TestExpenditure3", null, 30.00, 45.00, "No comments", BudgetId(2)),
+            Expenditure(ExpenditureId(9), "TestExpenditure5", null, 0.00, 11.00, "No comments", BudgetId(2)),
         )
         val EXP1 = mutableListOf(
-            Expenditure(ExpenditureId(1), "TestExpenditure1", CategoryId(-1), 10.00, 9.50, "No comments", BudgetId(1)),
-            Expenditure(ExpenditureId(2), "TestExpenditure2", CategoryId(-1), 15.00, 16.00, "No comments", BudgetId(1)),
-            Expenditure(ExpenditureId(3), "TestExpenditure3", CategoryId(-1), 30.00, 35.00, "No comments", BudgetId(1)),
-            Expenditure(ExpenditureId(4), "TestExpenditure4", CategoryId(-1), 8.00, 40.00, "No comments", BudgetId(1)),
-            Expenditure(ExpenditureId(5), "TestExpenditure5", CategoryId(-1), 0.00, 25.00, "No comments", BudgetId(1)),
+            Expenditure(ExpenditureId(1), "TestExpenditure1", null, 10.00, 9.50, "No comments", BudgetId(1)),
+            Expenditure(ExpenditureId(2), "TestExpenditure2", null, 15.00, 16.00, "No comments", BudgetId(1)),
+            Expenditure(ExpenditureId(3), "TestExpenditure3", null, 30.00, 35.00, "No comments", BudgetId(1)),
+            Expenditure(ExpenditureId(4), "TestExpenditure4", null, 8.00, 40.00, "No comments", BudgetId(1)),
+            Expenditure(ExpenditureId(5), "TestExpenditure5", null, 0.00, 25.00, "No comments", BudgetId(1)),
         )
         val EXP3 = mutableListOf(
-            Expenditure(ExpenditureId(6), "TestExpenditure1", CategoryId(-1), 10.00, 9.00, "No comments", BudgetId(3)),
-            Expenditure(ExpenditureId(7), "TestExpenditure2", CategoryId(-1), 15.00, 15.00, "No comments", BudgetId(3)),
-            Expenditure(ExpenditureId(8), "TestExpenditure3", CategoryId(-1), 30.00, 33.00, "No comments", BudgetId(3)),
-            Expenditure(ExpenditureId(9), "TestExpenditure5", CategoryId(-1), 0.00, 5.00, "No comments", BudgetId(3)),
+            Expenditure(ExpenditureId(6), "TestExpenditure1", null, 10.00, 9.00, "No comments", BudgetId(3)),
+            Expenditure(ExpenditureId(7), "TestExpenditure2", null, 15.00, 15.00, "No comments", BudgetId(3)),
+            Expenditure(ExpenditureId(8), "TestExpenditure3", null, 30.00, 33.00, "No comments", BudgetId(3)),
+            Expenditure(ExpenditureId(9), "TestExpenditure5", null, 0.00, 5.00, "No comments", BudgetId(3)),
         )
         val BUDGETS = listOf(
             Budget(

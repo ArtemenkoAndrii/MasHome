@@ -10,6 +10,7 @@ interface BudgetRepository : Repository<Budget> {
     fun createBudget(): Budget
     fun getBudget(budgetId: Int): Budget?
     fun getBudgetByName(name: String): Budget?
+    fun getBudgetBySpendingId(id: SpendingId): Budget?
     fun getOnDate(date: LocalDate): Budget?
     fun getLast(): Budget?
     fun getCompleted(): List<Budget>

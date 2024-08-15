@@ -1,7 +1,10 @@
 package com.mas.mobile.presentation.activity.fragment
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -75,6 +78,37 @@ abstract class CommonFragment : Fragment() {
                 .setCancelable(false)
                 .setPositiveButton(R.string.dialog_confirmation_gotit) { _, _ -> confirm() }
         }.create().show()
+    }
+
+    protected fun showOptionsPicker(title: String, list: List<String>, default: String?, result: (String) -> Unit) {
+        val layout = LayoutInflater.from(this.requireContext()).inflate(R.layout.popup_options, null)
+        val radioGroup = layout.findViewById<RadioGroup>(R.id.popupRadioGroup)
+
+        list.forEachIndexed { index, value ->
+            val button = RadioButton(layout.context).also {
+                it.text = value
+                it.id = index
+            }
+            radioGroup.addView(button)
+
+            if (value == default) {
+                radioGroup.check(index)
+            }
+        }
+
+        AlertDialog.Builder(this.requireContext())
+            .setTitle(title)
+            .setView(layout)
+            .setPositiveButton(getResourceService().dialogConfirmationOk()) { _, _ ->
+                val selectedId = radioGroup.checkedRadioButtonId
+                val radioButton = radioGroup.findViewById<RadioButton>(selectedId)
+                result(radioButton.text.toString())
+            }
+            .setNegativeButton(getResourceService().dialogConfirmationCancel()) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     protected fun go(direction: NavDirections): Boolean {

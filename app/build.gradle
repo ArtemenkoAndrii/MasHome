@@ -97,7 +97,7 @@ dependencies {
     // Testing Libraries
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0-RC2"
     testImplementation "org.jetbrains.kotlin:kotlin-test:1.8.0-RC2"
-    testImplementation ("io.mockk:mockk:1.13.9") {
+    testImplementation ("io.mockk:mockk:1.13.12") {
         exclude group: 'org.junit', module: 'junit'
     }
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.1"

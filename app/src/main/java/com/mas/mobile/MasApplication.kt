@@ -51,6 +51,7 @@ import com.mas.mobile.service.DateListener
 import com.mas.mobile.service.NotificationListener
 import com.mas.mobile.service.NotificationService
 import com.mas.mobile.service.ResourceService
+import com.mas.mobile.service.ScheduledSpendingWorker
 import com.mas.mobile.service.SmsListener
 import com.mas.mobile.service.TaskService
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
@@ -110,6 +111,7 @@ interface AppComponent {
     fun injectNotificationListener(notificationListener: NotificationListener)
     fun injectCommonFragment(wrapper: CommonFragment.CommonFragmentWrapper)
     fun injectAppUpdateCheckWorker(worker: AppUpdateCheckWorker)
+    fun injectScheduledSpendingWorker(worker: ScheduledSpendingWorker)
 
     fun injectMainActivity(mainActivity: MainActivity)
     fun injectPolicyActivity(policyActivity: PolicyActivity)

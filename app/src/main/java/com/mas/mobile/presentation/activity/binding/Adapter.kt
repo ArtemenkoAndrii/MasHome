@@ -14,7 +14,10 @@ import com.maltaisn.icondialog.data.Icon
 import com.mas.mobile.R
 import com.mas.mobile.domain.budget.Budget
 import com.mas.mobile.domain.budget.Expenditure
+import com.mas.mobile.domain.budget.Recurrence
+import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.presentation.activity.converter.MoneyConverter
+import com.mas.mobile.util.DateTool
 import kotlin.math.absoluteValue
 
 
@@ -121,5 +124,25 @@ fun setBudgetProgress(textView: TextView, budget: Budget) {
     } else {
         val format = textView.context.getString(R.string.formatter_percent_of)
         String.format(format, budget.getProgress(), budget.plan)
+    }
+}
+
+@BindingAdapter("recurrenceText")
+fun setRecurrenceText(textView: TextView, spending: Spending) {
+    val context = textView.context
+    val scheduled = spending.scheduledDate?.let { DateTool.dateTimeToString(it) }
+    val recurrence = when(spending.recurrence) {
+            Recurrence.Never -> context.getString(R.string.constant_recurrence_never)
+            Recurrence.Daily -> context.getString(R.string.constant_recurrence_daily)
+            Recurrence.Weekly -> context.getString(R.string.constant_recurrence_weekly)
+            Recurrence.Monthly -> context.getString(R.string.constant_recurrence_monthly)
+            Recurrence.Quarterly -> context.getString(R.string.constant_recurrence_quarterly)
+        }
+
+    textView.text = if (scheduled == null) {
+        recurrence
+    } else {
+        val formatter = textView.context.getString(R.string.formatter_next_recurrences)
+        String.format(formatter, recurrence, scheduled)
     }
 }

@@ -9,6 +9,7 @@ import com.mas.mobile.domain.budget.CategoryService
 import com.mas.mobile.domain.budget.ExchangeRepository
 import com.mas.mobile.domain.budget.Expenditure
 import com.mas.mobile.domain.budget.ExpenditureRepository
+import com.mas.mobile.domain.budget.Recurrence
 import com.mas.mobile.domain.budget.Spending
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.domain.budget.SpendingRepository
@@ -51,12 +52,14 @@ class MessageServiceTest {
         mockk<SettingsRepository>(relaxed = true),
         mockk<SpendingRepository>(relaxed = true) {
             every { create() } returns Spending(
-                SPENDING_ID, "", TIMESTAMP, 0.0, mockk<Expenditure>(relaxed = true), null
+                SPENDING_ID, "", TIMESTAMP, 0.0, mockk<Expenditure>(relaxed = true), null, Recurrence.Never
             )
         },
         mockExchangeRepository,
         mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
+        DummyTaskService,
+        mockAnalytics,
         mockk<BudgetRepository>(relaxed = true),
         mockk<ExpenditureRepository>(relaxed = true)
     )
