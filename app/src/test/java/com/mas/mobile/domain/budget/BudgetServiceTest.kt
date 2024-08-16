@@ -168,6 +168,7 @@ class BudgetServiceTest {
             assertEquals(10.00, this.amount, 0.001)
             assertEquals("Comment", this.comment)
             assertEquals("Food", this.expenditure.name)
+            assertEquals(BUDGET.id, this.expenditure.budgetId)
             assertEquals(5.00, this.exchangeInfo!!.rawAmount, 0.001)
             assertEquals(2.00, this.exchangeInfo!!.rate, 0.001)
             assertEquals("USD", this.exchangeInfo!!.currency.currencyCode)

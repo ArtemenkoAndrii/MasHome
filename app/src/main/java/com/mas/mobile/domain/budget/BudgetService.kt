@@ -95,7 +95,7 @@ class BudgetService @Inject constructor(
                       currency: Currency? = null): SpendingId {
         val budget = getActiveBudget()
         val expenditure = budget.findExpenditure(expenditureName)
-            ?: createExpenditure(expenditureName)
+            ?: createExpenditure(expenditureName).also { it.budgetId = budget.id }
 
         val spending = spendingRepository.create().also {
             it.comment = comment.trim()

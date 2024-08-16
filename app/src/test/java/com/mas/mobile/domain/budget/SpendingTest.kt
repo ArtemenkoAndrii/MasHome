@@ -130,21 +130,31 @@ class SpendingTest {
 
     @Test
     fun `should calc monthly recurrence` () {
-        val value = LocalDateTime.of(2024, 1, 31, 15, 0, 0)
-        val dailySpending = SPENDING.copy(date = value, recurrence = Recurrence.Monthly)
+        every { LocalDateTime.now() } returns "25.02.2024 12:00".toDateTime()
+
+        val createdLastMonth = SPENDING.copy(
+            recurrence = Recurrence.Monthly,
+            date = "31.01.2024 10:00".toDateTime()
+        )
+
         assertEquals(
-            LocalDateTime.of(2024, 2, 29, 15, 0, 0),
-            dailySpending.scheduledDate
+            "29.02.2024 10:00".toDateTime(),
+            createdLastMonth.scheduledDate
         )
     }
 
     @Test
     fun `should calc quarterly recurrence` () {
-        val value = LocalDateTime.of(2024, 1, 31, 15, 0, 0)
-        val dailySpending = SPENDING.copy(date = value, recurrence = Recurrence.Quarterly)
+        every { LocalDateTime.now() } returns "01.04.2024 12:00".toDateTime()
+
+        val createdLastMonth = SPENDING.copy(
+            recurrence = Recurrence.Monthly,
+            date = "01.01.2024 12:00".toDateTime()
+        )
+
         assertEquals(
-            LocalDateTime.of(2024, 4, 30, 15, 0, 0),
-            dailySpending.scheduledDate
+            "01.04.2024 12:00".toDateTime(),
+            createdLastMonth.scheduledDate
         )
     }
 
