@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "3d0f83047eff0bc0ae55aca6334e1b9f",
+    "identityHash": "6e0dbc78871c04877eb062748cab813d",
     "entities": [
       {
         "tableName": "budgets",
@@ -84,7 +84,7 @@
       },
       {
         "tableName": "spendings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `comment` TEXT, `date` INTEGER NOT NULL, `amount` REAL NOT NULL, `expenditure_id` INTEGER NOT NULL, `currency` TEXT, `rate` REAL, `foreignAmount` REAL, FOREIGN KEY(`expenditure_id`) REFERENCES `expenditures`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `comment` TEXT, `date` INTEGER NOT NULL, `amount` REAL NOT NULL, `expenditure_id` INTEGER NOT NULL, `currency` TEXT, `rate` REAL, `foreignAmount` REAL, `recurrence` TEXT NOT NULL, FOREIGN KEY(`expenditure_id`) REFERENCES `expenditures`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -133,6 +133,12 @@
             "columnName": "foreignAmount",
             "affinity": "REAL",
             "notNull": false
+          },
+          {
+            "fieldPath": "recurrence",
+            "columnName": "recurrence",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -168,7 +174,7 @@
       },
       {
         "tableName": "expenditures",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `plan` REAL NOT NULL, `fact` REAL NOT NULL, `comment` TEXT, `budget_id` INTEGER NOT NULL, FOREIGN KEY(`budget_id`) REFERENCES `budgets`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `plan` REAL NOT NULL, `fact` REAL NOT NULL, `comment` TEXT, `budget_id` INTEGER NOT NULL, `icon` INTEGER, FOREIGN KEY(`budget_id`) REFERENCES `budgets`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -205,6 +211,12 @@
             "columnName": "budget_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -240,7 +252,7 @@
       },
       {
         "tableName": "spending_messages",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `message` TEXT NOT NULL, `receivedAt` INTEGER NOT NULL, `rule_id` INTEGER NOT NULL, `spending_id` INTEGER, `suggested_expenditure_name` TEXT, `suggested_amount` REAL NOT NULL, `is_new` INTEGER NOT NULL, `status` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `message` TEXT NOT NULL, `receivedAt` INTEGER NOT NULL, `rule_id` INTEGER NOT NULL, `spending_id` INTEGER, `suggested_expenditure_name` TEXT, `suggested_merchant` TEXT, `suggested_amount` REAL NOT NULL, `is_new` INTEGER NOT NULL, `status` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -285,6 +297,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "suggestedMerchant",
+            "columnName": "suggested_merchant",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "suggestedAmount",
             "columnName": "suggested_amount",
             "affinity": "REAL",
@@ -299,56 +317,6 @@
           {
             "fieldPath": "status",
             "columnName": "status",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "message_rules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `amount_matcher` TEXT NOT NULL, `expenditure_matcher` TEXT NOT NULL, `expenditure_name` TEXT NOT NULL, `currency` TEXT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "amountMatcher",
-            "columnName": "amount_matcher",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "expenditureMatcher",
-            "columnName": "expenditure_matcher",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "expenditureName",
-            "columnName": "expenditure_name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "currency",
-            "columnName": "currency",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -410,8 +378,14 @@
       },
       {
         "tableName": "qualifiers",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `type` INTEGER NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "name",
             "columnName": "name",
@@ -428,10 +402,21 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "name"
+            "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_qualifiers_on_type_name",
+            "unique": false,
+            "columnNames": [
+              "type",
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_qualifiers_on_type_name` ON `${TABLE_NAME}` (`type`, `name`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -521,12 +506,78 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "categories",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `plan` REAL NOT NULL, `active` INTEGER NOT NULL, `description` TEXT NOT NULL, `merchants` TEXT NOT NULL, `icon` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plan",
+            "columnName": "plan",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "active",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "merchants",
+            "columnName": "merchants",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_categories_on_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_categories_on_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3d0f83047eff0bc0ae55aca6334e1b9f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e0dbc78871c04877eb062748cab813d')"
     ]
   }
 }

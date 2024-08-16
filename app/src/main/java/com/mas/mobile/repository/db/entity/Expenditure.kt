@@ -53,10 +53,6 @@ data class ExpenditureData(
     @ColumnInfo(name = "name")
     override var name: String = "",
 
-    // Not used, but can't be removed without the table recreation
-    @ColumnInfo(name = "category_id")
-    var categoryId: Int = -1,
-
     @ColumnInfo(name = "plan")
     var plan: Double = 0.0,
 

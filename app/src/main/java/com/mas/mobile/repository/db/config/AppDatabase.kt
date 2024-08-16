@@ -32,7 +32,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 17,
+    version = 9,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -68,9 +68,7 @@ abstract class AppDatabase : RoomDatabase() {
                         }
                     })
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                        MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
-                        MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14,
-                        MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
+                        MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                     .build()
             }
             return INSTANCE!!
@@ -162,11 +160,7 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
             );
         """.trimIndent())
         database.execSQLs(DML.GREETING_MESSAGE_TEMPLATES)
-    }
-}
 
-val MIGRATION_9_10 = object : Migration(9, 10) {
-    override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQLs("""
             BEGIN TRANSACTION;
             CREATE TABLE qualifiers_new (
@@ -182,11 +176,7 @@ val MIGRATION_9_10 = object : Migration(9, 10) {
             CREATE INDEX index_qualifiers_on_type_name ON qualifiers(type, name);
             COMMIT;
         """.trimIndent())
-    }
-}
 
-val MIGRATION_10_11 = object : Migration(10, 11) {
-    override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("""
             CREATE TABLE categories (
                 id INTEGER NOT NULL PRIMARY KEY,
@@ -194,64 +184,19 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
                 plan REAL NOT NULL,
                 active INTEGER NOT NULL,
                 description TEXT NOT NULL,
-                merchants TEXT NOT NULL
+                merchants TEXT NOT NULL,
+                icon INTEGER
             );
         """.trimIndent())
         database.execSQL("CREATE INDEX index_categories_on_name ON categories(name);")
         database.execSQLs(DML.GREETING_CATEGORIES)
-    }
-}
 
-val MIGRATION_11_12 = object : Migration(11, 12) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQLs("""
-            DELETE FROM categories;
-            INSERT INTO categories (id, name, plan, active, description, merchants)
-            SELECT 
-                ROW_NUMBER() OVER (ORDER BY name) AS id, 
-                name, 
-                max(plan) AS plan, 
-                1 AS active, 
-                'export' AS description, 
-                '' AS merchants
-            FROM expenditures
-            GROUP BY name;
-        """.trimIndent())
-        database.execSQL("DELETE FROM expenditures WHERE id = 1;")
-        database.execSQL("ALTER TABLE expenditures ADD COLUMN category_id INTEGER NOT NULL DEFAULT -1;")
-        database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
-    }
-}
-
-val MIGRATION_12_13 = object : Migration(12, 13) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("DELETE FROM expenditures WHERE id = 1;")
-    }
-}
-
-val MIGRATION_13_14 = object : Migration(13, 14) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE expenditures ADD COLUMN category_id INTEGER NOT NULL DEFAULT -1;")
-        database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
-    }
-}
-
-val MIGRATION_14_15 = object : Migration(14, 15) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("DROP TABLE IF EXISTS message_rules;")
-    }
-}
-
-val MIGRATION_15_16 = object : Migration(15, 16) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE categories ADD COLUMN icon INTEGER;")
-    }
-}
-
-val MIGRATION_16_17 = object : Migration(16, 17) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE spendings ADD COLUMN recurrence TEXT DEFAULT 'Never'")
         database.execSQL("ALTER TABLE expenditures ADD COLUMN icon INTEGER;")
+        database.execSQL("DELETE FROM expenditures WHERE budget_id = 1;")
+        database.execSQL("DELETE FROM budgets WHERE id = 1;")
+        database.execSQL("ALTER TABLE spending_messages ADD COLUMN suggested_merchant TEXT DEFAULT NULL;")
+        database.execSQL("DROP TABLE IF EXISTS message_rules;")
+        database.execSQL("ALTER TABLE spendings ADD COLUMN recurrence TEXT NOT NULL DEFAULT 'Never'")
         database.execSQL(DML.SCHEDULED_BUDGET)
     }
 }
