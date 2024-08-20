@@ -6,13 +6,12 @@ apply plugin: "com.google.gms.google-services"
 apply plugin: "com.google.firebase.crashlytics"
 
 android {
-    compileSdk 33
-    buildToolsVersion "30.0.3"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.mas.mobile"
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 28
         versionName "1.2.beta1"
 
@@ -31,13 +30,19 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
         dataBinding true
     }
+    namespace 'com.mas.mobile'
 }
 
 tasks.withType(Test).configureEach {
@@ -53,41 +58,46 @@ kapt {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
 
-    implementation "androidx.appcompat:appcompat:1.4.1"
-    implementation "androidx.core:core-ktx:1.10.1"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-    implementation "androidx.recyclerview:recyclerview:1.2.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
-    implementation "androidx.navigation:navigation-fragment-ktx:2.4.1"
-    implementation "androidx.navigation:navigation-ui-ktx:2.4.1"
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:2.4.1"
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 
-    implementation "com.google.android.material:material:1.5.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
-    implementation "com.github.midorikocak:currency-picker-android:1.2.1"
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.5.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.0") {
+        exclude group: "androidx.lifecycle"
+    }
+
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+
+    implementation("com.google.android.material:material:1.5.0")
+
+    implementation("com.github.midorikocak:currency-picker-android:1.2.1")
 
     // Room
     def room_version = "2.5.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
 
     // Retrofit & Networking
     def retrofit_version = "2.9.0"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
 
     // Dagger
     def dagger_version = "2.40.1"
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation("com.google.dagger:dagger:$dagger_version")
+    kapt("com.google.dagger:dagger-compiler:$dagger_version")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-crashlytics:19.0.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.0.3")
 
     //Misc
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
@@ -95,12 +105,12 @@ dependencies {
     implementation("com.maltaisn:iconpack-default:1.1.0")
 
     // Testing Libraries
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0-RC2"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:1.8.0-RC2"
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0-RC2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0-RC2")
     testImplementation ("io.mockk:mockk:1.13.12") {
         exclude group: 'org.junit', module: 'junit'
     }
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.1"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.1"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.3")
 }

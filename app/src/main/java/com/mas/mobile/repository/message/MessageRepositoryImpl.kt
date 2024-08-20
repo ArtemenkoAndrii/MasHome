@@ -1,7 +1,7 @@
 package com.mas.mobile.repository.message
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.budget.SpendingId
 import com.mas.mobile.domain.message.Message
 import com.mas.mobile.domain.message.MessageId
@@ -31,7 +31,7 @@ class MessageRepositoryImpl(val db: AppDatabase) : MessageRepository {
         )
 
     override fun getLiveMessages(from: LocalDate): LiveData<List<Message>> =
-        Transformations.map(db.spendingMessageDao().getLiveMessages(from.atStartOfDay())) { list ->
+        db.spendingMessageDao().getLiveMessages(from.atStartOfDay()).map { list ->
             list.map { it.toModel() }.toList()
         }
 

@@ -1,12 +1,11 @@
 package com.mas.mobile.repository.budget
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.budget.Category
 import com.mas.mobile.domain.budget.CategoryId
 import com.mas.mobile.domain.budget.CategoryLiveData
 import com.mas.mobile.domain.budget.CategoryRepository
-import com.mas.mobile.domain.budget.Merchant
 import com.mas.mobile.repository.db.config.AppDatabase
 import javax.inject.Singleton
 import com.mas.mobile.repository.db.entity.Category as CategoryData
@@ -47,7 +46,7 @@ class CategoryLiveDataImpl(val db: AppDatabase) : CategoryLiveData {
     val dao = db.categoryDAO()
 
     override fun getAll(): LiveData<List<Category>> =
-        Transformations.map(dao.getAllLive()) { category ->
+        dao.getAllLive().map { category ->
             category.map { it.toModel() }.toList()
         }
 }

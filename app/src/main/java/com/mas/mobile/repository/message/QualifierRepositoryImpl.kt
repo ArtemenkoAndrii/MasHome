@@ -1,7 +1,7 @@
 package com.mas.mobile.repository.message
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.message.Qualifier
 import com.mas.mobile.domain.message.QualifierId
 import com.mas.mobile.domain.message.QualifierLiveData
@@ -15,7 +15,7 @@ class QualifierRepositoryImpl(val db: AppDatabase) : QualifierRepository {
 
     override val live: QualifierLiveData = object : QualifierLiveData {
         override fun getQualifiers(type: Qualifier.Type): LiveData<List<Qualifier>> =
-            Transformations.map(dao.getQualifiersLive(type.toDTOType())) { qualifiers ->
+            dao.getQualifiersLive(type.toDTOType()).map { qualifiers ->
                 qualifiers.map { it.toModel() }.toList()
             }
     }

@@ -1,7 +1,7 @@
 package com.mas.mobile.repository.message
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.message.MessageTemplate
 import com.mas.mobile.domain.message.MessageTemplateId
 import com.mas.mobile.domain.message.MessageTemplateLiveData
@@ -51,7 +51,7 @@ class MessageTemplateLiveDataImpl(val db: AppDatabase) : MessageTemplateLiveData
     val dao = db.messageTemplateDAO()
 
     override fun getAll(): LiveData<List<MessageTemplate>> =
-        Transformations.map(dao.getAllLive()) { mt ->
+        dao.getAllLive().map { mt ->
             mt.map { it.toModel() }.toList()
         }
 }

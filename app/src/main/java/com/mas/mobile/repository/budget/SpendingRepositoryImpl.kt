@@ -1,7 +1,7 @@
 package com.mas.mobile.repository.budget
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.budget.*
 import com.mas.mobile.repository.db.config.AppDatabase
 import java.time.LocalDate
@@ -34,17 +34,17 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
         }
 
     override fun getLiveSpendings(from: LocalDate): LiveData<List<Spending>> =
-        Transformations.map(db.spendingDao().getLiveSpendings(from.atStartOfDay())) { list ->
+        db.spendingDao().getLiveSpendings(from.atStartOfDay()).map { list ->
             list.map { it.data.toModel(it.expenditure.toModel()) }.toList().filter { it.expenditure.budgetId.value > 0 }
         }
 
     override fun getLiveSpendings(budgetId: BudgetId): LiveData<List<Spending>> =
-        Transformations.map(db.spendingDao().getLiveByBudgetId(budgetId.value)) { list ->
+        db.spendingDao().getLiveByBudgetId(budgetId.value).map { list ->
             list.map { it.data.toModel(it.expenditure.toModel()) }.toList()
         }
 
     override fun getLiveSpendings(expenditureId: ExpenditureId): LiveData<List<Spending>> =
-        Transformations.map(db.spendingDao().getLiveByExpenditureId(expenditureId.value)) { list ->
+        db.spendingDao().getLiveByExpenditureId(expenditureId.value).map { list ->
             list.map { it.data.toModel(it.expenditure.toModel()) }.toList()
         }
 }

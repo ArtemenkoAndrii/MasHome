@@ -2,7 +2,7 @@ package com.mas.mobile.presentation.viewmodel
 
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mas.mobile.domain.Repository
 import com.mas.mobile.domain.budget.*
@@ -59,7 +59,7 @@ class SpendingViewModel @AssistedInject constructor(
     var exchangeAmount = MutableLiveData<Double>()
     var exchangeRate = MutableLiveData<Double>()
     var exchangeCurrency = MutableLiveData<Currency>()
-    val exchangeVisibility = Transformations.map(exchangeCurrency) {
+    val exchangeVisibility = exchangeCurrency.map {
         if (model.exchangeInfo != null) {
             View.VISIBLE
         } else {

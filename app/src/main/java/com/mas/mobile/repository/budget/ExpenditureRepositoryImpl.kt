@@ -1,7 +1,7 @@
 package com.mas.mobile.repository.budget
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.budget.*
 import com.mas.mobile.repository.db.config.AppDatabase
 import javax.inject.Singleton
@@ -25,7 +25,7 @@ class ExpenditureRepositoryImpl(
         db.expenditureDao().getUniqueNames().map { ExpenditureName(it) }.toSet()
 
     override fun getLiveExpenditures(budgetId: BudgetId): LiveData<List<Expenditure>> =
-        Transformations.map(db.expenditureDao().getByBudgetIdLive(budgetId.value)) { list ->
+        db.expenditureDao().getByBudgetIdLive(budgetId.value).map { list ->
             list.map { it.data.toModel() }.toList()
         }
 

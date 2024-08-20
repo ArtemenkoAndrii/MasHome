@@ -1,7 +1,7 @@
 package com.mas.mobile.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.domain.budget.*
 import com.mas.mobile.repository.budget.BudgetMapper
 import com.mas.mobile.repository.budget.NullableTransformations
@@ -100,7 +100,7 @@ class BudgetLiveDataImpl(val db: AppDatabase) : BudgetLiveData {
         dao.getByIdLive(budgetId.value).toModel()
 
     override fun getBudgets(): LiveData<List<Budget>> =
-        Transformations.map(db.budgetDao().getAllLive()) { budgets ->
+        db.budgetDao().getAllLive().map { budgets ->
             budgets.map { it.toModel() }.toList()
         }
 

@@ -10,7 +10,7 @@ class ViewModelFactory<T: ViewModel>(
     private val create: (stateHandle: SavedStateHandle) -> T
 ): AbstractSavedStateViewModelFactory(savedStateRegistryOwner, null) {
 
-    override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+    override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
         return create.invoke(handle) as T
     }
 }

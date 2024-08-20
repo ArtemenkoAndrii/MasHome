@@ -1,6 +1,6 @@
 package com.mas.mobile.presentation.viewmodel
 
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mas.mobile.R
 import com.mas.mobile.domain.Repository
 import com.mas.mobile.domain.budget.Budget
@@ -20,11 +20,9 @@ class ExpenditureListViewModel @AssistedInject constructor(
     private lateinit var currentBudget: Budget
 
     val budget = budgetService.loadLiveBudget(BudgetId(budgetId))
-    val expenditures = Transformations.map(budget) {
-        //it.budgetDetails.expenditure
-        budgetService.expenditureRepository.getExpenditures(it.id)
-    }
-    val color = Transformations.map(budget) { calcColor(it) }
+    val expenditures = budget.map { budgetService.expenditureRepository.getExpenditures(it.id) }
+
+    val color = budget.map  { calcColor(it) }
 
     init {
         budget.observeForever {
