@@ -106,7 +106,7 @@ class SpendingFragment : ItemFragment<SpendingViewModel>() {
 
         with(binding.spendingAmountLayout) {
             isEndIconVisible = true
-            endIconDrawable = TextDrawable(requireContext(), viewModel.budget.currency.symbol)
+            endIconDrawable = TextDrawable(requireContext(), viewModel.getCurrencyFromBudget().symbol)
             setEndIconOnClickListener {
                 showCurrencyPicker { currency ->
                     viewModel.exchangeCurrency.value = currency

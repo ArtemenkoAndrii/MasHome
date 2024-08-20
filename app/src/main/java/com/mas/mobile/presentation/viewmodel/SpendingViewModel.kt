@@ -91,6 +91,13 @@ class SpendingViewModel @AssistedInject constructor(
         this.merchantToSave = null
     }
 
+    fun getCurrencyFromBudget() =
+        if (budget.id.value == Budget.SCHEDULED_BUDGET_ID) {
+            budgetService.getActiveBudget().currency
+        } else {
+            budget.currency
+        }
+
     init {
         if (action != Action.VIEW) enableEditing()
         initProperties()
@@ -168,9 +175,9 @@ class SpendingViewModel @AssistedInject constructor(
             }
         }
 
-        exchangeCurrency.value = model.exchangeInfo?.currency ?: budget.currency
+        exchangeCurrency.value = model.exchangeInfo?.currency ?: getCurrencyFromBudget()
         exchangeCurrency.observeForever {
-            if (it != budget.currency) {
+            if (it != getCurrencyFromBudget()) {
                 if (model.exchangeInfo == null) {
                     model.exchangeInfo = ExchangeInfo(
                         rawAmount = model.amount,
