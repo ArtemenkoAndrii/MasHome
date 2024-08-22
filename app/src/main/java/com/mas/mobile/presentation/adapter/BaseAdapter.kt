@@ -5,9 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Collections
 
 abstract class BaseAdapter<T, V>(private val rowLayout: Int): RecyclerView.Adapter<BaseAdapter<T, V>.GroupViewHolder>() {
     private var items: List<T> = emptyList()
+    private var oldItems: List<T> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseAdapter<T, V>.GroupViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -43,6 +45,15 @@ abstract class BaseAdapter<T, V>(private val rowLayout: Int): RecyclerView.Adapt
         val callback = EntityListDiffCallback(this.items, items)
         val result = DiffUtil.calculateDiff(callback)
         result.dispatchUpdatesTo(this)
+        this.oldItems = items.toList()
         this.items = items
+    }
+
+    fun getItems() = this.items.toList()
+    fun getOldItems() = this.oldItems.toList()
+
+    fun moveItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(this.items, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
     }
 }

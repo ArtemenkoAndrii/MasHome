@@ -173,7 +173,8 @@ class SpendingTest {
             100.00,
             0.00,
             "",
-            BudgetId(0)
+            BudgetId(0),
+            0
         )
 
         val SPENDING = Spending(

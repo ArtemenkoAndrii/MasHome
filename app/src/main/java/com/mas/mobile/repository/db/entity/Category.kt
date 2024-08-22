@@ -7,7 +7,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "categories",
-    indices = [Index(value = ["name"], name = "index_categories_on_name")]
+    indices = [
+        Index(value = ["name"], name = "index_categories_on_name"),
+        Index(value = ["display_order", "name"], name = "index_categories_on_order_and_name")
+    ]
 )
 data class Category(
     @PrimaryKey
@@ -30,5 +33,8 @@ data class Category(
     val merchants: List<String>,
 
     @ColumnInfo(name = "icon")
-    val icon: Int?
+    val icon: Int?,
+
+    @ColumnInfo(name = "display_order")
+    val displayOrder: Int = 0
 )

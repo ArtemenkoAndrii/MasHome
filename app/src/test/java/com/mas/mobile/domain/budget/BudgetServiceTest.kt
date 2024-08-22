@@ -63,7 +63,7 @@ class BudgetServiceTest {
         every { mockBudgetRepository.getBudgetByName(any()) } returns null
         coEvery { mockBudgetRepository.save(capture(budgetSlot)) } returns Unit
 
-        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", null, 0.0, 0.0, "", BudgetId(BUDGET_ID)) }
+        every { mockExpenditureRepository.create() } answers { Expenditure(ExpenditureId(getNextInt()), "", null, 0.0, 0.0, "", BudgetId(BUDGET_ID), 0) }
 
         every { mockSpendingRepository.create() } returns SPENDING
 
@@ -214,7 +214,8 @@ class BudgetServiceTest {
                 plan = 1.0,
                 description = "Description 1",
                 isActive = true,
-                merchants = mutableListOf()
+                merchants = mutableListOf(),
+                displayOrder = 0
             ),
             Category(
                 id = CategoryId(2),
@@ -223,7 +224,8 @@ class BudgetServiceTest {
                 plan = 2.0,
                 description = "Description 2",
                 isActive = true,
-                merchants = mutableListOf()
+                merchants = mutableListOf(),
+                displayOrder = 0
             ),
             Category(
                 id = CategoryId(3),
@@ -232,7 +234,8 @@ class BudgetServiceTest {
                 plan = 3.0,
                 description = "Description 3",
                 isActive = false,
-                merchants = mutableListOf()
+                merchants = mutableListOf(),
+                displayOrder = 0
             )
         )
 
@@ -248,7 +251,8 @@ class BudgetServiceTest {
                 plan = 0.0,
                 fact = 0.0,
                 comment = "",
-                budgetId = BudgetId(-1)
+                budgetId = BudgetId(-1),
+                displayOrder = 0
             ),
             recurrence = Recurrence.Never
         )

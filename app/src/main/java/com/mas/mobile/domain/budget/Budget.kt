@@ -35,6 +35,7 @@ data class Budget(
             val index = this.indexOfFirst { it.id == expenditure.id }
             if (index == -1) {
                 this.add(expenditure)
+                expenditure.displayOrder = budgetDetails.expenditure.maxOf { it.displayOrder } + 1
             } else {
                 this[index] = expenditure
             }
@@ -44,13 +45,16 @@ data class Budget(
     }
 
     fun removeExpenditure(expenditure: Expenditure) {
-        budgetDetails.expenditure.remove(expenditure)
-        calculate()
+        val item = getExpenditure(expenditure.id)
+        if (item != null) {
+            budgetDetails.expenditure.remove(item)
+            calculate()
+        }
     }
 
     fun addSpending(spending: Spending) {
-        if (!budgetDetails.expenditure.contains(spending.expenditure)) {
-            budgetDetails.expenditure.add(spending.expenditure)
+        if (getExpenditure(spending.expenditure.id) == null) {
+            addExpenditure(spending.expenditure)
         }
 
         val index = budgetDetails.spending.indexOfFirst { it.id == spending.id }

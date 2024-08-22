@@ -172,6 +172,7 @@ class BudgetService @Inject constructor(
                 it.name = category.name
                 it.plan = category.plan
                 it.iconId = category.iconId
+                it.displayOrder = category.displayOrder
             }
             budget.addExpenditure(expenditure)
         }

@@ -9,7 +9,6 @@ import java.util.Currency
 import kotlin.test.assertEquals
 
 class BudgetTest {
-
     private lateinit var testInstance: Budget
 
     @BeforeEach
@@ -19,12 +18,21 @@ class BudgetTest {
 
     @Test
     fun `should add expenditure` () {
-        testInstance.addExpenditure(FOOD_EXPENDITURE)
+        testInstance.addExpenditure(FOOD_EXPENDITURE.copy())
 
-        assertEquals(FOOD_EXPENDITURE, testInstance.budgetDetails.expenditure[0])
-        assertEquals(FOOD_EXPENDITURE, testInstance.getExpenditure(ExpenditureId(2)))
-        assertEquals(100.00, testInstance.plan)
-        assertEquals(0.00, testInstance.fact)
+        val addedExpenditure = testInstance.budgetDetails.expenditure[0]
+        val foundExpenditure = testInstance.getExpenditure(FOOD_EXPENDITURE.id)!!
+
+        // Expenditure checks
+        assertEquals(addedExpenditure, foundExpenditure)
+        assertEquals(FOOD_EXPENDITURE.name, foundExpenditure.name)
+        assertEquals(FOOD_EXPENDITURE.plan, foundExpenditure.plan, TOLERANCE)
+        assertEquals(testInstance.id, foundExpenditure.budgetId)
+        assertEquals(1, foundExpenditure.displayOrder)
+
+        // Budget checks
+        assertEquals(100.00, testInstance.plan, TOLERANCE)
+        assertEquals(0.00, testInstance.fact, TOLERANCE)
         assertEquals(0, testInstance.getProgress())
         assertEquals("0.00 / 100.00", testInstance.getStatus())
     }
@@ -32,21 +40,41 @@ class BudgetTest {
     @Test
     fun `should update expenditure` () {
         `should add expenditure`()
+        val originalExpenditure = testInstance.budgetDetails.expenditure[0]
 
-        testInstance.addExpenditure(FOOD_EXPENDITURE.copy(plan = 300.00))
+        testInstance.addExpenditure(originalExpenditure.copy(plan = 300.00))
 
-        assertEquals(FOOD_EXPENDITURE.id, testInstance.budgetDetails.expenditure[0].id)
+        // Expenditure checks
+        val updatedExpenditure = testInstance.getExpenditure(originalExpenditure.id)!!
+        assertEquals(originalExpenditure.id, updatedExpenditure.id)
+        assertEquals(originalExpenditure.name, updatedExpenditure.name)
+        assertEquals(originalExpenditure.displayOrder, updatedExpenditure.displayOrder)
+        assertEquals(300.00, updatedExpenditure.plan, TOLERANCE)
+
+        // Budget checks
+        assertEquals(300.00, testInstance.plan, TOLERANCE)
         assertEquals(1, testInstance.budgetDetails.expenditure.size)
-        assertEquals(300.00, testInstance.plan)
     }
 
     @Test
     fun `should add spending` () {
         `should add expenditure`()
 
-        testInstance.addSpending(FOOD_SPENDING)
+        testInstance.addSpending(FOOD_SPENDING.copy())
 
-        assertEquals(FOOD_SPENDING, testInstance.budgetDetails.spending[0])
+        // Spending checks
+        val addedSpending = testInstance.budgetDetails.spending[0]
+        assertEquals(FOOD_SPENDING.expenditure.name, addedSpending.expenditure.name)
+        assertEquals(FOOD_SPENDING.recurrence, addedSpending.recurrence)
+        assertEquals(FOOD_SPENDING.amount, addedSpending.amount, TOLERANCE)
+        assertEquals(FOOD_SPENDING.date, addedSpending.date)
+        assertEquals(FOOD_SPENDING.exchangeInfo, addedSpending.exchangeInfo)
+
+        // Expenditure checks
+        val existingExpenditure = testInstance.budgetDetails.expenditure[0]
+        assertEquals(1, existingExpenditure.displayOrder)
+
+        // Budget checks
         assertEquals(1, testInstance.budgetDetails.expenditure.size)
         assertEquals(100.00, testInstance.plan)
         assertEquals(20.00, testInstance.fact)
@@ -57,10 +85,19 @@ class BudgetTest {
     @Test
     fun `should update spending` () {
         `should add spending`()
+        val originalSpending = testInstance.budgetDetails.spending[0]
 
         testInstance.addSpending(FOOD_SPENDING.copy(amount = 15.00))
 
-        assertEquals(FOOD_SPENDING.id, testInstance.budgetDetails.spending[0].id)
+        // Spending checks
+        val updatedSpending = testInstance.budgetDetails.spending[0]
+        assertEquals(originalSpending.id, updatedSpending.id)
+        assertEquals(originalSpending.expenditure, updatedSpending.expenditure)
+        assertEquals(originalSpending.date, updatedSpending.date)
+        assertEquals(originalSpending.recurrence, updatedSpending.recurrence)
+        assertEquals(15.00, updatedSpending.amount, TOLERANCE)
+
+        // Budget checks
         assertEquals(1, testInstance.budgetDetails.spending.size)
         assertEquals(15.00, testInstance.fact)
     }
@@ -69,7 +106,7 @@ class BudgetTest {
     fun `should remove spending` () {
         `should add spending` ()
 
-        testInstance.addSpending(FOOD_SPENDING_2)
+        testInstance.addSpending(FOOD_SPENDING_2.copy())
         assertEquals(FOOD_SPENDING, testInstance.budgetDetails.spending[0])
         assertEquals(1, testInstance.budgetDetails.expenditure.size)
         assertEquals(100.00, testInstance.plan)
@@ -77,7 +114,7 @@ class BudgetTest {
         assertEquals(25, testInstance.getProgress())
         assertEquals("25.00 / 100.00", testInstance.getStatus())
 
-        testInstance.removeSpending(FOOD_SPENDING_2)
+        testInstance.removeSpending(FOOD_SPENDING_2.copy())
         assertEquals(FOOD_SPENDING, testInstance.budgetDetails.spending[0])
         assertEquals(1, testInstance.budgetDetails.expenditure.size)
         assertEquals(100.00, testInstance.plan)
@@ -90,28 +127,51 @@ class BudgetTest {
     fun `should add expenditure implicitly` () {
         `should add spending` ()
 
-        testInstance.addSpending(PETROL_SPENDING)
+        testInstance.addSpending(PETROL_SPENDING.copy())
+
+        // Expenditure checks
+        assertEquals(FOOD_EXPENDITURE.id, testInstance.budgetDetails.expenditure[0].id)
+        assertEquals(FOOD_EXPENDITURE.name, testInstance.budgetDetails.expenditure[0].name)
+        assertEquals(1, testInstance.budgetDetails.expenditure[0].displayOrder)
+        assertEquals(PETROL_EXPENDITURE.id, testInstance.budgetDetails.expenditure[1].id)
+        assertEquals(PETROL_EXPENDITURE.name, testInstance.budgetDetails.expenditure[1].name)
+        assertEquals(2, testInstance.budgetDetails.expenditure[1].displayOrder)
+
+        // Budget checks
         assertEquals(2, testInstance.budgetDetails.expenditure.size)
-        assertEquals(FOOD_EXPENDITURE, testInstance.budgetDetails.expenditure[0])
-        assertEquals(PETROL_EXPENDITURE, testInstance.budgetDetails.expenditure[1])
         assertEquals(250.00, testInstance.plan)
         assertEquals(100.00, testInstance.fact)
         assertEquals(40, testInstance.getProgress())
         assertEquals("100.00 / 250.00", testInstance.getStatus())
+        assertEquals(1, testInstance.budgetDetails.expenditure[0].displayOrder)
+        assertEquals(2, testInstance.budgetDetails.expenditure[1].displayOrder)
     }
 
     @Test
     fun `should remove expenditure` () {
         `should add spending`()
+        val firstExpenditure = testInstance.budgetDetails.expenditure[0]
 
-        testInstance.addExpenditure(PETROL_EXPENDITURE)
+        testInstance.addExpenditure(PETROL_EXPENDITURE.copy())
+        // Expenditure checks
+        val secondExpenditure = testInstance.budgetDetails.expenditure[1]
+        assertEquals(FOOD_EXPENDITURE.name, firstExpenditure.name)
+        assertEquals(1, firstExpenditure.displayOrder)
+        assertEquals(PETROL_EXPENDITURE.name, secondExpenditure.name)
+        assertEquals(2, secondExpenditure.displayOrder)
+
+        // Budget checks
         assertEquals(2, testInstance.budgetDetails.expenditure.size)
         assertEquals(250.00, testInstance.plan)
         assertEquals(20.00, testInstance.fact)
 
-        testInstance.removeExpenditure(PETROL_EXPENDITURE)
+        testInstance.removeExpenditure(PETROL_EXPENDITURE.copy())
+        // Expenditure checks
+        assertEquals(FOOD_EXPENDITURE.name, firstExpenditure.name)
+        assertEquals(1, firstExpenditure.displayOrder)
+
+        // Budget checks
         assertEquals(1, testInstance.budgetDetails.expenditure.size)
-        assertEquals(FOOD_EXPENDITURE, testInstance.budgetDetails.expenditure[0])
         assertEquals(100.00, testInstance.plan)
         assertEquals(20.00, testInstance.fact)
     }
@@ -121,8 +181,8 @@ class BudgetTest {
         `should add spending` ()
 
         assertEquals(
-            FOOD_EXPENDITURE,
-            testInstance.findExpenditure("food")
+            FOOD_EXPENDITURE.id,
+            testInstance.findExpenditure("food")?.id
         )
         assertNull(
             testInstance.findExpenditure("non-existing")
@@ -130,6 +190,8 @@ class BudgetTest {
     }
 
     companion object {
+        const val TOLERANCE = 0.001
+
         val PETROL_EXPENDITURE = Expenditure(
             ExpenditureId(1),
             "Petrol",
@@ -137,7 +199,8 @@ class BudgetTest {
             150.00,
             0.00,
             "A95",
-            BudgetId(0)
+            BudgetId(0),
+            0
         )
 
         val FOOD_EXPENDITURE = Expenditure(
@@ -147,7 +210,8 @@ class BudgetTest {
             100.00,
             0.00,
             "",
-            BudgetId(0)
+            BudgetId(0),
+            0
         )
 
         val FOOD_SPENDING = Spending(
@@ -165,7 +229,7 @@ class BudgetTest {
             "Starbucks",
             LocalDateTime.now(),
             5.00,
-            FOOD_EXPENDITURE,
+            FOOD_EXPENDITURE.copy(),
             null,
             recurrence = Recurrence.Never
         )
@@ -175,7 +239,7 @@ class BudgetTest {
             "Shell",
             LocalDateTime.now(),
             80.00,
-            PETROL_EXPENDITURE,
+            PETROL_EXPENDITURE.copy(),
             null,
             recurrence = Recurrence.Never
         )

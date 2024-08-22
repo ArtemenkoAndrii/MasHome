@@ -23,7 +23,8 @@ class SpendingRepositoryImpl(val db: AppDatabase) : SpendingRepository {
                 plan = 0.0,
                 fact = 0.0,
                 comment = "",
-                budgetId = BudgetId(-1)
+                budgetId = BudgetId(-1),
+                displayOrder = 0
             ),
             recurrence = Recurrence.Never
         )

@@ -18,7 +18,8 @@ class ExpenditureRepositoryImpl(
             plan = 0.0,
             fact = 0.0,
             comment = "",
-            budgetId = BudgetId(-1)
+            budgetId = BudgetId(-1),
+            displayOrder = 0
         )
 
     override fun getExpenditureNames(sortByRating: Boolean, limit: Short): Set<ExpenditureName> =

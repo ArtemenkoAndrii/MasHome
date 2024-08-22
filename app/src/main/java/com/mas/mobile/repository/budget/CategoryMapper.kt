@@ -15,7 +15,8 @@ object CategoryMapper {
             plan = dto.plan,
             isActive = dto.isActive,
             description = dto.description,
-            merchants = dto.merchants.map { Merchant(it) }.toMutableList()
+            merchants = dto.merchants.map { Merchant(it) }.toMutableList(),
+            displayOrder = dto.displayOrder
         )
 
     fun toDTO(model: Category): CategoryData =
@@ -26,6 +27,7 @@ object CategoryMapper {
             plan = model.plan,
             isActive = model.isActive,
             description = model.description,
-            merchants = model.merchants.map { it.value }
+            merchants = model.merchants.map { it.value },
+            displayOrder = model.displayOrder
         )
 }

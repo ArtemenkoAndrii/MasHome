@@ -32,7 +32,7 @@ import com.mas.mobile.util.CurrencyTools
 import java.time.LocalDate
 
 @Database(
-    version = 9,
+    version = 10,
     exportSchema = true,
     entities = [
         Budget::class,
@@ -68,7 +68,7 @@ abstract class AppDatabase : RoomDatabase() {
                         }
                     })
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                        MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                        MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     .build()
             }
             return INSTANCE!!
@@ -198,5 +198,16 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
         database.execSQL("DROP TABLE IF EXISTS message_rules;")
         database.execSQL("ALTER TABLE spendings ADD COLUMN recurrence TEXT NOT NULL DEFAULT 'Never'")
         database.execSQL(DML.SCHEDULED_BUDGET)
+    }
+}
+
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE categories ADD COLUMN display_order INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("CREATE INDEX index_categories_on_order_and_name ON categories(display_order, name)")
+
+        database.execSQL("ALTER TABLE expenditures ADD COLUMN display_order INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("CREATE INDEX index_expenditures_on_budget_order_name ON expenditures(budget_id, display_order, name)")
+        database.execSQL("CREATE INDEX index_expenditures_on_name ON expenditures(name)")
     }
 }

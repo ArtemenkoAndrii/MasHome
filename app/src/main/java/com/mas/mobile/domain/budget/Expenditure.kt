@@ -9,7 +9,8 @@ data class Expenditure (
     var plan: Double,
     var fact: Double,
     var comment: String,
-    var budgetId: BudgetId
+    var budgetId: BudgetId,
+    var displayOrder: Int
 ) {
     val progress
         get() = if (plan.absoluteValue < 0.001) {

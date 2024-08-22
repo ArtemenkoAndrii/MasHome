@@ -43,7 +43,11 @@ data class Expenditure(
             parentColumns = ["id"],
             childColumns = ["budget_id"],
             onDelete = CASCADE)],
-        indices = [Index(value = ["budget_id"])]
+        indices = [
+            Index(value = ["budget_id"]),
+            Index(value = ["budget_id", "display_order", "name"], name = "index_expenditures_on_budget_order_name"),
+            Index(value = ["name"], name = "index_expenditures_on_name")
+        ]
 )
 data class ExpenditureData(
     @PrimaryKey(autoGenerate = true)
@@ -66,5 +70,8 @@ data class ExpenditureData(
     var budget_id: Int = 0,
 
     @ColumnInfo(name = "icon")
-    val icon: Int?
+    val icon: Int?,
+
+    @ColumnInfo(name = "display_order")
+    val display_order: Int = 0
 ): Searchable(id, name)

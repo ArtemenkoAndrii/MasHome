@@ -10,10 +10,10 @@ import com.mas.mobile.repository.db.entity.Category
 
 @Dao
 interface CategoryDAO {
-    @Query("SELECT * FROM categories ORDER BY name")
+    @Query("SELECT * FROM categories ORDER BY display_order, name")
     fun getAllLive(): LiveData<List<Category>>
 
-    @Query("SELECT * FROM categories ORDER BY name")
+    @Query("SELECT * FROM categories ORDER BY display_order, name")
     fun getAll(): List<Category>
 
     @Query("SELECT * FROM categories WHERE id = :id")

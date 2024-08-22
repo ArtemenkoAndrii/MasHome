@@ -15,7 +15,8 @@ object ExpenditureMapper {
             plan = dto.plan,
             fact = dto.fact,
             comment = dto.comment ?: "",
-            budgetId = BudgetId(dto.budget_id)
+            budgetId = BudgetId(dto.budget_id),
+            displayOrder = dto.display_order
         )
 
     fun toDto(model: Expenditure) =
@@ -26,7 +27,8 @@ object ExpenditureMapper {
             plan = model.plan,
             fact = model.fact,
             comment = model.comment,
-            budget_id = model.budgetId.value
+            budget_id = model.budgetId.value,
+            display_order = model.displayOrder
         )
 }
 

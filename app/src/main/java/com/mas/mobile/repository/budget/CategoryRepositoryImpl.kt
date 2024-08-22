@@ -30,7 +30,8 @@ class CategoryRepositoryImpl(
             plan = 0.0,
             isActive = false,
             description = "",
-            merchants = mutableListOf()
+            merchants = mutableListOf(),
+            displayOrder = 0
         )
 
     override suspend fun save(item: Category) {
