@@ -40,8 +40,8 @@ class SpendingMessageAdapter(
     }
 
     private fun bindCardView(binding:MessageListRowBinding, item: Message) = with (binding) {
-        messageListRowCard.setOnClickListener { goToSpending(item) }
-        messageListRowCard.setOnLongClickListener {
+        messageListRowLayout.setOnClickListener { goToSpending(item) }
+        messageListRowLayout.setOnLongClickListener {
             goToSpending(item, Action.EDIT)
             true
         }
