@@ -18,6 +18,7 @@
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:background="?attr/selectableItemBackground"
+            android:alpha="@{messageTemplate.enabled ? 1f : 0.4f}"
             android:clickable="true"
             android:padding="10dp">
 

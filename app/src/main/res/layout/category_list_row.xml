@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="?attr/selectableItemBackground"
+        android:alpha="@{model.isActive ? 1f : 0.5f}"
         android:clickable="true">
 
         <ImageView

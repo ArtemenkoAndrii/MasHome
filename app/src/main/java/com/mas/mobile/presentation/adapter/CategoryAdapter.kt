@@ -23,12 +23,6 @@ class CategoryAdapter(
             fragment.findNavController().navigate(action)
         }
 
-//        binding.layoutRowCard.setOnLongClickListener {
-//            val action = CategoryListFragmentDirections.actionToCategory(Action.EDIT.name, item.id.value)
-//            fragment.findNavController().navigate(action)
-//            true
-//        }
-
         binding.callback = View.OnClickListener{ viewMenu ->
             val menu = PopupMenu(viewMenu.context, viewMenu)
             menu.inflate(R.menu.standard_row_menu)

@@ -39,6 +39,7 @@ class CategoryListFragment : ListFragment() {
         binding = CategoryListFragmentBinding.bind(layout)
         binding.categoryList.adapter = adapter
         binding.categoryList.layoutManager = LinearLayoutManager(requireContext())
+        binding.categoryList.itemAnimator = null // To enable layout opacity
 
         val itemTouchHelper = ItemTouchHelper(ItemMoveCallback(adapter) { old, new ->
             listViewModel.reorder(old, new)

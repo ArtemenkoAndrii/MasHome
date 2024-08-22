@@ -39,6 +39,7 @@ class MessageTemplateListFragment: ListFragment() {
         binding.list = listViewModel
         binding.messageTemplateList.adapter = adapter
         binding.messageTemplateList.layoutManager = LinearLayoutManager(requireContext())
+        binding.messageTemplateList.itemAnimator = null // To enable layout opacity
         binding.messageTemplateBlacklist.setOnClickListener {
             go(MessageTemplateListFragmentDirections.actionToBlackList())
         }
