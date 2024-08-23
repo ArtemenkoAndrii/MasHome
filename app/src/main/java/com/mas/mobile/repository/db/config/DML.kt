@@ -29,7 +29,7 @@ class DML {
 
         val SCHEDULED_BUDGET = """
             INSERT INTO budgets(id, name, plan, fact, startsOn, lastDayAt, isActive, comment, currency)
-            VALUES(-2, 'Scheduled', 0.00, 0.00, ${MIN_DATE}, ${MIN_DATE}, false, '', '${getCurrency()}');
+            VALUES(-2, 'Scheduled', 0.00, 0.00, ${MIN_DATE}, ${MIN_DATE}, 0, '', '${getCurrency()}');
         """.trimIndent()
 
         val GREETING_MESSAGE_TEMPLATES = """
