@@ -21,9 +21,9 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
                 showEditor(binding)
             }
 
-            handleMenuBtn(this, qualifier!!)
-            handleSaveBtn(this, qualifier!!, oldQualifier as Qualifier)
-            handleCancelBtn(this, qualifier!!)
+            handleMenuBtn(this)
+            handleSaveBtn(this)
+            handleCancelBtn(this)
 
             qualifierNameViewer.setOnLongClickListener {
                 showEditor(binding)
@@ -32,7 +32,7 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
         }
     }
 
-    private fun handleMenuBtn(binding: QualifierListRowBinding, item: Qualifier) {
+    private fun handleMenuBtn(binding: QualifierListRowBinding) {
         binding.qualifierMenuBtn.setOnClickListener {
             with(PopupMenu(it.context, it)) {
                 inflate(R.menu.ud_row_menu)
@@ -48,7 +48,7 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
                             true
                         }
                         else -> {
-                            fragment.removeQualifier(item)
+                            fragment.removeQualifier(binding.qualifier!!)
                             true
                         }
                     }
@@ -58,16 +58,17 @@ class QualifierAdapter(val fragment: QualifierTabFragment): BaseAdapter<Qualifie
         }
     }
 
-    private fun handleSaveBtn(binding: QualifierListRowBinding, item: Qualifier, oldValue: Qualifier) {
+    private fun handleSaveBtn(binding: QualifierListRowBinding) {
         binding.qualifierSaveBtn.setOnClickListener {
-            fragment.removeQualifier(oldValue)
-            fragment.saveQualifier(item)
+            fragment.removeQualifier(binding.oldQualifier!!)
+            fragment.saveQualifier(binding.qualifier!!)
             binding.editable = false
         }
     }
 
-    private fun handleCancelBtn(binding: QualifierListRowBinding, item: Qualifier) {
+    private fun handleCancelBtn(binding: QualifierListRowBinding) {
         binding.qualifierDeleteBtn.setOnClickListener {
+            val item = binding.qualifier!!
             if (item.value.isBlank()) {
                 fragment.removeQualifier(item)
             }
