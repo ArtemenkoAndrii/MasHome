@@ -35,7 +35,7 @@ data class Budget(
             val index = this.indexOfFirst { it.id == expenditure.id }
             if (index == -1) {
                 this.add(expenditure)
-                expenditure.displayOrder = budgetDetails.expenditure.maxOf { it.displayOrder } + 1
+                expenditure.displayOrder = (budgetDetails.expenditure.maxOfOrNull { it.displayOrder } ?: 0) + 1
             } else {
                 this[index] = expenditure
             }

@@ -28,7 +28,7 @@ class CategoryRepositoryImpl(
             iconId = null,
             name = "",
             plan = 0.0,
-            isActive = false,
+            isActive = true,
             description = "",
             merchants = mutableListOf(),
             displayOrder = 0

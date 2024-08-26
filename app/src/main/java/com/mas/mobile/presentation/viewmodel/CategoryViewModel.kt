@@ -117,6 +117,11 @@ class CategoryViewModel @AssistedInject constructor(
             else -> throw ActionNotSupportedException("BudgetViewModel does not support $action action")
         } ?: throw ItemNotFoundException("Item not found id=$categoryId")
 
+    override suspend fun doSave() {
+        model.displayOrder = (repository.getAll().maxOfOrNull { it.displayOrder } ?: 0) + 1
+        super.doSave()
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(@Assisted("categoryId") categoryId: Int,
