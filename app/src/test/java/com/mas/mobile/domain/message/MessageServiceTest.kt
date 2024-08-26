@@ -1,6 +1,7 @@
 package com.mas.mobile.domain.message
 
 import android.util.Log
+import com.mas.mobile.DummyEventLogger
 import com.mas.mobile.DummyTaskService
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.BudgetService
@@ -17,7 +18,6 @@ import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
-import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -40,7 +40,6 @@ class MessageServiceTest {
     private val mockMessageRepository = mockk<MessageRepository>(relaxed = true)
     private val mockExchangeRepository = mockk<ExchangeRepository>(relaxed = true)
     private val mockCategoryRepository = mockk<CategoryRepository>(relaxed = true)
-    private val mockAnalytics = mockk<Analytics>(relaxed = true)
     private val mockMessageTemplateService = mockk<MessageTemplateService>(relaxed = true)
     private val mockMessageTemplateRepository = mockk<MessageTemplateRepository>(relaxed = true)
     private val mockCategoryService = mockk<CategoryService>(relaxed = true)
@@ -59,7 +58,7 @@ class MessageServiceTest {
         mockCategoryRepository,
         mockk<ErrorHandler>(relaxed = true),
         DummyTaskService,
-        mockAnalytics,
+        DummyEventLogger,
         mockk<BudgetRepository>(relaxed = true),
         mockk<ExpenditureRepository>(relaxed = true)
     )
@@ -73,7 +72,7 @@ class MessageServiceTest {
         budgetService,
         mockQualifierService,
         mockSettingsService,
-        mockAnalytics,
+        DummyEventLogger,
         mockMessageRepository
     )
 

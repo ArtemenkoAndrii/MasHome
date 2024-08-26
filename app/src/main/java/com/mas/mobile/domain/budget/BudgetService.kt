@@ -5,12 +5,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import com.mas.mobile.domain.analytics.EventLogger
+import com.mas.mobile.domain.analytics.ScheduledBudgetNotFound
 import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.SettingsRepository
 import com.mas.mobile.service.ErrorHandler
 import com.mas.mobile.service.ResourceService
 import com.mas.mobile.service.TaskService
-import com.mas.mobile.util.Analytics
 import com.mas.mobile.util.DateTool
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -28,7 +29,7 @@ class BudgetService @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val errorHandler: ErrorHandler,
     private val coroutineService: TaskService,
-    private val analytics: Analytics,
+    private val eventLogger: EventLogger,
     val budgetRepository: BudgetRepository,
     val expenditureRepository: ExpenditureRepository,
 ) {
@@ -146,7 +147,7 @@ class BudgetService @Inject constructor(
                     }
                 budgetRepository.save(scheduledBudget)
             } else {
-                analytics.logEvent(Analytics.Event.APP_ERROR, Analytics.Param.STATUS, "Scheduled budget not found.")
+                eventLogger.log(ScheduledBudgetNotFound)
             }
         }
 

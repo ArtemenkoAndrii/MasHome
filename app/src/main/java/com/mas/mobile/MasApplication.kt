@@ -5,6 +5,7 @@ import android.content.Context
 import com.maltaisn.icondialog.pack.IconPack
 import com.maltaisn.icondialog.pack.IconPackLoader
 import com.maltaisn.iconpack.defaultpack.createDefaultIconPack
+import com.mas.mobile.domain.analytics.EventLogger
 import com.mas.mobile.domain.budget.BudgetRepository
 import com.mas.mobile.domain.budget.CategoryRepository
 import com.mas.mobile.domain.budget.ExchangeRepository
@@ -57,7 +58,7 @@ import com.mas.mobile.service.TaskService
 import com.mas.mobile.service.ai.GPTMessageAnalyzer
 import com.mas.mobile.service.ai.GptChatApiClient
 import com.mas.mobile.service.ai.GptChatConnector
-import com.mas.mobile.util.Analytics
+import com.mas.mobile.util.FirebaseEventLogger
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -209,8 +210,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun resolveAnalytics(): Analytics {
-        return Analytics()
+    fun resolveAnalytics(): EventLogger {
+        return FirebaseEventLogger()
     }
 
     @Provides

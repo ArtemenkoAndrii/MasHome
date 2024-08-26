@@ -1,7 +1,6 @@
 package com.mas.mobile.domain.message
 
 import com.mas.mobile.domain.settings.SettingsRepository
-import com.mas.mobile.util.Analytics
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -18,9 +17,8 @@ class MessageTemplateServiceTest {
     private val mockMessageTemplateRepository = mockk<MessageTemplateRepository>(relaxed = true)
     private val mockSettingsRepository = mockk<SettingsRepository>(relaxed = true)
     private val mockMessageAnalyzer = mockk<MessageAnalyzer>(relaxed = true)
-    private val mockAnalytics = mockk<Analytics>(relaxed = true)
 
-    private val underTest = MessageTemplateService(mockMessageTemplateRepository, mockSettingsRepository, mockMessageAnalyzer, mockAnalytics)
+    private val underTest = MessageTemplateService(mockMessageTemplateRepository, mockSettingsRepository, mockMessageAnalyzer)
 
     @BeforeEach
     fun setUp() {

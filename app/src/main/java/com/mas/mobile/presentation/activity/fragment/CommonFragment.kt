@@ -14,9 +14,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.maltaisn.icondialog.pack.IconPack
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
+import com.mas.mobile.domain.analytics.Event
+import com.mas.mobile.domain.analytics.EventLogger
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.service.ResourceService
-import com.mas.mobile.util.Analytics
 import com.mynameismidori.currencypicker.CurrencyPicker
 import java.util.Currency
 import javax.inject.Inject
@@ -36,7 +37,7 @@ abstract class CommonFragment : Fragment() {
         @Inject
         lateinit var budgetService: BudgetService
         @Inject
-        lateinit var analytics: Analytics
+        lateinit var eventLogger: EventLogger
         @Inject
         lateinit var iconPack: IconPack
     }
@@ -47,8 +48,8 @@ abstract class CommonFragment : Fragment() {
 
     fun getIconPack() = wrapper.iconPack
 
-    fun logEvent(eventName: Analytics.EventName, param: Analytics.ParamName, value: String) {
-        wrapper.analytics.logEvent(eventName, param, value)
+    fun logEvent(event: Event) {
+        wrapper.eventLogger.log(event)
     }
 
     fun showConfirmationDialog(

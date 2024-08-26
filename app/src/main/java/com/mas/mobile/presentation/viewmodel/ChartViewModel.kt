@@ -1,9 +1,10 @@
 package com.mas.mobile.presentation.viewmodel
 
-import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mas.mobile.domain.analytics.AnalyticsService
+import com.mas.mobile.domain.analytics.ChartShown
+import com.mas.mobile.domain.analytics.EventLogger
 import com.mas.mobile.domain.analytics.OverspendingAlert
 import com.mas.mobile.domain.analytics.Percentage
 import com.mas.mobile.domain.analytics.Share
@@ -17,6 +18,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class ChartViewModel @AssistedInject constructor(
+    private val eventLogger: EventLogger,
     private val analyticsService: AnalyticsService,
     private val budgetService: BudgetService,
     expenditureRepository: ExpenditureRepository,
@@ -51,13 +53,19 @@ class ChartViewModel @AssistedInject constructor(
         }
     }
 
-    private fun getAnalyticsTrends(expenditureName: String?): List<TrendEntry> =
-        analyticsService.getAnalyticsTrends(expenditureName?.let { ExpenditureName(it) } )
+    private fun getAnalyticsTrends(expenditureName: String?): List<TrendEntry> {
+        eventLogger.log(ChartShown(ChartShown.Type.Trends))
+        return analyticsService.getAnalyticsTrends(expenditureName?.let { ExpenditureName(it) } )
+    }
 
-    private fun getOverspendingAlerts(): List<OverspendingAlert> =
-        analyticsService.getOverspendingAlerts(Percentage.P120)
+    private fun getOverspendingAlerts(): List<OverspendingAlert> {
+        eventLogger.log(ChartShown(ChartShown.Type.Overspending))
+        return analyticsService.getOverspendingAlerts(Percentage.P120)
+    }
 
     private fun getExpenditureDistribution(budgetName: String? = null): List<Share> {
+        eventLogger.log(ChartShown(ChartShown.Type.Distribution))
+
         val name = budgetName ?: budgetService.getActiveBudget().name
         val result = budgetService.budgetRepository.getBudgetByName(name)?.let {
             analyticsService.getExpenditureDistribution(it.id)

@@ -1,11 +1,14 @@
 package com.mas.mobile.domain.message
 
 import android.util.Log
+import com.mas.mobile.domain.analytics.EventLogger
+import com.mas.mobile.domain.analytics.MessageEvaluated
+import com.mas.mobile.domain.analytics.MessageTemplateFailed
+import com.mas.mobile.domain.analytics.MessageTemplateFailed.Status
 import com.mas.mobile.domain.budget.BudgetService
 import com.mas.mobile.domain.budget.CategoryService
 import com.mas.mobile.domain.settings.SettingsService
 import com.mas.mobile.service.TaskService
-import com.mas.mobile.util.Analytics
 import java.time.LocalDateTime
 import java.util.Currency
 import javax.inject.Inject
@@ -19,12 +22,12 @@ class MessageService @Inject constructor(
     private val budgetService: BudgetService,
     private val qualifierService: QualifierService,
     private val settings: SettingsService,
-    private val analytics: Analytics,
+    private val eventLogger: EventLogger,
     val repository: MessageRepository
 ) {
     fun handleRawMessage(sender: String, text: String, date: LocalDateTime) = coroutineService.backgroundTask {
         val status = assessStatus(sender, text)
-        analytics.logEvent(Analytics.Event.MESSAGE_EVALUATED, Analytics.Param.STATUS, status::class.simpleName ?: "")
+        logEvent(status)
 
         if (status !is Message.Rejected) {
             val message = repository.create().also {
@@ -37,7 +40,6 @@ class MessageService @Inject constructor(
 
             if (status is Message.Matched) {
                 createSpending(message)
-                analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, "auto")
             }
 
             repository.save(message)
@@ -51,11 +53,6 @@ class MessageService @Inject constructor(
         return messageTemplateService.repository.getById(status.messageTemplateId)?.currency
     }
 
-    fun getAmount(message: Message): Double? {
-        val status = message.status as? Message.Matched ?: return null
-        return status.amount
-    }
-
     suspend fun promoteRecommendedMessage(message: Message): Message? {
         if (message.status !is Message.Recommended) {
             return null
@@ -63,13 +60,13 @@ class MessageService @Inject constructor(
 
         val newTemplate = messageTemplateService.generateTemplateFromMessage(message)
         if (newTemplate == null) {
-            analytics.logEvent(Analytics.Event.MESSAGE_TEMPLATE_FAILED, Analytics.Param.STATUS, GENERATION)
+            eventLogger.log(MessageTemplateFailed(Status.Generation))
             return null
         }
 
         val newStatus = matchesTemplate(message.sender, message.text, newTemplate)
         if (newStatus !is Message.Matched) {
-            analytics.logEvent(Analytics.Event.MESSAGE_TEMPLATE_FAILED, Analytics.Param.STATUS, EVALUATION)
+            eventLogger.log(MessageTemplateFailed(Status.Evaluation))
             return null
         }
 
@@ -148,8 +145,17 @@ class MessageService @Inject constructor(
             null
         }
 
-    companion object {
-        const val GENERATION = "generation"
-        const val EVALUATION = "evaluation"
+    private fun logEvent(status: Message.Status) {
+        val eventStatus = when (status) {
+            is Message.Matched -> if (status.merchant != null) {
+                MessageEvaluated.Status.Spent
+            } else {
+                MessageEvaluated.Status.Pending
+            }
+
+            is Message.Recommended -> MessageEvaluated.Status.Recommended
+            is Message.Rejected -> MessageEvaluated.Status.Rejected
+        }
+        eventLogger.log(MessageEvaluated(eventStatus))
     }
 }

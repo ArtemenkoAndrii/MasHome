@@ -4,6 +4,9 @@ import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.BackgroundColorSpan
 import androidx.lifecycle.MutableLiveData
+import com.mas.mobile.domain.analytics.EventLogger
+import com.mas.mobile.domain.analytics.MessageTemplateModified
+import com.mas.mobile.domain.analytics.MessageTemplateModified.Status
 import com.mas.mobile.domain.message.MessageTemplate
 import com.mas.mobile.domain.message.MessageTemplateId
 import com.mas.mobile.domain.message.MessageTemplateRepository
@@ -19,7 +22,8 @@ import java.util.Currency
 class MessageTemplateViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
     val repository: MessageTemplateRepository,
-    val resources: ResourceService,
+    private val resources: ResourceService,
+    private val eventLogger: EventLogger,
     @Assisted private val action: Action,
     @Assisted private val messageTemplateId: Int = NEW_ITEM,
 ) : ItemViewModel<MessageTemplate>(coroutineService, repository) {
@@ -135,6 +139,16 @@ class MessageTemplateViewModel @AssistedInject constructor(
                 else -> throw ActionNotSupportedException("MessageTemplateId does not support $action action")
             } ?: throw ItemNotFoundException("Item not found id=$messageTemplateId")
         }
+
+    override suspend fun doSave() {
+        super.doSave()
+        eventLogger.log(MessageTemplateModified(Status.Save))
+    }
+
+    override suspend fun doRemove() {
+        super.doRemove()
+        eventLogger.log(MessageTemplateModified(Status.Remove))
+    }
 
     @AssistedFactory
     interface Factory {

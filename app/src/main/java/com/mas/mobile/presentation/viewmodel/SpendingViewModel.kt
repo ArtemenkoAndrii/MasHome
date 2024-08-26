@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mas.mobile.domain.Repository
+import com.mas.mobile.domain.analytics.EventLogger
+import com.mas.mobile.domain.analytics.ScheduledModified
+import com.mas.mobile.domain.analytics.SpendingModified
 import com.mas.mobile.domain.budget.*
 import com.mas.mobile.domain.message.*
 import com.mas.mobile.presentation.viewmodel.ExpenditureViewModel.Companion.EXPENDITURE_MIN_LENGTH
@@ -13,7 +16,6 @@ import com.mas.mobile.presentation.viewmodel.validator.FieldValidator
 import com.mas.mobile.presentation.viewmodel.validator.Validator
 import com.mas.mobile.service.CoroutineService
 import com.mas.mobile.service.ResourceService
-import com.mas.mobile.util.Analytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,7 +32,7 @@ class SpendingViewModel @AssistedInject constructor(
     private val fieldValidator: FieldValidator,
     private val messageService: MessageService,
     private val categoryService: CategoryService,
-    private val analytics: Analytics,
+    private val eventLogger: EventLogger,
     @Assisted private val action: Action,
     @Assisted("spendingId") private val pSpendingId: Int,
     @Assisted("expenditureId") private val pExpenditureId: Int,
@@ -253,7 +255,12 @@ class SpendingViewModel @AssistedInject constructor(
         beforeSave()
         super.doSave()
         saveDependencies()
-        logEvent()
+        logSaveEvent()
+    }
+
+    override suspend fun doRemove() {
+        super.doRemove()
+        logRemoveEvent()
     }
 
     private fun findOrCreateExpenditure(name: String) =
@@ -284,15 +291,24 @@ class SpendingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun logEvent() {
-        if (action == Action.ADD) {
-            val source = if (message != null) {
-                "message"
-            } else {
-                "form"
-            }
-            analytics.logEvent(Analytics.Event.SPENDING_CREATED, Analytics.Param.SOURCE, source)
+    private fun logSaveEvent() {
+        val event = when {
+            model.recurrence == Recurrence.Never && message != null -> SpendingModified(SpendingModified.Status.Save, true)
+            model.recurrence == Recurrence.Never -> SpendingModified(SpendingModified.Status.Save)
+            else -> ScheduledModified(ScheduledModified.Status.Save)
         }
+
+        eventLogger.log(event)
+    }
+
+    private fun logRemoveEvent() {
+        val event = when {
+            model.recurrence == Recurrence.Never && message != null -> SpendingModified(SpendingModified.Status.Remove, true)
+            model.recurrence == Recurrence.Never -> SpendingModified(SpendingModified.Status.Remove)
+            else -> ScheduledModified(ScheduledModified.Status.Remove)
+        }
+
+        eventLogger.log(event)
     }
 
     @AssistedFactory

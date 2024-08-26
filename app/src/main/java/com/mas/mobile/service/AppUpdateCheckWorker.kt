@@ -9,10 +9,10 @@ import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.mas.mobile.appComponent
+import com.mas.mobile.domain.analytics.AppUpdateSuggested
+import com.mas.mobile.domain.analytics.EventLogger
 import com.mas.mobile.domain.settings.DeferrableActionService
 import com.mas.mobile.domain.settings.ProgressiveDaily
-import com.mas.mobile.util.Analytics
-import com.mas.mobile.util.Analytics.Event.APP_UPDATE_SUGGESTED
 import javax.inject.Inject
 
 class AppUpdateCheckWorker(val context: Context, params: WorkerParameters) : Worker(context, params) {
@@ -21,7 +21,7 @@ class AppUpdateCheckWorker(val context: Context, params: WorkerParameters) : Wor
     @Inject
     lateinit var notificationService: NotificationService
     @Inject
-    lateinit var analytics: Analytics
+    lateinit var eventLogger: EventLogger
 
     override fun doWork(): Result {
         val appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
@@ -33,7 +33,7 @@ class AppUpdateCheckWorker(val context: Context, params: WorkerParameters) : Wor
                 if (!deferrableActionService.isDeferred(action)) {
                     deferrableActionService.defer(action)
                     notificationService.sendUpdateAvailable()
-                    analytics.logEvent(APP_UPDATE_SUGGESTED)
+                    eventLogger.log(AppUpdateSuggested)
                 }
             }
         }.addOnFailureListener {

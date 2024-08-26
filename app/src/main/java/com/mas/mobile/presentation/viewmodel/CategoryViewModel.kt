@@ -1,6 +1,9 @@
 package com.mas.mobile.presentation.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import com.mas.mobile.domain.analytics.CategoryModified
+import com.mas.mobile.domain.analytics.CategoryModified.Status
+import com.mas.mobile.domain.analytics.EventLogger
 import com.mas.mobile.domain.budget.Category
 import com.mas.mobile.domain.budget.CategoryId
 import com.mas.mobile.domain.budget.CategoryRepository
@@ -15,6 +18,7 @@ import dagger.assisted.AssistedInject
 
 class CategoryViewModel @AssistedInject constructor(
     coroutineService: CoroutineService,
+    private val eventLogger: EventLogger,
     private val repository: CategoryRepository,
     private val fieldValidator: FieldValidator,
     @Assisted("categoryId") private val categoryId: Int,
@@ -120,6 +124,12 @@ class CategoryViewModel @AssistedInject constructor(
     override suspend fun doSave() {
         model.displayOrder = (repository.getAll().maxOfOrNull { it.displayOrder } ?: 0) + 1
         super.doSave()
+        eventLogger.log(CategoryModified(Status.Save))
+    }
+
+    override suspend fun doRemove() {
+        super.doRemove()
+        eventLogger.log(CategoryModified(Status.Remove))
     }
 
     @AssistedFactory

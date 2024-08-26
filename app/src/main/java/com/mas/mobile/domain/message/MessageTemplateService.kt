@@ -1,7 +1,6 @@
 package com.mas.mobile.domain.message
 
 import com.mas.mobile.domain.settings.SettingsRepository
-import com.mas.mobile.util.Analytics
 import java.util.Currency
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,8 +10,6 @@ class MessageTemplateService @Inject constructor(
     val repository: MessageTemplateRepository,
     private val settingsRepository: SettingsRepository,
     private val messageAnalyzer: MessageAnalyzer,
-    // TODO add logging
-    private val analytics: Analytics,
 ) {
     suspend fun generateTemplateFromMessage(message: Message): MessageTemplate? {
         val pattern = messageAnalyzer.buildPattern(message.text) ?: return null
