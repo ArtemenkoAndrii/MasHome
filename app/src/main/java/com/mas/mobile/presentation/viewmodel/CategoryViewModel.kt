@@ -122,7 +122,9 @@ class CategoryViewModel @AssistedInject constructor(
         } ?: throw ItemNotFoundException("Item not found id=$categoryId")
 
     override suspend fun doSave() {
-        model.displayOrder = (repository.getAll().maxOfOrNull { it.displayOrder } ?: 0) + 1
+        if (action == Action.ADD || action == Action.CLONE) {
+            model.displayOrder = (repository.getAll().maxOfOrNull { it.displayOrder } ?: 0) + 1
+        }
         super.doSave()
         eventLogger.log(CategoryModified(Status.Save))
     }

@@ -34,25 +34,6 @@ class CategoryService @Inject constructor(
         }
     }
 
-    init {
-        repairOrder()
-    }
-
-    /*
-        Remove in next release
-    */
-    private fun repairOrder() =
-        coroutineService.backgroundTask {
-            val items = repository.getAll()
-            val hasOrderedItems = items.any { it.displayOrder > 0 }
-            if (!hasOrderedItems) {
-                items.forEachIndexed { index, category ->
-                    category.displayOrder = index + 1
-                    repository.save(category)
-                }
-            }
-        }
-
     private fun List<Merchant>.containsIgnoreCase(value: String): Boolean =
         this.any { it.value.equals(value, true) }
 }
