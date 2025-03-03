@@ -63,8 +63,25 @@ class PatternTest {
     }
 
     @Test
+    fun `should parse multiline`() {
+        val result = Pattern("en {merchant} por {amount} EUR")
+            .parse("""
+                Cajasur  
+                Pago realizado con la visa dual ****1809 en  
+                KIWOKO MALAGA NOSTRUM por  60,00 EUR.  
+
+                Consulta el detalle del movimiento.
+            """.trimIndent())
+
+        with(result as Pattern.Data) {
+            assertEquals(60.00, amount, 0.001)
+            assertEquals("KIWOKO MALAGA NOSTRUM", merchant)
+        }
+    }
+
+    @Test
     fun `should parse when different langs`() {
-        val result = Pattern("{merchant}. Малага, Малага.\n{amount} €")
+        val result = Pattern( "{merchant}. Малага, Малага. {amount} €")
             .parse("""
                 La Mafia. Малага, Малага.
                 57.20 €

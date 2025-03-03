@@ -27,7 +27,7 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
             .replacePlaceholder(AMOUNT_PLACEHOLDER, AMOUNT_REGEX)
             .replacePlaceholder(MERCHANT_PLACEHOLDER, MERCHANT_REGEX)
             .let { Regex(ANY_STRING_REGEX + it + ANY_STRING_REGEX) }
-            .find(text)
+            .find(text.escapeNewLines())
     } catch (e: Throwable) {
         Log.i(this::class.java.name, "Matcher regex failed.", e)
         null
@@ -39,6 +39,10 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
             if (char in specialChars) "\\$char" else char.toString()
         }.joinToString("")
     }
+
+    private fun String.escapeNewLines() = this
+        .replace(Regex("\\r\\n|\\r|\\n"), SINGLE_SPACE)
+        .replace(Regex("\\s+"), SINGLE_SPACE)
 
     private fun String.replacePlaceholder(placeholder: String, regex: String) =
         when {
@@ -96,6 +100,7 @@ data class Pattern(val value: String = AMOUNT_PLACEHOLDER) {
         private const val MERCHANT_REGEX = "($ANY_STRING_REGEX)"
         private const val START_STRING = "^"
         private const val END_STRING = "$"
+        private const val SINGLE_SPACE = " "
     }
 
     sealed interface Result
