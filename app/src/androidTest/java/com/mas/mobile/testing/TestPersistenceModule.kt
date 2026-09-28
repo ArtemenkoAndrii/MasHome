@@ -2,9 +2,12 @@ package com.mas.mobile.testing
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.espresso.idling.CountingIdlingResource
 import com.mas.mobile.PersistenceModule
 import com.mas.mobile.repository.db.config.AppDatabase
+import com.mas.mobile.repository.db.config.DML
 import dagger.Provides
 import java.util.concurrent.Executors
 import javax.inject.Singleton
@@ -30,6 +33,17 @@ class TestPersistenceModule : PersistenceModule() {
             .allowMainThreadQueries()
             .setQueryExecutor(executor)
             .setTransactionExecutor(executor)
+            .addCallback(object : RoomDatabase.Callback() {
+                // Mirrors AppDatabase.getInstance()'s onCreate seed: without it, the shared
+                // `generator` sequence (idGeneratorDAO, used by every production *Repository's
+                // create()) starts at 1, the same as Room's own per-table autoincrement that
+                // TestFixtures' raw DAO inserts rely on - letting a fixture-seeded row and a
+                // production-created row collide on the same id across different tables.
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    db.execSQL(DML.TEMPLATE_GENERATOR)
+                }
+            })
             .build()
     }
 }

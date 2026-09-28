@@ -1,11 +1,17 @@
 package com.mas.mobile.presentation.viewmodel
 
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.mas.mobile.BuildConfig
+import com.mas.mobile.domain.backup.BackupJson
+import com.mas.mobile.domain.backup.BackupService
 import com.mas.mobile.domain.settings.DayOfMonth
 import com.mas.mobile.domain.settings.Period
 import com.mas.mobile.domain.settings.Settings
 import com.mas.mobile.domain.settings.SettingsRepository
+import com.mas.mobile.service.BackupFileService
 import com.mas.mobile.service.CoroutineService
 import com.mas.mobile.service.PermissionService
 import com.mas.mobile.service.ResourceService
@@ -17,11 +23,17 @@ import java.util.Currency
 
 class SettingsViewModel @AssistedInject constructor(
     settingsRepository: SettingsRepository,
-    coroutineService: CoroutineService,
-    resourceService: ResourceService,
-    private val permissionService: PermissionService
+    private val coroutineService: CoroutineService,
+    private val resourceService: ResourceService,
+    private val permissionService: PermissionService,
+    private val backupService: BackupService,
+    private val backupFileService: BackupFileService
 ) : ItemViewModel<Settings>(coroutineService, settingsRepository) {
     override var model = settingsRepository.get()
+
+    val backupInProgress = MutableLiveData(false)
+    private var onBackupCompleted: (String) -> Unit = {}
+    private var onBackupFailed: (String) -> Unit = {}
 
     var period = MutableLiveData<String>()
     var startDayOfMonth = MutableLiveData<String>()
@@ -117,6 +129,48 @@ class SettingsViewModel @AssistedInject constructor(
 
     fun onRequestNotificationPermissions(handler: () -> Unit) {
         onRequestNotificationPermissions = handler
+    }
+
+    fun onBackupCompleted(handler: (String) -> Unit) {
+        onBackupCompleted = handler
+    }
+
+    fun onBackupFailed(handler: (String) -> Unit) {
+        onBackupFailed = handler
+    }
+
+    fun exportBudgets(uri: Uri) {
+        backupInProgress.value = true
+        coroutineService.backgroundTask {
+            runCatching {
+                backupFileService.write(uri, BackupJson.toJson(backupService.buildExport()))
+            }.onSuccess {
+                notifyBackup { onBackupCompleted(resourceService.messageBackupExportDone()) }
+            }.onFailure {
+                notifyBackup { onBackupFailed(resourceService.messageBackupFailed()) }
+            }
+            backupInProgress.postValue(false)
+        }
+    }
+
+    fun importBudgets(uri: Uri) {
+        backupInProgress.value = true
+        coroutineService.backgroundTask {
+            runCatching {
+                backupService.importBudgets(BackupJson.fromJson(backupFileService.read(uri)))
+            }.onSuccess { summary ->
+                notifyBackup { onBackupCompleted(resourceService.messageBackupImportDone(summary.imported, summary.skipped)) }
+            }.onFailure {
+                notifyBackup { onBackupFailed(resourceService.messageBackupFailed()) }
+            }
+            backupInProgress.postValue(false)
+        }
+    }
+
+    // exportBudgets/importBudgets run on a background dispatcher; onBackupCompleted/onBackupFailed
+    // are Fragment-supplied handlers that show a dialog, which requires the main thread.
+    private fun notifyBackup(action: () -> Unit) {
+        Handler(Looper.getMainLooper()).post(action)
     }
 
     private fun switchDateFields(period: Period) {

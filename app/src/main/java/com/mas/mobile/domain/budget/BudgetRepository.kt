@@ -14,6 +14,7 @@ interface BudgetRepository : Repository<Budget> {
     fun getOnDate(date: LocalDate): Budget?
     fun getLast(): Budget?
     fun getCompleted(): List<Budget>
+    fun getAll(): List<Budget>
 
     override suspend fun save(item: Budget)
     override suspend fun remove(item: Budget)

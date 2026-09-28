@@ -35,6 +35,11 @@ class ResourceService @Inject constructor(
     fun messageAnalyticsNoAlerts() = context.getString(R.string.message_analytics_no_alerts)
     fun messageAnalyticsNoBudgets() = context.getString(R.string.message_analytics_no_budgets)
 
+    fun messageBackupExportDone() = context.getString(R.string.message_backup_export_done)
+    fun messageBackupImportDone(imported: Int, skipped: Int) =
+        String.format(context.getString(R.string.message_backup_import_done), imported, skipped)
+    fun messageBackupFailed() = context.getString(R.string.message_backup_failed)
+
     fun constantToday() = context.getString(R.string.constant_today)
     fun constantYesterday() = context.getString(R.string.constant_yesterday)
 

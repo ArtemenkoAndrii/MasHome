@@ -80,6 +80,8 @@
     <string name="menu_settings_notifications">Capture Notifications</string>
     <string name="menu_settings_sms">Capture SMS</string>
     <string name="menu_settings_discovery_mode">Autodetect</string>
+    <string name="menu_settings_backup_export">Export budgets</string>
+    <string name="menu_settings_backup_import">Import budgets</string>
     <string name="menu_settings_about">About</string>
     <string name="menu_settings_version">Version</string>
     <string name="menu_settings_what_is">What is the MasHome?</string>
@@ -115,6 +117,9 @@
     <string name="message_analytics_no_budgets">You do not have any completed budgets yet</string>
     <string name="message_detected">New spending message detected:</string>
     <string name="message_detected_confirmation">By clicking \'Confirm\', you agree to send this message to GPTChat for processing.</string>
+    <string name="message_backup_export_done">Budgets exported successfully.</string>
+    <string name="message_backup_import_done">Imported %1$d budget(s). Skipped %2$d already present.</string>
+    <string name="message_backup_failed">Something went wrong while processing the backup file.</string>
 
     <!-- FORMATTER -->
     <string name="formatter_money">%.2f</string>
@@ -158,6 +163,7 @@
     <string name="label_app_version">Version: </string>
     <string name="label_settings_budget">BUDGET</string>
     <string name="label_settings_messages">MESSAGES</string>
+    <string name="label_settings_backup">BACKUP</string>
     <string name="label_settings_about">ABOUT</string>
     <string name="label_analytics_plan">Plan</string>
     <string name="label_analytics_fact">Fact</string>

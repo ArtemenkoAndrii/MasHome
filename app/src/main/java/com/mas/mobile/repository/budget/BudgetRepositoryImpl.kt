@@ -41,6 +41,8 @@ class BudgetRepositoryImpl(
 
     override fun getCompleted(): List<Budget> = dao.getCompleted().map { it.toModel() }
 
+    override fun getAll(): List<Budget> = dao.getAll().map { it.toModel() }
+
     override fun generateId(): Long {
         return db.idGeneratorDAO().generateId()
     }

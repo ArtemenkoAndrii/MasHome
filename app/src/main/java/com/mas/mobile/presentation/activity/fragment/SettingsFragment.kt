@@ -29,6 +29,8 @@ import com.mas.mobile.databinding.SettingsFragmentBinding
 import com.mas.mobile.presentation.activity.converter.TextDrawable
 import com.mas.mobile.presentation.viewmodel.SettingsViewModel
 import com.mas.mobile.service.NotificationListener
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class SettingsFragment : CommonFragment() {
@@ -36,6 +38,12 @@ class SettingsFragment : CommonFragment() {
     private val args: SettingsFragmentArgs by navArgs()
     private var permissionLauncher = this.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         settingsViewModel.captureSms.value = it
+    }
+    private var exportLauncher = this.registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        uri?.let { settingsViewModel.exportBudgets(it) }
+    }
+    private var importLauncher = this.registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { settingsViewModel.importBudgets(it) }
     }
 
     private val settingsViewModel: SettingsViewModel by lazyViewModel {
@@ -120,8 +128,28 @@ class SettingsFragment : CommonFragment() {
         settingsViewModel.onRequestSMSPermissions { requestSMSPermissions() }
         settingsViewModel.onRequestNotificationPermissions { showNotificationSettings() }
 
+        binding.settingsBackupExportLayout.setOnClickListener {
+            exportLauncher.launch(backupFileName())
+        }
+
+        binding.settingsBackupImportLayout.setOnClickListener {
+            importLauncher.launch(arrayOf("application/json"))
+        }
+
+        settingsViewModel.backupInProgress.observeForever { inProgress ->
+            binding.settingsBackupProgressBar.visibility = if (inProgress) View.VISIBLE else View.GONE
+            binding.settingsBackupExportLayout.isEnabled = !inProgress
+            binding.settingsBackupImportLayout.isEnabled = !inProgress
+        }
+
+        settingsViewModel.onBackupCompleted { message -> showInfoDialog(message) {} }
+        settingsViewModel.onBackupFailed { message -> showInfoDialog(message) {} }
+
         return layout
     }
+
+    private fun backupFileName() =
+        "mashome-backup-${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}.json"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

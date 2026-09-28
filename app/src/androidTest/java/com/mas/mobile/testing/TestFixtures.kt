@@ -6,8 +6,10 @@ import com.mas.mobile.repository.db.entity.Category
 import com.mas.mobile.repository.db.entity.ExpenditureData
 import com.mas.mobile.repository.db.entity.MessageTemplate
 import com.mas.mobile.repository.db.entity.Qualifier
+import com.mas.mobile.repository.db.entity.SpendingData
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Minimal DAO-level fixture helpers for instrumented tests, seeding [TestPersistenceModule]'s
@@ -74,6 +76,29 @@ object TestFixtures {
             budget.plan += plan
             budget.fact += fact
             db.budgetDao().update(budget)
+        }
+
+        id
+    }
+
+    /**
+     * Also bumps the parent expenditure's `fact` column, mirroring `Budget.calculate()` in
+     * production - a bare DAO insert here would otherwise leave the expenditure's `fact` at 0.
+     */
+    fun seedSpending(
+        db: AppDatabase,
+        expenditureId: Int,
+        amount: Double,
+        comment: String = "",
+        date: LocalDateTime = LocalDateTime.now()
+    ): Int = runBlocking {
+        val id = db.spendingDao().insertSpendingData(
+            SpendingData(comment = comment, date = date, amount = amount, expenditureId = expenditureId, recurrence = "Never")
+        ).toInt()
+
+        db.expenditureDao().getById(expenditureId)?.let { expenditure ->
+            expenditure.data.fact += amount
+            db.expenditureDao().updateExpenditureData(expenditure.data)
         }
 
         id
