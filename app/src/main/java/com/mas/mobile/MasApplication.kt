@@ -13,6 +13,7 @@ import com.mas.mobile.domain.budget.ExpenditureRepository
 import com.mas.mobile.domain.budget.SpendingRepository
 import com.mas.mobile.domain.message.MessageAnalyzer
 import com.mas.mobile.domain.message.MessageRepository
+import com.mas.mobile.domain.message.MessageService
 import com.mas.mobile.domain.message.MessageTemplateRepository
 import com.mas.mobile.domain.message.QualifierRepository
 import com.mas.mobile.domain.settings.DeferrableActionRepository
@@ -87,9 +88,12 @@ val Context.appComponent: AppComponent
         else -> this.applicationContext.appComponent
     }
 
-@Component(modules = [AppModule::class])
+@Component(modules = [AppModule::class, PersistenceModule::class, ExternalServicesModule::class])
 @Singleton
 interface AppComponent {
+    fun messageService(): MessageService
+    fun db(): AppDatabase
+
     fun messageListViewModel(): MessageListViewModel.Factory
     fun messageTemplateListViewModel(): MessageTemplateListViewModel.Factory
     fun messageTemplateViewModel(): MessageTemplateViewModel.Factory
@@ -122,16 +126,14 @@ interface AppComponent {
     interface Builder {
         @BindsInstance
         fun context(context: Context): Builder
+        fun persistenceModule(module: PersistenceModule): Builder
+        fun externalServicesModule(module: ExternalServicesModule): Builder
         fun build(): AppComponent
     }
 }
 
 @Module
 class AppModule {
-    @Provides
-    @Singleton
-    fun providesDb(context: Context): AppDatabase = AppDatabase.getInstance(context)
-
     @Provides
     @Singleton
     fun resolveBudgetRepository(db: AppDatabase): BudgetRepository {
@@ -176,12 +178,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun resolveExchangeRepository(): ExchangeRepository {
-        return FreeCurrencyAPIRepositoryImpl()
-    }
-
-    @Provides
-    @Singleton
     fun resolveDeferredActionRepositoryImpl(db: AppDatabase): DeferrableActionRepository {
         return DeferrableActionRepositoryImpl(db)
     }
@@ -190,22 +186,6 @@ class AppModule {
     @Singleton
     fun resolveCategoryRepositoryImpl(db: AppDatabase): CategoryRepository {
         return CategoryRepositoryImpl(db)
-    }
-
-    @Provides
-    @Singleton
-    fun resolveGptChatService(): GptChatConnector =
-        GptChatApiClient().gptChatConnector
-
-    @Provides
-    @Singleton
-    fun resolveMessageProcessor(gptChatConnector: GptChatConnector): MessageAnalyzer =
-        GPTMessageAnalyzer(gptChatConnector)
-
-    @Provides
-    @Singleton
-    fun resolveTaskService(coroutineService: CoroutineService): TaskService {
-        return coroutineService
     }
 
     @Provides
@@ -227,5 +207,42 @@ class AppModule {
         val pack = createDefaultIconPack(loader)
         pack.loadDrawables(loader.drawableLoader)
         return pack
+    }
+}
+
+// Persistence lives in its own module, open for instrumented tests to subclass and
+// swap the real, file-backed AppDatabase for an in-memory one, without touching AppModule.
+@Module
+open class PersistenceModule {
+    @Provides
+    @Singleton
+    open fun providesDb(context: Context): AppDatabase = AppDatabase.getInstance(context)
+}
+
+// Network/threading collaborators live in their own module, open for instrumented tests
+// to subclass and swap for deterministic fakes (no live GPT/currency-API calls, no real
+// background dispatcher), without touching AppModule.
+@Module
+open class ExternalServicesModule {
+    @Provides
+    @Singleton
+    open fun resolveExchangeRepository(): ExchangeRepository {
+        return FreeCurrencyAPIRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    open fun resolveGptChatService(): GptChatConnector =
+        GptChatApiClient().gptChatConnector
+
+    @Provides
+    @Singleton
+    open fun resolveMessageProcessor(gptChatConnector: GptChatConnector): MessageAnalyzer =
+        GPTMessageAnalyzer(gptChatConnector)
+
+    @Provides
+    @Singleton
+    open fun resolveTaskService(coroutineService: CoroutineService): TaskService {
+        return coroutineService
     }
 }

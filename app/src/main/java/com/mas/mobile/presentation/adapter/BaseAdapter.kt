@@ -3,11 +3,12 @@ package com.mas.mobile.presentation.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
 
-abstract class BaseAdapter<T, V>(private val rowLayout: Int): RecyclerView.Adapter<BaseAdapter<T, V>.GroupViewHolder>() {
+abstract class BaseAdapter<T, V: ViewDataBinding>(private val rowLayout: Int): RecyclerView.Adapter<BaseAdapter<T, V>.GroupViewHolder>() {
     private var items: List<T> = emptyList()
     private var oldItems: List<T> = emptyList()
 
@@ -38,6 +39,11 @@ abstract class BaseAdapter<T, V>(private val rowLayout: Int): RecyclerView.Adapt
 
         fun bind(item: T, prior: T?) {
             processor(item, prior)
+            // Data Binding defers applying field updates until the next Choreographer frame
+            // unless forced - without this, a freshly bound row can briefly show stale/blank
+            // content, and a UI test interacting with it right after scrolling into view can
+            // race past the update entirely.
+            binding.executePendingBindings()
         }
     }
 

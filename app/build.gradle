@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
+
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-kapt"
@@ -16,6 +18,7 @@ android {
         versionName "1.2.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments useTestStorageService: 'true'
 
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
@@ -43,6 +46,41 @@ android {
         dataBinding true
     }
     namespace 'com.mas.mobile'
+
+    testOptions {
+        // The orchestrator APK itself fails to install on the minimal AOSP-ATD managed-
+        // device image ("Failed to install APK ... orchestrator-1.5.1.apk"). Per-test
+        // process isolation is a nice-to-have, not required for the current suite - default
+        // (non-orchestrated) execution is enough to get real coverage running. Revisit if
+        // ATD/orchestrator compatibility improves, or switch systemImageSource to "google"
+        // if orchestrator support turns out to matter more than the smaller/faster ATD image.
+        // execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        managedDevices {
+            devices {
+                pixel8Api34(ManagedVirtualDevice) {
+                    // "Pixel 8" isn't a hardware-profile name this SDK's Gradle Managed
+                    // Device catalog recognizes (that catalog is separate from Android
+                    // Studio's Device Manager, which is where a "Pixel 8" AVD can be
+                    // created - confirmed the two don't share profile data on this
+                    // install). "Pixel 5" is the newest name GMD actually resolves here;
+                    // it only picks the emulator's skin, not the API level under test.
+                    device = "Pixel 5"
+                    apiLevel = 34
+                    // "aosp-atd" (Automated Test Device - a stripped-down, speed-optimized
+                    // image) never grants real Android window focus to the app in this setup:
+                    // the window displays but Espresso's RootViewPicker times out waiting for
+                    // has-window-focus=true on every test, and wake/unlock/freeform/animation
+                    // adb fixes made no difference - points at the ATD image itself, not device
+                    // state. "aosp" (regular, non-ATD) has a broken/partial local SDK install
+                    // on this machine ("System image does not exist" despite package.xml being
+                    // present). "google" is a clean, standard, widely-used image, most likely
+                    // to have normal window-focus behavior and a clean download path.
+                    systemImageSource = "google"
+                }
+            }
+        }
+    }
 }
 
 tasks.withType(Test).configureEach {
@@ -125,4 +163,23 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.3")
+
+    // Instrumented Testing Libraries
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1") {
+        exclude group: "com.android.support", module: "support-annotations"
+    }
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
+    // NOTE: androidx.fragment:fragment-testing (for FragmentScenario) is deliberately not
+    // included yet - its 1.6.2 POM publishes `strictly` constraints on androidx.test:core/
+    // monitor that downgrade them below what espresso-core:3.6.1 needs at runtime, causing
+    // `NoClassDefFoundError: DirectExecutor`. None of the current tests use FragmentScenario;
+    // re-add it (with an explicit resolutionStrategy force on androidx.test:core/monitor to
+    // the versions below) only once a test actually needs it.
+    androidTestImplementation("androidx.room:room-testing:$room_version")
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
 }

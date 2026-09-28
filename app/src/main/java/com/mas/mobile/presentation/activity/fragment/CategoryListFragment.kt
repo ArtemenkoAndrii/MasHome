@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.databinding.ViewDataBinding
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,7 +68,7 @@ class CategoryListFragment : ListFragment() {
         CategoryListFragmentDirections.actionToCategory(Action.ADD.name)
 }
 
-class ItemMoveCallback<T, V>(
+class ItemMoveCallback<T, V: ViewDataBinding>(
     private val adapter: BaseAdapter<T, V>,
     private val reorderHandler: (old: List<T>, new: List<T>) -> Unit
 ) : ItemTouchHelper.Callback() {
