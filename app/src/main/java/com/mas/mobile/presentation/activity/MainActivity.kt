@@ -7,6 +7,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.main_activity)
         setSupportActionBar(findViewById(R.id.toolbar))
+        applySystemBarInsets(findViewById(R.id.toolbar))
 
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_view) as NavHostFragment).navController
         val graph = navController.navInflater.inflate(R.navigation.nav_graph).also {
@@ -77,6 +81,23 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         this.applicationContext.unregisterReceiver(dateListener)
         super.onDestroy()
+    }
+
+    // Edge-to-edge is enforced from targetSdk 35: the toolbar takes the status bar inset, the rest of the
+    // content is padded by the side/bottom (navigation bar, keyboard) insets.
+    private fun applySystemBarInsets(toolbar: View) {
+        val content = findViewById<View>(android.R.id.content)
+        val toolbarPaddingTop = toolbar.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+                        or WindowInsetsCompat.Type.ime()
+            )
+            toolbar.updatePadding(top = toolbarPaddingTop + insets.top)
+            view.updatePadding(left = insets.left, right = insets.right, bottom = insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun checkPrivacyPolicy() {

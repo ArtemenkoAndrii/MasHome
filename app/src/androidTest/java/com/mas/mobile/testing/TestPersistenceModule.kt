@@ -8,9 +8,7 @@ import androidx.test.espresso.idling.CountingIdlingResource
 import com.mas.mobile.PersistenceModule
 import com.mas.mobile.repository.db.config.AppDatabase
 import com.mas.mobile.repository.db.config.DML
-import dagger.Provides
 import java.util.concurrent.Executors
-import javax.inject.Singleton
 
 /**
  * Instrumented-test replacement for [PersistenceModule]. Builds a fresh in-memory
@@ -25,8 +23,6 @@ import javax.inject.Singleton
 class TestPersistenceModule : PersistenceModule() {
     val idlingResource = CountingIdlingResource("RoomQueries")
 
-    @Provides
-    @Singleton
     override fun providesDb(context: Context): AppDatabase {
         val executor = IdlingResourceExecutor(Executors.newSingleThreadExecutor(), idlingResource)
         return Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)

@@ -35,7 +35,7 @@ class IconPickerActivity : AppCompatActivity(), IconDialog.Callback {
 
     override fun onIconDialogCancelled() {
         setResult(RESULT_CANCELED)
-        super.onBackPressed()
+        finish()
     }
 
     companion object {

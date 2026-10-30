@@ -4,6 +4,9 @@ import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.mas.mobile.R
 import com.mas.mobile.appComponent
 import com.mas.mobile.domain.settings.SettingsService
@@ -19,6 +22,14 @@ class PolicyActivity : Activity() {
         this.appComponent.injectPolicyActivity(this)
 
         setContentView(R.layout.policy_activity)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         findViewById<WebView?>(R.id.policy_web_view)?.let {
             it.settings.allowContentAccess = true
